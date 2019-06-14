@@ -119,7 +119,7 @@ class ReportDetails(UpdateView, LoginRequiredMixin):
             scan=this_scan
         ).exclude(status_code__isnull=True).order_by('url')
 
-        no_referrer_urls = broken_urls.filter(referrer_isnull=True)
+        no_referrer_urls = broken_urls.filter(referrers__isnull=True)
 
         referrer_urls = ReferrerUrl.objects.filter(scan=this_scan)
 
