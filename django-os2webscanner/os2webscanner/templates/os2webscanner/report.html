@@ -345,14 +345,15 @@ Rapport
                 </tr>
             {% endfor %}
         </table>
-    </div>
-            {% if no_referrer_urls %}
-                {% for burl in no_referrer_urls %}
-                    {% for bref in burl.referrers %}
-                        <p> {{ bref }} </p>
-                    {% endfor %}
+        <div>
+            <p> Here i show broken urls from sitemap.xml </p>
+            {% for burl in no_referrer_urls %}
+                {% for bref in burl.referrers %}
+                    <p> {{ bref }} </p>
                 {% endfor %}
-            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
     {% endif %}
       
     {% if failed_conversions or scan.status == "FAILED" %}
