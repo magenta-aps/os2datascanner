@@ -348,9 +348,7 @@ Rapport
         <div>
             <p> Here i show broken urls from sitemap.xml </p>
             {% for burl in no_referrer_urls %}
-                {% for bref in burl.referrers.all %}
-                    <p> {{ bref }} </p>
-                {% endfor %}
+                    <p> {{ burl }} </p>
             {% endfor %}
         </div>
     </div>
