@@ -344,12 +344,51 @@ Rapport
 
                 </tr>
             {% endfor %}
+            {% if no_referrer_urls %} 
+                <tr class="danger">
+                <td class="broken-url-referrers">
+                    <p target="_NEW">Andre links - Højest sandsynligt fra sitemap</p>
+                </td>
+
+                <td class="broken-url-count">
+                    <span class="badge">{{no_referrer_urls.count}}</span>
+                </td>
+
+                <td class="broken-url-show">
+                    <p>
+                        <script>
+                            var get_messages = Array(
+                            {% for broken in no_referrer_urls %}
+                                "{{ broken.status_message }}",
+                            {% endfor %});
+                            var all_broken_urls = Array(
+                            {% for url in no_referrer_urls.all %}
+                                "{{ url }}",
+                            {% endfor %}
+                            );
+                            status_messages.push(get_messages);
+                            all_broken.push(all_broken_urls);
+                        </script>
+                        <button type="button"
+                                class="btn btn-default"
+                                data-toggle="modal"
+                                data-target="#view-deadlinks-modal"
+                                onclick="showReferrerUrl('other','other',all_broken[{{ forloop.counter0 }}],status_messages[{{ forloop.counter0 }}])">
+                        <span class="glyphicon glyphicon-eye-open"></span>
+                        Inspicér
+                        </button>
+                    </p>
+                </td>
+
+                </tr>
+                {% for burl in no_referrer_urls %}
+                    
+                        <p> {{ burl }} </p>
+                {% endfor %}
+            {% endif %}
         </table>
         <div>
             <p> Here i show broken urls from sitemap.xml </p>
-            {% for burl in no_referrer_urls %}
-                    <p> {{ burl }} </p>
-            {% endfor %}
         </div>
     </div>
     {% endif %}
