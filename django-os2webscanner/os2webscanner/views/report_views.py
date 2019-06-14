@@ -127,6 +127,7 @@ class ReportDetails(UpdateView, LoginRequiredMixin):
         context['broken_urls'] = broken_urls[:100]
         context['no_of_broken_links'] = broken_urls.count()
         context['referrer_urls'] = referrer_urls
+        context['no_referrer_urls'] = no_referrer_urls
         context['matches'] = all_matches[:100]
         context['all_matches'] = all_matches
         context['no_of_matches'] = all_matches.count() + broken_urls.count()
