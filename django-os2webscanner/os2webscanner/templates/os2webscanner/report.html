@@ -371,7 +371,7 @@ Rapport
                                 class="btn btn-default"
                                 data-toggle="modal"
                                 data-target="#view-deadlinks-modal"
-                                onclick="showReferrerUrl('other','other',all_broken_urls,get_messages)">
+                                onclick="showReferrerUrl('','',all_broken_urls,get_messages)">
                         <span class="glyphicon glyphicon-eye-open"></span>
                         Inspicér
                         </button>
@@ -379,15 +379,8 @@ Rapport
                 </td>
 
                 </tr>
-                {% for burl in no_referrer_urls %}
-                    
-                        <p> {{ burl }} </p>
-                {% endfor %}
             {% endif %}
         </table>
-        <div>
-            <p> Here i show broken urls from sitemap.xml </p>
-        </div>
     </div>
     {% endif %}
       
@@ -628,8 +621,13 @@ Rapport
 
     function showReferrerUrl(id, url, broken_link, error) {
         console.log(id, url, broken_link, error)
-        //var url_mask = "{% url 'referrer_content' pk=12345 %}".replace(/12345/, id.toString());
-        //document.getElementById("iframe").src = url_mask;
+        $("#list-links").html('Finder links...');
+        if(url == ''){
+            document.getElementById("iframe").srcdoc = "";
+        } else {
+            var url_mask = "{% url 'referrer_content' pk=12345 %}".replace(/12345/, id.toString());
+            document.getElementById("iframe").src = url_mask;
+        }
 
         $("#create-summary-modal-title span").html('<a href="' + url + '">' + url + '</a>');
 
@@ -639,8 +637,7 @@ Rapport
             linkMarkup += "<span class='label label-danger'>"+ error[i] +"</span></a>";
         }
 
-        //$("#list-links").html('Finder links...');
-        //prevTarg = null;
+        prevTarg = null;
     }
 
     document.onready = function() {
