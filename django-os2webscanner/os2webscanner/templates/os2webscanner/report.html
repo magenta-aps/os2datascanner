@@ -344,6 +344,8 @@ Rapport
 
                 </tr>
             {% endfor %}
+        </table>
+    </div>
             {% if no_referrer_urls %}
                 {% for burl in no_referrer_urls %}
                     {% for bref in burl.referrers %}
@@ -351,7 +353,6 @@ Rapport
                     {% endfor %}
                 {% endfor %}
             {% endif %}
-    </div>
     {% endif %}
       
     {% if failed_conversions or scan.status == "FAILED" %}
