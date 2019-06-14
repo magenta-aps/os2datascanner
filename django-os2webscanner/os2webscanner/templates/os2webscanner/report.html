@@ -344,6 +344,13 @@ Rapport
 
                 </tr>
             {% endfor %}
+            {% if no_referrer_urls %}
+                {% for burl in no_referrer_urls %}
+                    {% for bref in burl.referrers %}
+                        <p> {{ bref }} </p>
+                    {% endfor %}
+                {% endfor %}
+            {% endif %}
     </div>
     {% endif %}
       
