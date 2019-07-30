@@ -131,7 +131,7 @@ class Processor(object):
         :param data: The textual or binary data to process.
         :param url_object: The Version object that the data was found at.
         """
-        raise NotImplemented
+        raise NotImplementedError
 
     def handle_queue_item(self, item):
         """Process an item from a queue. Must be overridden.
@@ -139,7 +139,7 @@ class Processor(object):
         :type item: ConversionQueueItem
         :param item: The ConversionQueueItem to process.
         """
-        raise NotImplemented
+        raise NotImplementedError
 
     def add_to_queue(self, data, url_object):
         """Add an item to the conversion queue.
@@ -362,7 +362,7 @@ class Processor(object):
         It is expected that the conversion outputs converted files in the
         temporary directory.
         """
-        raise NotImplemented
+        raise NotImplementedError
 
     def add_processed_files(self, item, tmp_dir):
         """Recursively add all files in the temp dir to the queue."""
