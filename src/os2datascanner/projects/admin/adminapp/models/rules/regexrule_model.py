@@ -16,7 +16,6 @@
 
 from django.db import models
 
-
 from .rule_model import Rule
 
 

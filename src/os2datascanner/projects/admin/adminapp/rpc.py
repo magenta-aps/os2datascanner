@@ -161,8 +161,11 @@ def get_report(username, password, report_url):
     all_matches = Match.objects.filter(scan=scan).order_by(
         '-sensitivity', 'url', 'matched_rule', 'matched_data'
     )
+
     # CSV utilities
-    e = lambda fields: ([f.encode('utf-8') for f in fields])
+    def e(fields):
+        return [f.encode('utf-8') for f in fields]
+
     # Print summary header
     writer.writerow(e(['Starttidspunkt', 'Sluttidspunkt', 'Status',
                     'Totalt antal matches']))

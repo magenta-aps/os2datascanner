@@ -42,7 +42,7 @@ class SMBSource(Source):
             print(args)
             check_call(args)
             return ShareableCookie(mntdir)
-        except:
+        except Exception:
             rmdir(mntdir)
             raise
 

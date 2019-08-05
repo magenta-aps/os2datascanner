@@ -54,7 +54,6 @@ tests:
 flake8:
   stage: check
   image: python:latest
-  allow_failure: true
   script:
     - pip install flake8 flake8-gl-codeclimate
     - flake8 --exit-zero --format gl-codeclimate --tee --output-file build/code-quality.json src/

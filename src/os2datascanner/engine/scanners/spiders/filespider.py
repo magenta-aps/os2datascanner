@@ -22,13 +22,6 @@ class FileSpider(ScannerSpider):
         'SPIDER_MIDDLEWARES': {'os2datascanner.engine.scanners.middlewares.middlewares.ExclusionRuleMiddleware': 1000}
     }
 
-    def __init__(self, scanner, runner, *a, **kw):
-        """Initialize the ScannerSpider with a Scanner object.
-
-        The configuration will be loaded from the Scanner.
-        """
-        super().__init__(scanner=scanner, runner=runner, *a, **kw)
-
     def setup_spider(self):
         self.logger.info("Initializing spider of type FileSpider")
         for path in self.allowed_domains:

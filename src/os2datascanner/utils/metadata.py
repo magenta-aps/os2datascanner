@@ -9,7 +9,9 @@ import mimetypes
 from defusedxml.ElementTree import parse
 import subprocess
 
-guess_mime_type = lambda t: mimetypes.guess_type(t, strict=False)[0]
+
+def guess_mime_type(t):
+    return mimetypes.guess_type(t, strict=False)[0]
 
 def _get_cifs_security_descriptor(path):
     """Attempts to parse the output of the getcifsacl command, returning a

@@ -187,7 +187,7 @@ def main():
                     while True:
                         print("waiting on {0}".format(p))
                         p.join()
-                        if p.exitcode != None:
+                        if p.exitcode is not None:
                             print("joined {0}".format(p))
                             break
 

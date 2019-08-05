@@ -22,7 +22,6 @@ import datetime
 import os
 import re
 import shutil
-import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -40,7 +39,6 @@ data_dir = test_dir.joinpath('data')
 base_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
 from os2datascanner.engine import linkchecker
-from os2datascanner.engine.scanners.scanner_types.scanner import Scanner
 from os2datascanner.engine.scanners.spiders.filespider import FileSpider
 from os2datascanner.engine.scanners.scanner_types.filescanner import FileScanner
 
@@ -439,98 +437,6 @@ class ZIPTest(django.test.TestCase):
         result = self.create_ressources(filename)
         self.assertIsNotNone(result, "File does not exist")
         self.assertEqual(result, True)
-
-
-@unittest.skip("ScannerApp no longer exists")
-class StoreStatsTest(django.test.TestCase):
-
-    def test_store_stats(self):
-        scan_id, scannerapp, webscan = self.create_ressources()
-
-        files_skipped_count = 110
-        files_scraped_count = 5
-        scannerapp.scanner = Scanner(scan_id)
-        scannerapp.scanner_spider = scannerapp.setup_scanner_spider()
-        scannerapp.scanner_spider.crawler.stats.set_value('last_modified_check/pages_skipped', files_skipped_count)
-        scannerapp.scanner_spider.crawler.stats.set_value('downloader/request_count', files_scraped_count)
-        scannerapp.scanner_spider.crawler.stats.get_stats()
-        scannerapp.store_stats()
-        from os2webscanner.models.statistic_model import Statistic
-        statistic = Statistic.objects.get(scan=webscan)
-        self.assertEqual(statistic.files_skipped_count, files_skipped_count)
-        self.assertEqual(statistic.files_scraped_count, files_scraped_count)
-
-    def create_ressources(self):
-        webscan = create_webscan()
-        # python 3.4+ should use builtin unittest.mock not mock package
-        from unittest.mock import patch
-
-        scan_id = webscan.pk
-        args = ['does not matter', scan_id]
-        with patch.object(sys, 'argv', args):
-            from os2datascanner.engine.run import get_project_settings
-            scannerapp = ScannerApp(scan_id, type(webscan).__name__)
-            settings = get_project_settings()
-            from scrapy.crawler import CrawlerProcess
-            scannerapp.crawler_process = CrawlerProcess(settings)
-        return scan_id, scannerapp, webscan
-
-    def tearDown(self) -> None:
-        for p in data_dir.joinpath('tmp').iterdir():
-            if p.name != 'README':
-                p.unlink()
-
-    def test_store_multiple_stats(self):
-        scan_id, scannerapp, webscan = self.create_ressources()
-
-        for i in range(2):
-            files_skipped_count = 110
-            files_scraped_count = 5
-            scannerapp.scanner = Scanner(scan_id)
-            scannerapp.scanner_spider = scannerapp.setup_scanner_spider()
-            scannerapp.scanner_spider.crawler.stats.set_value('last_modified_check/pages_skipped', files_skipped_count)
-            scannerapp.scanner_spider.crawler.stats.set_value('downloader/request_count', files_scraped_count)
-            scannerapp.scanner_spider.crawler.stats.get_stats()
-            scannerapp.store_stats()
-
-        from os2datascanner.projects.admin.adminapp.models.statistic_model import Statistic
-        statistic = Statistic.objects.get(scan=webscan)
-        self.assertEqual(statistic.files_skipped_count, files_skipped_count*2)
-        self.assertEqual(statistic.files_scraped_count, files_scraped_count*2)
-
-
-@unittest.skip("process manager has been refactored")
-class ProcessManagerTest(django.test.TestCase):
-
-    @classmethod
-    def setUpClass(self):
-        process_manager.prepare_processors()
-        process_manager.start_all_processors()
-
-    @classmethod
-    def tearDownClass(self):
-        for pdata in process_manager.process_list:
-            process_manager.stop_process(pdata)
-
-    def test_processors_are_prepared(self):
-        self.assertEqual(len(process_manager.process_list), 16)
-
-    def test_processors_are_started(self):
-        self.assertEqual(len(process_manager.process_map), 32)
-
-    def test_processors_restart(self):
-        # Enable time sleep if you want to make sure libreoffice
-        # sub-processors(soffice, oopsplash) are started,
-        # before trying to stop them again.
-
-        # time.sleep(120)
-        for pdata in process_manager.process_list:
-            process_manager.stop_process(pdata)
-        self.assertEqual(len(process_manager.process_map), 16)
-        for pdata in process_manager.process_list:
-            process_manager.start_process(pdata)
-        self.assertEqual(len(process_manager.process_map), 32)
-        # time.sleep(120)
 
 
 def create_webscan():

@@ -109,10 +109,12 @@ class NameRule(Rule):
         """Execute the Name rule."""
         matches = set()
         unmatched_text = text
+
         # Determine if a name matches one of the lists
-        match = lambda n, list: n.upper() in self.blacklist or (
-            n.upper() in list and not n.upper() in self.whitelist
-        )
+        def match(n, list):
+            return n.upper() in self.blacklist or (
+                n.upper() in list and not n.upper() in self.whitelist
+            )
 
         # First, check for whole names, i.e. at least Firstname + Lastname
         names = match_full_name(text)
@@ -164,7 +166,9 @@ class NameRule(Rule):
             # Check if name is blacklisted.
             # The name is blacklisted if there exists a string in the
             # blacklist which is contained as a substring of the name.
-            is_match = lambda str: str in full_name.upper()
+            def is_match(s):
+                return s in full_name.upper()
+
             is_blacklisted = any(map(is_match, self.blacklist))
             # Name match is always high sensitivity
             # and occurs only when first and last name are in the name lists

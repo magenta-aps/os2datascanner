@@ -2,7 +2,6 @@ import os
 import shutil
 import tempfile
 import time
-import unittest
 from datetime import timedelta, datetime
 
 from django.conf import settings
@@ -30,11 +29,6 @@ class ScanModelTest(TestCase):
         shutil.rmtree(self.__tempdir)
 
         super().tearDown()
-
-    @unittest.skip("Exchange domain is gone!")
-    def test_exchange_cleanup_finished_scan(self):
-        exchangescan = CreateExchangeScan.create_exchangescan(self)
-        self.check_scan_dir(exchangescan)
 
     def test_web_cleanup_finished_scan(self):
         webscan = CreateWebScan.create_webscan(self)

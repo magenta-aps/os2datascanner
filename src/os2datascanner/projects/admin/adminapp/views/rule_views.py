@@ -127,7 +127,7 @@ class RuleUpdate(RestrictedUpdateView):
             with transaction.atomic():
                 RuleCreate._save_rule_form(form)
                 return super().form_valid(form)
-        except:
+        except Exception:
             return super().form_invalid(form)
 
 
@@ -191,7 +191,7 @@ class RegexRuleUpdate(RuleUpdate):
                 # Skip the RuleUpdate implementation of form_valid -- we've
                 # already created our (Regex)Rule object
                 return super(RuleUpdate, self).form_valid(form)
-        except:
+        except Exception:
             return super().form_invalid(form)
 
     def get_pattern_fields(self):

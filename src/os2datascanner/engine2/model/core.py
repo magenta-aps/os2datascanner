@@ -67,7 +67,7 @@ class Source(ABC, _TypPropEq):
         """Parses the given URL to produce a new Source."""
         try:
             scheme, _ = url.split(':', maxsplit=1)
-            if not scheme in Source.__url_handlers:
+            if scheme not in Source.__url_handlers:
                 raise UnknownSchemeError(scheme)
             return Source.__url_handlers[scheme](url)
         except ValueError:
@@ -174,7 +174,7 @@ class SourceManager:
                     "BUG: open(try_open=True) called on" +
                     " a read-only SourceManager!")
         rv = None
-        if not source in self._opened:
+        if source not in self._opened:
             cookie = None
             if self._parent:
                 cookie = self._parent.open(source, try_open=False)
