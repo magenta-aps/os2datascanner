@@ -1,9 +1,7 @@
 import logging
 import datetime
 import dateutil.tz
-import arrow
 
-from lxml import html
 from email.utils import parsedate_tz, mktime_tz
 
 from scrapy import Request

@@ -21,7 +21,6 @@ import structlog
 from os2datascanner.projects.admin.adminapp.models.location_model import Location
 from os2datascanner.projects.admin.adminapp.models.scans.scan_model import Scan
 from os2datascanner.projects.admin.adminapp.models.version_model import Version
-from os2datascanner.projects.admin.adminapp.models.sensitivity_level import Sensitivity
 
 from ..rules.name import NameRule
 from ..rules.address import AddressRule

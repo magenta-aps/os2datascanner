@@ -1,13 +1,9 @@
-import os
 import django
 
 from os2datascanner.projects.admin.adminapp.models.organization_model import Organization
 from os2datascanner.projects.admin.adminapp.models.rules.regexrule_model import RegexRule, RegexPattern
 from os2datascanner.projects.admin.adminapp.models.sensitivity_level import Sensitivity
 from os2datascanner.projects.admin.adminapp.models.scannerjobs.webscanner_model import WebScanner
-
-from django.conf import settings
-from subprocess import Popen
 
 
 class ScannerTest(django.test.TestCase):

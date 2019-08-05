@@ -1,13 +1,12 @@
 import structlog
 
 from .smb import make_smb_url, SMBSource
-from .core import Source, Handle, ShareableCookie, FileResource, ResourceUnavailableError
+from .core import FileResource, Handle, ResourceUnavailableError, Source
 from .utilities import NamedTemporaryResource
 
-from os import rmdir, stat_result, O_RDONLY
+from os import O_RDONLY, stat_result
 import smbc
-from regex import compile, match
-from urllib.parse import quote, unquote, urlsplit, urlunsplit
+from urllib.parse import quote, unquote, urlsplit
 from hashlib import md5
 from datetime import datetime
 from urllib.parse import quote

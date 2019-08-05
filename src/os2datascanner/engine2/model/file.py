@@ -1,6 +1,5 @@
 from .core import Source, Handle, FileResource, ShareableCookie
 
-from os import stat
 import os.path
 from urllib.parse import quote, unquote, urlsplit, urlunsplit
 from hashlib import md5

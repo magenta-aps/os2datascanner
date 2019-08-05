@@ -1,4 +1,3 @@
-from os import rmdir, remove
 from pathlib import Path
 from tempfile import mkdtemp
 

@@ -23,8 +23,6 @@ from .rule_model import Rule
 class RegexRule(Rule):
     """Represents matching rules based on regular expressions."""
 
-    pass
-
 
 class RegexPattern(models.Model):
     """

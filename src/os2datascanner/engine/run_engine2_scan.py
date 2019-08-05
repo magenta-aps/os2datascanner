@@ -6,7 +6,6 @@ from .run import StartScan
 
 from ..engine2.model.core import SourceManager, ResourceUnavailableError
 from ..engine2.model.http import WebSource
-from ..engine2.model.smbc import SMBCSource
 from .scanners.processors.processor import Processor
 from .scanners.scanner_types.webscanner import WebScanner
 from .scanners.scanner_types.filescanner import FileScanner
