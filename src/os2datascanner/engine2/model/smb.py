@@ -6,7 +6,7 @@ from regex import compile
 from urllib.parse import quote, unquote, urlsplit, urlunsplit
 from pathlib import Path
 from tempfile import mkdtemp
-from subprocess import run
+from subprocess import check_call
 
 class SMBSource(Source):
     def __init__(self, unc, user=None, password=None, domain=None):
@@ -40,7 +40,7 @@ class SMBSource(Source):
             args = ["mount", "-t", "cifs", self._unc, mntdir, '-o']
             args.append(self._make_optarg(display=False))
             print(args)
-            assert run(args).returncode == 0
+            check_call(args)
             return ShareableCookie(mntdir)
         except:
             rmdir(mntdir)
@@ -49,9 +49,7 @@ class SMBSource(Source):
     def _close(self, mntdir):
         args = ["umount", mntdir]
         try:
-            assert run(args).returncode == 0
-        except:
-            raise
+            check_call(args)
         finally:
             rmdir(mntdir)
 
