@@ -1,8 +1,15 @@
 from django import forms
 
-from .scanner_views import *
 from ..aescipher import decrypt
 from ..models.scannerjobs.filescanner_model import FileScanner
+from .scanner_views import (
+    ScannerList,
+    ScannerCreate,
+    ScannerUpdate,
+    ScannerDelete,
+    ScannerAskRun,
+    ScannerRun,
+)
 
 
 class FileScannerList(ScannerList):

@@ -1,6 +1,14 @@
 from ..validate import validate_domain, get_validation_str
-from .scanner_views import *
 from ..models.scannerjobs.webscanner_model import WebScanner
+from .views import RestrictedDetailView
+from .scanner_views import (
+    ScannerList,
+    ScannerCreate,
+    ScannerUpdate,
+    ScannerDelete,
+    ScannerAskRun,
+    ScannerRun,
+)
 
 
 def url_contains_spaces(form):
