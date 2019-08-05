@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from .core import Source, Handle, FileResource
 from .utilities import NamedTemporaryResource
 

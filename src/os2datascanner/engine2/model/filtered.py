@@ -1,7 +1,9 @@
+from pathlib import Path
+import os.path
+
 from .core import Source, Handle, FileResource
 from .utilities import NamedTemporaryResource
 
-import os.path
 from bz2 import BZ2File
 from gzip import GzipFile
 from lzma import LZMAFile

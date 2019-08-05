@@ -29,7 +29,7 @@ import typing
 from django.db import IntegrityError
 from django.conf import settings
 from django.core.mail import EmailMessage
-from django.template import loader
+from django.template import loader, Context
 
 from .models.match_model import Match
 from .models.webversion_model import WebVersion
