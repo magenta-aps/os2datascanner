@@ -64,13 +64,17 @@ flake8:
     reports:
       codequality: build/code-quality.json
 
-black:
+yapf:
   stage: check
   image: python:latest
   allow_failure: true
   script:
-    - pip install black
-    - black --check src
+    - mkdir -p build
+    - pip install yapf-junit
+    - yapf-junit --target-dir src --out-file build/yapf-results.xml
+  artifacts:
+    reports:
+      junit: build/yapf-results.xml
 
 docs:
   stage: build

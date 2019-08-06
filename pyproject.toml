@@ -1,3 +1,0 @@
-[tool.black]
-target-version = ["py34"]
-line-length = 79

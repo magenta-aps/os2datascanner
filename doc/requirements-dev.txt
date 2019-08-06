@@ -2,6 +2,7 @@
 ipython
 pycodestyle==2.5.0
 flake8==3.7.8
+yapf==0.28.0
 unittest-xml-reporting==2.5.1
 django_extensions
 colorama
