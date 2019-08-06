@@ -30,16 +30,14 @@ def check_url(url, method="HEAD"):
     """
     try:
         logger.info("check_url", url=url)
-        request = urllib.request.Request(url, headers={"User-Agent":
-                                                       "OS2Webscanner"})
+        request = urllib.request.Request(
+            url, headers={"User-Agent": "OS2Webscanner"})
         request.get_method = lambda: method
         urllib.request.urlopen(request, timeout=LINK_CHECK_TIMEOUT)
         return None
-    except (urllib.error.HTTPError,
-            urllib.error.URLError,
-            http.client.InvalidURL,
-            socket.timeout,
-            IOError, ssl.CertificateError) as e:
+    except (urllib.error.HTTPError, urllib.error.URLError,
+            http.client.InvalidURL, socket.timeout, IOError,
+            ssl.CertificateError) as e:
         logger.warning("check_url", url=url, exc_info=True)
         code = getattr(e, "code", 0)
         if code == 405:

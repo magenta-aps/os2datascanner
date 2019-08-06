@@ -18,7 +18,6 @@
 
 from django.db import models
 
-
 from .rule_model import Rule
 
 
@@ -26,17 +25,15 @@ class AddressRule(Rule):
     DATABASE_PD_2015 = 0
 
     database_choices = (
-        (DATABASE_PD_2015, u'Post Danmarks liste over gadenavne pr. ca. 1. januar 2015'),
-    )
+        (DATABASE_PD_2015,
+         u'Post Danmarks liste over gadenavne pr. ca. 1. januar 2015'), )
 
     database = models.IntegerField(
-            choices=database_choices,
-            default=DATABASE_PD_2015,
-            verbose_name="Gadenavnedatabase")
+        choices=database_choices,
+        default=DATABASE_PD_2015,
+        verbose_name="Gadenavnedatabase")
 
-    whitelist = models.TextField(blank=True,
-                                 default="",
-                                 verbose_name='Godkendte adresser')
-    blacklist = models.TextField(blank=True,
-                                 default="",
-                                 verbose_name='Sortlistede adresser')
+    whitelist = models.TextField(
+        blank=True, default="", verbose_name='Godkendte adresser')
+    blacklist = models.TextField(
+        blank=True, default="", verbose_name='Sortlistede adresser')

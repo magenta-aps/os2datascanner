@@ -14,7 +14,6 @@ logger = structlog.get_logger()
 
 
 class FileScanLastModifiedCheckMiddleware(LastModifiedCheckMiddleware):
-
     def __init__(self, crawler):
         super().__init__(crawler)
 
@@ -34,8 +33,9 @@ class FileScanLastModifiedCheckMiddleware(LastModifiedCheckMiddleware):
         # Check the Last-Modified header to see if the content has been
         # updated since the last time we checked it.
         if self.has_been_modified(request, response, spider):
-            logger.debug("Page has been modified since Last-Modified",
-                         response=response)
+            logger.debug(
+                "Page has been modified since Last-Modified",
+                response=response)
             return response
         else:
             # Ignore the request, since the content has not been modified
@@ -60,8 +60,9 @@ class FileScanLastModifiedCheckMiddleware(LastModifiedCheckMiddleware):
                 tz=dateutil.tz.UTC,
             )
         except OSError:
-            logger.exception('Error occured while getting last modified',
-                             file_path=file_path)
+            logger.exception(
+                'Error occured while getting last modified',
+                file_path=file_path)
             return True
 
         if last_modified is not None:
@@ -80,6 +81,6 @@ class FileScanLastModifiedCheckMiddleware(LastModifiedCheckMiddleware):
         else:
             # If there is no Last-Modified header, we have to assume it has
             # been modified.
-            logger.debug('No Last-Modified header found at all.',
-                         file_path=file_path)
+            logger.debug(
+                'No Last-Modified header found at all.', file_path=file_path)
             return True

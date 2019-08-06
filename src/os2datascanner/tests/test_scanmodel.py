@@ -41,9 +41,7 @@ class ScanModelTest(TestCase):
     def check_scan_dir(self, scan_object):
         self.assertEqual(
             os.path.commonpath([self.__tempdir, scan_object.scan_dir]),
-            self.__tempdir,
-            "forcing scandir to /tmp failed!"
-        )
+            self.__tempdir, "forcing scandir to /tmp failed!")
 
         os.makedirs(scan_object.scan_dir)
         self.assertTrue(os.path.exists(scan_object.scan_dir))

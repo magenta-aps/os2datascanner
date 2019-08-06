@@ -17,11 +17,22 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='conversionqueueitem',
             name='process_start_time',
-            field=model_utils.fields.MonitorField(blank=True, default=django.utils.timezone.now, monitor='status', null=True, verbose_name='Proces starttidspunkt', when=set(['PROCESSING'])),
+            field=model_utils.fields.MonitorField(
+                blank=True,
+                default=django.utils.timezone.now,
+                monitor='status',
+                null=True,
+                verbose_name='Proces starttidspunkt',
+                when=set(['PROCESSING'])),
         ),
         migrations.AlterField(
             model_name='conversionqueueitem',
             name='status',
-            field=model_utils.fields.StatusField(choices=[(0, 'dummy')], default='NEW', max_length=10, no_check_for_status=True, verbose_name='Status'),
+            field=model_utils.fields.StatusField(
+                choices=[(0, 'dummy')],
+                default='NEW',
+                max_length=10,
+                no_check_for_status=True,
+                verbose_name='Status'),
         ),
     ]

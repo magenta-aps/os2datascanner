@@ -27,15 +27,18 @@ class WebScannerCreate(ScannerCreate):
 
     model = WebScanner
     type = 'web'
-    fields = ['name', 'schedule', 'url', 'exclusion_rules',
-              'download_sitemap', 'sitemap_url', 'sitemap', 'do_ocr',
-              'do_link_check', 'do_external_link_check', 'do_collect_cookies',
-              'do_last_modified_check', 'do_last_modified_check_head_request',
-              'rules', 'recipients']
+    fields = [
+        'name', 'schedule', 'url', 'exclusion_rules', 'download_sitemap',
+        'sitemap_url', 'sitemap', 'do_ocr', 'do_link_check',
+        'do_external_link_check', 'do_collect_cookies',
+        'do_last_modified_check', 'do_last_modified_check_head_request',
+        'rules', 'recipients'
+    ]
 
     def form_valid(self, form):
         if url_contains_spaces(form):
-            form.add_error('url', u'Mellemrum er ikke tilladt i web-domænenavnet.')
+            form.add_error('url',
+                           u'Mellemrum er ikke tilladt i web-domænenavnet.')
             return self.form_invalid(form)
         return super().form_valid(form)
 
@@ -49,15 +52,18 @@ class WebScannerUpdate(ScannerUpdate):
 
     model = WebScanner
     type = 'web'
-    fields = ['name', 'schedule', 'exclusion_rules',
-              'download_sitemap', 'sitemap_url', 'sitemap', 'do_ocr',
-              'do_link_check', 'do_external_link_check', 'do_collect_cookies',
-              'do_last_modified_check', 'do_last_modified_check_head_request',
-              'rules', 'recipients']
+    fields = [
+        'name', 'schedule', 'exclusion_rules', 'download_sitemap',
+        'sitemap_url', 'sitemap', 'do_ocr', 'do_link_check',
+        'do_external_link_check', 'do_collect_cookies',
+        'do_last_modified_check', 'do_last_modified_check_head_request',
+        'rules', 'recipients'
+    ]
 
     def form_valid(self, form):
         if url_contains_spaces(form):
-            form.add_error('url', u'Mellemrum er ikke tilladt i web-domænenavnet.')
+            form.add_error('url',
+                           u'Mellemrum er ikke tilladt i web-domænenavnet.')
             return self.form_invalid(form)
         return super().form_valid(form)
 
@@ -103,14 +109,12 @@ class WebScannerAskRun(ScannerAskRun):
 
 
 class WebScannerRun(ScannerRun):
-
     """View that handles starting of a web scanner run."""
 
     model = WebScanner
 
 
 class WebScannerValidate(RestrictedDetailView):
-
     """View that handles validation of a domain."""
 
     model = WebScanner

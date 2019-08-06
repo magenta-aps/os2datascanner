@@ -33,9 +33,8 @@ class StartFileScan(StartScan, multiprocessing.Process):
     @defer.inlineCallbacks
     def run_crawlers(self):
         self.make_scanner_crawler(FileSpider)
-        yield self.crawler_process.crawl(self.scanner_crawler,
-                                         scanner=self.scanner,
-                                         runner=self)
+        yield self.crawler_process.crawl(
+            self.scanner_crawler, scanner=self.scanner, runner=self)
 
     def handle_closed(self, spider, reason):
         """Handle the spider being finished."""

@@ -31,7 +31,6 @@ _whitespace_re = regex.compile('(?<!\\<\\!--)\\s+(?!-->)', regex.UNICODE)
 
 
 class HTMLProcessor(Processor):
-
     """Processor for HTML, XML and SGML documents.
 
     When processing, replaces entities and removes tags (except comments).
@@ -63,10 +62,12 @@ class HTMLProcessor(Processor):
         try:
             encoding, data = get_codec_and_string(data)
             # Remove style tags to avoid false positives from inline styles
-            data = remove_tags_with_content(data, which_ones=('style',))
+            data = remove_tags_with_content(data, which_ones=('style', ))
         except UnicodeDecodeError as ude:
-            self.logger.exception('UnicodeDecodeError in handle_error_method',
-                                  exc_info=ude, url=url_object.url)
+            self.logger.exception(
+                'UnicodeDecodeError in handle_error_method',
+                exc_info=ude,
+                url=url_object.url)
             return False
 
         # Convert HTML entities to their unicode representation

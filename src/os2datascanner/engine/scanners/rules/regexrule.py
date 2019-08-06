@@ -25,7 +25,7 @@ from .rule import Rule
 from ..items import MatchItem
 
 from os2datascanner.projects.admin.adminapp.models.sensitivity_level import (
-        Sensitivity)
+    Sensitivity)
 
 logger = structlog.get_logger()
 
@@ -46,10 +46,12 @@ class RegexRule(Rule):
         self.sensitivity = sensitivity
         self.regex_str = ''
 
-        logger.debug('Regex patterns', patterns=[
-            _psuedoRule.pattern_string
-            for _psuedoRule in self.regex_patterns
-        ])
+        logger.debug(
+            'Regex patterns',
+            patterns=[
+                _psuedoRule.pattern_string
+                for _psuedoRule in self.regex_patterns
+            ])
 
         self.regex_str = self.compund_rules()
         self.regex = regex.compile(self.regex_str, regex.DOTALL)
@@ -64,7 +66,8 @@ class RegexRule(Rule):
             'name': self.name,
             'regex': self.regex_str,
             'sensitivity': self.sensitivity,
-        }, indent=2)
+        },
+                          indent=2)
 
     def compund_rules(self):
         """
@@ -84,7 +87,7 @@ class RegexRule(Rule):
                     compound_rule += ')'
                 else:
                     compound_rule += '|'
-            print('Returning< '+compound_rule+' >')
+            print('Returning< ' + compound_rule + ' >')
             return compound_rule
         if len(rule_set) < 1:
             return None
@@ -99,8 +102,10 @@ class RegexRule(Rule):
             if len(matched_data) > 1024:
                 # TODO: Get rid of magic number
                 matched_data = match.group(1)
-            matches.add(MatchItem(matched_data=matched_data,
-                                  sensitivity=self._clamp_sensitivity(Sensitivity.HIGH)))
+            matches.add(
+                MatchItem(
+                    matched_data=matched_data,
+                    sensitivity=self._clamp_sensitivity(Sensitivity.HIGH)))
         return matches
 
     def is_all_match(self, matches):
@@ -117,7 +122,8 @@ class RegexRule(Rule):
         # for rule in self.regex_patterns:
         for pattern in self.regex_patterns:
             for match in matches:
-                if re.match(pattern.pattern_string, match['matched_data']) and regex_patterns:
+                if re.match(pattern.pattern_string,
+                            match['matched_data']) and regex_patterns:
                     regex_patterns.pop()
                     continue
 

@@ -16,9 +16,12 @@ class ExchangeServerAssistant(object):
 
     service_endpoint = 'https://outlook.office365.com/EWS/Exchange.asmx'
 
-    def __init__(self, credentials,
-                 user_name, export_path,
-                 mail_ending, start_date=None,
+    def __init__(self,
+                 credentials,
+                 user_name,
+                 export_path,
+                 mail_ending,
+                 start_date=None,
                  is_office365=False):
         """
         Initializes an ExchangeServer object.
@@ -33,7 +36,6 @@ class ExchangeServerAssistant(object):
         :param start_date: Date from when we should download mails from
         :param is_office365: Is the Exchange Server an Office365 instance or not
         """
-
 
         self.credentials = credentials
         self.user_name = user_name
@@ -52,8 +54,8 @@ class ExchangeServerAssistant(object):
         of the user accounts.
         :return: An Exchange Service Account object
         """
-        return ServiceAccount(username=self.credentials[0],
-                              password=self.credentials[1])
+        return ServiceAccount(
+            username=self.credentials[0], password=self.credentials[1])
 
     def get_account(self):
         """
@@ -67,14 +69,16 @@ class ExchangeServerAssistant(object):
         account = None
         config = None
         if self.is_office365:
-            config = Configuration(service_endpoint=self.service_endpoint,
-                                   credentials=service_account)
+            config = Configuration(
+                service_endpoint=self.service_endpoint,
+                credentials=service_account)
         try:
-            account = Account(primary_smtp_address=self.get_user_email_address(),
-                              credentials=service_account,
-                              config=config,
-                              autodiscover=False if self.is_office365 else True,
-                              access_type=IMPERSONATION)
+            account = Account(
+                primary_smtp_address=self.get_user_email_address(),
+                credentials=service_account,
+                config=config,
+                autodiscover=False if self.is_office365 else True,
+                access_type=IMPERSONATION)
             account.root.refresh()
             logger.info('{}: Init complete'.format(self.username))
         except ErrorNonExistentMailbox:

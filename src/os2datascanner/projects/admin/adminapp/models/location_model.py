@@ -23,7 +23,7 @@ class Location(models.Model):
     """A representation of an actual URL on a domain with its MIME type."""
 
     class Meta:
-        unique_together = (("url", "scanner"),)
+        unique_together = (("url", "scanner"), )
 
     url = models.URLField(max_length=2048, verbose_name="URL")
     scanner = models.ForeignKey(

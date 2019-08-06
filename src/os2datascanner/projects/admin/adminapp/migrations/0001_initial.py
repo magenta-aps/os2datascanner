@@ -25,30 +25,79 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Authentication',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('username', models.CharField(blank=True, default='', max_length=1024, verbose_name='Brugernavn')),
-                ('iv', models.BinaryField(blank=True, max_length=32, verbose_name='InitialiseringsVektor')),
-                ('ciphertext', models.BinaryField(blank=True, max_length=1024, verbose_name='Password')),
-                ('domain', models.CharField(blank=True, default='', max_length=2024, verbose_name='Brugerdomæne')),
+                ('id',
+                 models.AutoField(
+                     auto_created=True,
+                     primary_key=True,
+                     serialize=False,
+                     verbose_name='ID')),
+                ('username',
+                 models.CharField(
+                     blank=True,
+                     default='',
+                     max_length=1024,
+                     verbose_name='Brugernavn')),
+                ('iv',
+                 models.BinaryField(
+                     blank=True,
+                     max_length=32,
+                     verbose_name='InitialiseringsVektor')),
+                ('ciphertext',
+                 models.BinaryField(
+                     blank=True, max_length=1024, verbose_name='Password')),
+                ('domain',
+                 models.CharField(
+                     blank=True,
+                     default='',
+                     max_length=2024,
+                     verbose_name='Brugerdomæne')),
             ],
         ),
         migrations.CreateModel(
             name='AuthenticationMethods',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('methodname', models.CharField(max_length=1024, unique=True, verbose_name='Login method')),
+                ('id',
+                 models.AutoField(
+                     auto_created=True,
+                     primary_key=True,
+                     serialize=False,
+                     verbose_name='ID')),
+                ('methodname',
+                 models.CharField(
+                     max_length=1024, unique=True,
+                     verbose_name='Login method')),
             ],
         ),
         migrations.CreateModel(
             name='ConversionQueueItem',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('file', models.CharField(max_length=4096, verbose_name='Fil')),
-                ('type', models.CharField(max_length=256, verbose_name='Type')),
-                ('page_no', models.IntegerField(null=True, verbose_name='Side')),
-                ('status', models.CharField(choices=[('NEW', 'Ny'), ('PROCESSING', 'I gang'), ('FAILED', 'Mislykket')], default='NEW', max_length=10, verbose_name='Status')),
-                ('process_id', models.IntegerField(blank=True, null=True, verbose_name='Proces id')),
-                ('process_start_time', models.DateTimeField(blank=True, null=True, verbose_name='Proces starttidspunkt')),
+                ('id',
+                 models.AutoField(
+                     auto_created=True,
+                     primary_key=True,
+                     serialize=False,
+                     verbose_name='ID')),
+                ('file', models.CharField(max_length=4096,
+                                          verbose_name='Fil')),
+                ('type', models.CharField(max_length=256,
+                                          verbose_name='Type')),
+                ('page_no', models.IntegerField(
+                    null=True, verbose_name='Side')),
+                ('status',
+                 models.CharField(
+                     choices=[('NEW', 'Ny'), ('PROCESSING', 'I gang'),
+                              ('FAILED', 'Mislykket')],
+                     default='NEW',
+                     max_length=10,
+                     verbose_name='Status')),
+                ('process_id',
+                 models.IntegerField(
+                     blank=True, null=True, verbose_name='Proces id')),
+                ('process_start_time',
+                 models.DateTimeField(
+                     blank=True,
+                     null=True,
+                     verbose_name='Proces starttidspunkt')),
             ],
             options={
                 'abstract': False,
@@ -57,10 +106,19 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Group',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=256, unique=True, verbose_name='Navn')),
-                ('contact_email', models.CharField(max_length=256, verbose_name='Email')),
-                ('contact_phone', models.CharField(max_length=256, verbose_name='Telefon')),
+                ('id',
+                 models.AutoField(
+                     auto_created=True,
+                     primary_key=True,
+                     serialize=False,
+                     verbose_name='ID')),
+                ('name',
+                 models.CharField(
+                     max_length=256, unique=True, verbose_name='Navn')),
+                ('contact_email',
+                 models.CharField(max_length=256, verbose_name='Email')),
+                ('contact_phone',
+                 models.CharField(max_length=256, verbose_name='Telefon')),
             ],
             options={
                 'ordering': ['name'],
@@ -69,19 +127,36 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Location',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id',
+                 models.AutoField(
+                     auto_created=True,
+                     primary_key=True,
+                     serialize=False,
+                     verbose_name='ID')),
                 ('url', models.URLField(max_length=2048, verbose_name='URL')),
             ],
         ),
         migrations.CreateModel(
             name='Match',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id',
+                 models.AutoField(
+                     auto_created=True,
+                     primary_key=True,
+                     serialize=False,
+                     verbose_name='ID')),
                 ('matched_data', models.TextField(verbose_name='Data match')),
-                ('matched_rule', models.CharField(max_length=256, verbose_name='Regel match')),
-                ('sensitivity', models.IntegerField(choices=[(0, 'Grøn'), (1, 'Gul'), (2, 'Rød')], default=2, verbose_name='Følsomhed')),
-                ('match_context', models.CharField(max_length=1152, verbose_name='Kontekst')),
-                ('page_no', models.IntegerField(null=True, verbose_name='Side')),
+                ('matched_rule',
+                 models.CharField(max_length=256, verbose_name='Regel match')),
+                ('sensitivity',
+                 models.IntegerField(
+                     choices=[(0, 'Grøn'), (1, 'Gul'), (2, 'Rød')],
+                     default=2,
+                     verbose_name='Følsomhed')),
+                ('match_context',
+                 models.CharField(max_length=1152, verbose_name='Kontekst')),
+                ('page_no', models.IntegerField(
+                    null=True, verbose_name='Side')),
             ],
             options={
                 'abstract': False,
@@ -92,24 +167,56 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Organization',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=256, unique=True, verbose_name='Navn')),
-                ('contact_email', models.CharField(max_length=256, verbose_name='Email')),
-                ('contact_phone', models.CharField(max_length=256, verbose_name='Telefon')),
-                ('do_use_groups', models.BooleanField(default=False, editable=False)),
+                ('id',
+                 models.AutoField(
+                     auto_created=True,
+                     primary_key=True,
+                     serialize=False,
+                     verbose_name='ID')),
+                ('name',
+                 models.CharField(
+                     max_length=256, unique=True, verbose_name='Navn')),
+                ('contact_email',
+                 models.CharField(max_length=256, verbose_name='Email')),
+                ('contact_phone',
+                 models.CharField(max_length=256, verbose_name='Telefon')),
+                ('do_use_groups',
+                 models.BooleanField(default=False, editable=False)),
                 ('do_notify_all_scans', models.BooleanField(default=True)),
-                ('name_whitelist', models.TextField(blank=True, default='', verbose_name='Godkendte navne')),
-                ('name_blacklist', models.TextField(blank=True, default='', verbose_name='Sortlistede navne')),
-                ('address_whitelist', models.TextField(blank=True, default='', verbose_name='Godkendte adresser')),
-                ('address_blacklist', models.TextField(blank=True, default='', verbose_name='Sortlistede adresser')),
-                ('cpr_whitelist', models.TextField(blank=True, default='', verbose_name='Godkendte CPR-numre')),
+                ('name_whitelist',
+                 models.TextField(
+                     blank=True, default='', verbose_name='Godkendte navne')),
+                ('name_blacklist',
+                 models.TextField(
+                     blank=True, default='',
+                     verbose_name='Sortlistede navne')),
+                ('address_whitelist',
+                 models.TextField(
+                     blank=True, default='',
+                     verbose_name='Godkendte adresser')),
+                ('address_blacklist',
+                 models.TextField(
+                     blank=True,
+                     default='',
+                     verbose_name='Sortlistede adresser')),
+                ('cpr_whitelist',
+                 models.TextField(
+                     blank=True,
+                     default='',
+                     verbose_name='Godkendte CPR-numre')),
             ],
         ),
         migrations.CreateModel(
             name='RegexPattern',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('pattern_string', models.CharField(max_length=1024, verbose_name='Udtryk')),
+                ('id',
+                 models.AutoField(
+                     auto_created=True,
+                     primary_key=True,
+                     serialize=False,
+                     verbose_name='ID')),
+                ('pattern_string',
+                 models.CharField(max_length=1024, verbose_name='Udtryk')),
             ],
             options={
                 'verbose_name': 'Pattern',
@@ -118,46 +225,158 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='RegexRule',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=256, unique=True, verbose_name='Navn')),
+                ('id',
+                 models.AutoField(
+                     auto_created=True,
+                     primary_key=True,
+                     serialize=False,
+                     verbose_name='ID')),
+                ('name',
+                 models.CharField(
+                     max_length=256, unique=True, verbose_name='Navn')),
                 ('description', models.TextField(verbose_name='Beskrivelse')),
-                ('sensitivity', models.IntegerField(choices=[(0, 'Grøn'), (1, 'Gul'), (2, 'Rød')], default=2, verbose_name='Følsomhed')),
-                ('cpr_enabled', models.BooleanField(default=False, verbose_name='Scan CPR')),
-                ('do_modulus11', models.BooleanField(default=False, verbose_name='Tjek modulus-11')),
-                ('ignore_irrelevant', models.BooleanField(default=False, verbose_name='Ignorer ugyldige fødselsdatoer')),
-                ('group', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='os2datascanner.Group', verbose_name='Gruppe')),
-                ('organization', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='os2datascanner.Organization', verbose_name='Organisation')),
+                ('sensitivity',
+                 models.IntegerField(
+                     choices=[(0, 'Grøn'), (1, 'Gul'), (2, 'Rød')],
+                     default=2,
+                     verbose_name='Følsomhed')),
+                ('cpr_enabled',
+                 models.BooleanField(default=False, verbose_name='Scan CPR')),
+                ('do_modulus11',
+                 models.BooleanField(
+                     default=False, verbose_name='Tjek modulus-11')),
+                ('ignore_irrelevant',
+                 models.BooleanField(
+                     default=False,
+                     verbose_name='Ignorer ugyldige fødselsdatoer')),
+                ('group',
+                 models.ForeignKey(
+                     blank=True,
+                     null=True,
+                     on_delete=django.db.models.deletion.SET_NULL,
+                     to='os2datascanner.Group',
+                     verbose_name='Gruppe')),
+                ('organization',
+                 models.ForeignKey(
+                     on_delete=django.db.models.deletion.PROTECT,
+                     to='os2datascanner.Organization',
+                     verbose_name='Organisation')),
             ],
         ),
         migrations.CreateModel(
             name='Scan',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id',
+                 models.AutoField(
+                     auto_created=True,
+                     primary_key=True,
+                     serialize=False,
+                     verbose_name='ID')),
                 ('is_visible', models.BooleanField(default=True)),
-                ('whitelisted_names', models.TextField(blank=True, default='', max_length=4096, verbose_name='Godkendte navne')),
-                ('blacklisted_names', models.TextField(blank=True, default='', max_length=4096, verbose_name='Sortlistede navne')),
-                ('whitelisted_addresses', models.TextField(blank=True, default='', max_length=4096, verbose_name='Godkendte adresser')),
-                ('blacklisted_addresses', models.TextField(blank=True, default='', max_length=4096, verbose_name='Sortlistede adresser')),
-                ('whitelisted_cprs', models.TextField(blank=True, default='', max_length=4096, verbose_name='Godkendte CPR-numre')),
-                ('do_name_scan', models.BooleanField(default=False, verbose_name='Navn')),
-                ('do_address_scan', models.BooleanField(default=False, verbose_name='Adresse')),
-                ('do_ocr', models.BooleanField(default=False, verbose_name='Scan billeder')),
-                ('do_last_modified_check', models.BooleanField(default=True, help_text='Scan udelukkende filer der rapporteres som nyere end sidste scanning', verbose_name='Tjek dato for sidste ændring')),
-                ('columns', models.CharField(blank=True, max_length=128, null=True, validators=[django.core.validators.RegexValidator(re.compile('^\\d+(?:\\,\\d+)*\\Z', 32), code='invalid', message='Enter only digits separated by commas.')])),
-                ('output_spreadsheet_file', models.BooleanField(default=False)),
+                ('whitelisted_names',
+                 models.TextField(
+                     blank=True,
+                     default='',
+                     max_length=4096,
+                     verbose_name='Godkendte navne')),
+                ('blacklisted_names',
+                 models.TextField(
+                     blank=True,
+                     default='',
+                     max_length=4096,
+                     verbose_name='Sortlistede navne')),
+                ('whitelisted_addresses',
+                 models.TextField(
+                     blank=True,
+                     default='',
+                     max_length=4096,
+                     verbose_name='Godkendte adresser')),
+                ('blacklisted_addresses',
+                 models.TextField(
+                     blank=True,
+                     default='',
+                     max_length=4096,
+                     verbose_name='Sortlistede adresser')),
+                ('whitelisted_cprs',
+                 models.TextField(
+                     blank=True,
+                     default='',
+                     max_length=4096,
+                     verbose_name='Godkendte CPR-numre')),
+                ('do_name_scan',
+                 models.BooleanField(default=False, verbose_name='Navn')),
+                ('do_address_scan',
+                 models.BooleanField(default=False, verbose_name='Adresse')),
+                ('do_ocr',
+                 models.BooleanField(
+                     default=False, verbose_name='Scan billeder')),
+                ('do_last_modified_check',
+                 models.BooleanField(
+                     default=True,
+                     help_text=
+                     'Scan udelukkende filer der rapporteres som nyere end sidste scanning',
+                     verbose_name='Tjek dato for sidste ændring')),
+                ('columns',
+                 models.CharField(
+                     blank=True,
+                     max_length=128,
+                     null=True,
+                     validators=[
+                         django.core.validators.RegexValidator(
+                             re.compile('^\\d+(?:\\,\\d+)*\\Z', 32),
+                             code='invalid',
+                             message='Enter only digits separated by commas.')
+                     ])),
+                ('output_spreadsheet_file',
+                 models.BooleanField(default=False)),
                 ('do_cpr_replace', models.BooleanField(default=False)),
-                ('cpr_replace_text', models.CharField(blank=True, max_length=2048, null=True)),
+                ('cpr_replace_text',
+                 models.CharField(blank=True, max_length=2048, null=True)),
                 ('do_name_replace', models.BooleanField(default=False)),
-                ('name_replace_text', models.CharField(blank=True, max_length=2048, null=True)),
+                ('name_replace_text',
+                 models.CharField(blank=True, max_length=2048, null=True)),
                 ('do_address_replace', models.BooleanField(default=False)),
-                ('address_replace_text', models.CharField(blank=True, max_length=2048, null=True)),
-                ('status', model_utils.fields.StatusField(choices=[('NEW', 'Ny'), ('STARTED', 'I gang'), ('DONE', 'Færdig'), ('FAILED', 'Mislykket')], default='NEW', max_length=9, no_check_for_status=True)),
-                ('creation_time', model_utils.fields.MonitorField(default=django.utils.timezone.now, monitor='status', verbose_name='Oprettelsestidspunkt', when=set(['NEW']))),
-                ('start_time', model_utils.fields.MonitorField(default=None, monitor='status', null=True, verbose_name='Starttidspunkt', when=set(['STARTED']))),
-                ('end_time', model_utils.fields.MonitorField(default=None, monitor='status', null=True, verbose_name='Sluttidspunkt', when=set(['DONE', 'FAILED']))),
-                ('pause_non_ocr_conversions', models.BooleanField(default=False, verbose_name='Pause non-OCR conversions')),
-                ('reason', models.CharField(blank=True, default='', max_length=1024, verbose_name='Årsag')),
-                ('pid', models.IntegerField(blank=True, null=True, verbose_name='Pid')),
+                ('address_replace_text',
+                 models.CharField(blank=True, max_length=2048, null=True)),
+                ('status',
+                 model_utils.fields.StatusField(
+                     choices=[('NEW', 'Ny'), ('STARTED', 'I gang'),
+                              ('DONE', 'Færdig'), ('FAILED', 'Mislykket')],
+                     default='NEW',
+                     max_length=9,
+                     no_check_for_status=True)),
+                ('creation_time',
+                 model_utils.fields.MonitorField(
+                     default=django.utils.timezone.now,
+                     monitor='status',
+                     verbose_name='Oprettelsestidspunkt',
+                     when=set(['NEW']))),
+                ('start_time',
+                 model_utils.fields.MonitorField(
+                     default=None,
+                     monitor='status',
+                     null=True,
+                     verbose_name='Starttidspunkt',
+                     when=set(['STARTED']))),
+                ('end_time',
+                 model_utils.fields.MonitorField(
+                     default=None,
+                     monitor='status',
+                     null=True,
+                     verbose_name='Sluttidspunkt',
+                     when=set(['DONE', 'FAILED']))),
+                ('pause_non_ocr_conversions',
+                 models.BooleanField(
+                     default=False, verbose_name='Pause non-OCR conversions')),
+                ('reason',
+                 models.CharField(
+                     blank=True,
+                     default='',
+                     max_length=1024,
+                     verbose_name='Årsag')),
+                ('pid',
+                 models.IntegerField(
+                     blank=True, null=True, verbose_name='Pid')),
             ],
             options={
                 'abstract': False,
@@ -167,25 +386,68 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Scanner',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(db_index=True, max_length=256, unique=True, verbose_name='Navn')),
-                ('schedule', recurrence.fields.RecurrenceField(max_length=1024, verbose_name='Planlagt afvikling')),
-                ('do_name_scan', models.BooleanField(default=False, verbose_name='Navn')),
-                ('do_address_scan', models.BooleanField(default=False, verbose_name='Adresse')),
-                ('do_ocr', models.BooleanField(default=False, verbose_name='Scan billeder')),
-                ('do_last_modified_check', models.BooleanField(default=True, verbose_name='Tjek dato for sidste ændring')),
-                ('columns', models.CharField(blank=True, max_length=128, null=True, validators=[django.core.validators.RegexValidator(re.compile('^\\d+(?:\\,\\d+)*\\Z', 32), code='invalid', message='Enter only digits separated by commas.')])),
-                ('output_spreadsheet_file', models.BooleanField(default=False)),
+                ('id',
+                 models.AutoField(
+                     auto_created=True,
+                     primary_key=True,
+                     serialize=False,
+                     verbose_name='ID')),
+                ('name',
+                 models.CharField(
+                     db_index=True,
+                     max_length=256,
+                     unique=True,
+                     verbose_name='Navn')),
+                ('schedule',
+                 recurrence.fields.RecurrenceField(
+                     max_length=1024, verbose_name='Planlagt afvikling')),
+                ('do_name_scan',
+                 models.BooleanField(default=False, verbose_name='Navn')),
+                ('do_address_scan',
+                 models.BooleanField(default=False, verbose_name='Adresse')),
+                ('do_ocr',
+                 models.BooleanField(
+                     default=False, verbose_name='Scan billeder')),
+                ('do_last_modified_check',
+                 models.BooleanField(
+                     default=True,
+                     verbose_name='Tjek dato for sidste ændring')),
+                ('columns',
+                 models.CharField(
+                     blank=True,
+                     max_length=128,
+                     null=True,
+                     validators=[
+                         django.core.validators.RegexValidator(
+                             re.compile('^\\d+(?:\\,\\d+)*\\Z', 32),
+                             code='invalid',
+                             message='Enter only digits separated by commas.')
+                     ])),
+                ('output_spreadsheet_file',
+                 models.BooleanField(default=False)),
                 ('do_cpr_replace', models.BooleanField(default=False)),
-                ('cpr_replace_text', models.CharField(blank=True, max_length=2048, null=True)),
+                ('cpr_replace_text',
+                 models.CharField(blank=True, max_length=2048, null=True)),
                 ('do_name_replace', models.BooleanField(default=False)),
-                ('name_replace_text', models.CharField(blank=True, max_length=2048, null=True)),
+                ('name_replace_text',
+                 models.CharField(blank=True, max_length=2048, null=True)),
                 ('do_address_replace', models.BooleanField(default=False)),
-                ('address_replace_text', models.CharField(blank=True, max_length=2048, null=True)),
+                ('address_replace_text',
+                 models.CharField(blank=True, max_length=2048, null=True)),
                 ('url', models.CharField(max_length=2048, verbose_name='URL')),
-                ('validation_status', models.IntegerField(choices=[(0, 'Ugyldig'), (1, 'Gyldig')], default=0, verbose_name='Valideringsstatus')),
-                ('exclusion_rules', models.TextField(blank=True, default='', verbose_name='Ekskluderingsregler')),
-                ('process_urls', django.contrib.postgres.fields.jsonb.JSONField(blank=True, null=True)),
+                ('validation_status',
+                 models.IntegerField(
+                     choices=[(0, 'Ugyldig'), (1, 'Gyldig')],
+                     default=0,
+                     verbose_name='Valideringsstatus')),
+                ('exclusion_rules',
+                 models.TextField(
+                     blank=True,
+                     default='',
+                     verbose_name='Ekskluderingsregler')),
+                ('process_urls',
+                 django.contrib.postgres.fields.jsonb.JSONField(
+                     blank=True, null=True)),
                 ('do_run_synchronously', models.BooleanField(default=False)),
                 ('is_visible', models.BooleanField(default=True)),
             ],
@@ -197,10 +459,16 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Statistic',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id',
+                 models.AutoField(
+                     auto_created=True,
+                     primary_key=True,
+                     serialize=False,
+                     verbose_name='ID')),
                 ('files_scraped_count', models.IntegerField(default=0)),
                 ('files_processed_count', models.IntegerField(default=0)),
-                ('files_added_to_the_conversion_queue_count', models.IntegerField(default=0)),
+                ('files_added_to_the_conversion_queue_count',
+                 models.IntegerField(default=0)),
                 ('files_skipped_count', models.IntegerField(default=0)),
                 ('files_failed_count', models.IntegerField(default=0)),
                 ('files_is_dir_count', models.IntegerField(default=0)),
@@ -215,14 +483,39 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Summary',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=256, unique=True, verbose_name='Navn')),
-                ('description', models.TextField(blank=True, null=True, verbose_name='Beskrivelse')),
-                ('schedule', recurrence.fields.RecurrenceField(max_length=1024, verbose_name='Planlagt afvikling')),
-                ('last_run', models.DateTimeField(blank=True, null=True, verbose_name='Sidste kørsel')),
-                ('do_email_recipients', models.BooleanField(default=False, verbose_name='Udsend mails')),
-                ('group', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='os2datascanner.Group', verbose_name='Gruppe')),
-                ('organization', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='os2datascanner.Organization', verbose_name='Organisation')),
+                ('id',
+                 models.AutoField(
+                     auto_created=True,
+                     primary_key=True,
+                     serialize=False,
+                     verbose_name='ID')),
+                ('name',
+                 models.CharField(
+                     max_length=256, unique=True, verbose_name='Navn')),
+                ('description',
+                 models.TextField(
+                     blank=True, null=True, verbose_name='Beskrivelse')),
+                ('schedule',
+                 recurrence.fields.RecurrenceField(
+                     max_length=1024, verbose_name='Planlagt afvikling')),
+                ('last_run',
+                 models.DateTimeField(
+                     blank=True, null=True, verbose_name='Sidste kørsel')),
+                ('do_email_recipients',
+                 models.BooleanField(
+                     default=False, verbose_name='Udsend mails')),
+                ('group',
+                 models.ForeignKey(
+                     blank=True,
+                     null=True,
+                     on_delete=django.db.models.deletion.SET_NULL,
+                     to='os2datascanner.Group',
+                     verbose_name='Gruppe')),
+                ('organization',
+                 models.ForeignKey(
+                     on_delete=django.db.models.deletion.PROTECT,
+                     to='os2datascanner.Organization',
+                     verbose_name='Organisation')),
             ],
             options={
                 'ordering': ['name'],
@@ -231,20 +524,40 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='TypeStatistics',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id',
+                 models.AutoField(
+                     auto_created=True,
+                     primary_key=True,
+                     serialize=False,
+                     verbose_name='ID')),
                 ('type_name', models.CharField(max_length=256)),
                 ('count', models.IntegerField(default=0)),
                 ('size', models.IntegerField(default=0)),
-                ('statistic', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='types', to='os2datascanner.Statistic', verbose_name='Statistics')),
+                ('statistic',
+                 models.ForeignKey(
+                     on_delete=django.db.models.deletion.CASCADE,
+                     related_name='types',
+                     to='os2datascanner.Statistic',
+                     verbose_name='Statistics')),
             ],
         ),
         migrations.CreateModel(
             name='UrlLastModified',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id',
+                 models.AutoField(
+                     auto_created=True,
+                     primary_key=True,
+                     serialize=False,
+                     verbose_name='ID')),
                 ('url', models.CharField(max_length=2048, verbose_name='URL')),
-                ('last_modified', models.DateTimeField(blank=True, null=True, verbose_name='Last-modified')),
-                ('links', models.ManyToManyField(to='os2datascanner.UrlLastModified', verbose_name='Links')),
+                ('last_modified',
+                 models.DateTimeField(
+                     blank=True, null=True, verbose_name='Last-modified')),
+                ('links',
+                 models.ManyToManyField(
+                     to='os2datascanner.UrlLastModified',
+                     verbose_name='Links')),
             ],
             options={
                 'verbose_name': 'Last modified URL',
@@ -253,176 +566,359 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='UserProfile',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id',
+                 models.AutoField(
+                     auto_created=True,
+                     primary_key=True,
+                     serialize=False,
+                     verbose_name='ID')),
                 ('is_group_admin', models.BooleanField(default=False)),
                 ('is_upload_only', models.BooleanField(default=False)),
-                ('organization', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='os2datascanner.Organization', verbose_name='Organisation')),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.PROTECT, related_name='profile', to=settings.AUTH_USER_MODEL, verbose_name='Bruger')),
+                ('organization',
+                 models.ForeignKey(
+                     on_delete=django.db.models.deletion.PROTECT,
+                     to='os2datascanner.Organization',
+                     verbose_name='Organisation')),
+                ('user',
+                 models.OneToOneField(
+                     on_delete=django.db.models.deletion.PROTECT,
+                     related_name='profile',
+                     to=settings.AUTH_USER_MODEL,
+                     verbose_name='Bruger')),
             ],
         ),
         migrations.CreateModel(
             name='Version',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id',
+                 models.AutoField(
+                     auto_created=True,
+                     primary_key=True,
+                     serialize=False,
+                     verbose_name='ID')),
             ],
         ),
         migrations.CreateModel(
             name='ExchangeScanner',
             fields=[
-                ('scanner_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='os2datascanner.Scanner')),
+                ('scanner_ptr',
+                 models.OneToOneField(
+                     auto_created=True,
+                     on_delete=django.db.models.deletion.CASCADE,
+                     parent_link=True,
+                     primary_key=True,
+                     serialize=False,
+                     to='os2datascanner.Scanner')),
                 ('is_exporting', models.BooleanField(default=False)),
                 ('is_ready_to_scan', models.BooleanField(default=False)),
                 ('userlist', models.FileField(upload_to='mailscan/users/')),
-                ('dir_to_scan', models.CharField(max_length=2048, null=True, verbose_name='Exchange export sti')),
+                ('dir_to_scan',
+                 models.CharField(
+                     max_length=2048,
+                     null=True,
+                     verbose_name='Exchange export sti')),
             ],
-            bases=('os2datascanner.scanner',),
+            bases=('os2datascanner.scanner', ),
         ),
         migrations.CreateModel(
             name='FileScanner',
             fields=[
-                ('scanner_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='os2datascanner.Scanner')),
-                ('mountpath', models.CharField(max_length=2048, null=True, verbose_name='Folder sti')),
-                ('alias', models.CharField(max_length=64, null=True, verbose_name='Drevbogstav')),
+                ('scanner_ptr',
+                 models.OneToOneField(
+                     auto_created=True,
+                     on_delete=django.db.models.deletion.CASCADE,
+                     parent_link=True,
+                     primary_key=True,
+                     serialize=False,
+                     to='os2datascanner.Scanner')),
+                ('mountpath',
+                 models.CharField(
+                     max_length=2048, null=True, verbose_name='Folder sti')),
+                ('alias',
+                 models.CharField(
+                     max_length=64, null=True, verbose_name='Drevbogstav')),
             ],
-            bases=('os2datascanner.scanner',),
+            bases=('os2datascanner.scanner', ),
         ),
         migrations.CreateModel(
             name='ReferrerUrl',
             fields=[
-                ('version_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='os2datascanner.Version')),
+                ('version_ptr',
+                 models.OneToOneField(
+                     auto_created=True,
+                     on_delete=django.db.models.deletion.CASCADE,
+                     parent_link=True,
+                     primary_key=True,
+                     serialize=False,
+                     to='os2datascanner.Version')),
             ],
             options={
                 'verbose_name': 'Referer URL',
             },
-            bases=('os2datascanner.version',),
+            bases=('os2datascanner.version', ),
         ),
         migrations.CreateModel(
             name='WebScan',
             fields=[
-                ('scan_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='os2datascanner.Scan')),
-                ('do_link_check', models.BooleanField(default=False, verbose_name='Tjek links')),
-                ('do_external_link_check', models.BooleanField(default=False, verbose_name='Tjek eksterne links')),
-                ('do_last_modified_check_head_request', models.BooleanField(default=True, help_text='Tjek datoer ved hjælp af en særskilt forespørgsel', verbose_name='Brug HTTP HEAD-forespørgsler')),
-                ('do_collect_cookies', models.BooleanField(default=False, verbose_name='Opsaml cookies')),
+                ('scan_ptr',
+                 models.OneToOneField(
+                     auto_created=True,
+                     on_delete=django.db.models.deletion.CASCADE,
+                     parent_link=True,
+                     primary_key=True,
+                     serialize=False,
+                     to='os2datascanner.Scan')),
+                ('do_link_check',
+                 models.BooleanField(default=False,
+                                     verbose_name='Tjek links')),
+                ('do_external_link_check',
+                 models.BooleanField(
+                     default=False, verbose_name='Tjek eksterne links')),
+                ('do_last_modified_check_head_request',
+                 models.BooleanField(
+                     default=True,
+                     help_text=
+                     'Tjek datoer ved hjælp af en særskilt forespørgsel',
+                     verbose_name='Brug HTTP HEAD-forespørgsler')),
+                ('do_collect_cookies',
+                 models.BooleanField(
+                     default=False, verbose_name='Opsaml cookies')),
             ],
             options={
                 'verbose_name': 'Web report',
             },
-            bases=('os2datascanner.scan',),
+            bases=('os2datascanner.scan', ),
         ),
         migrations.CreateModel(
             name='WebScanner',
             fields=[
-                ('scanner_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='os2datascanner.Scanner')),
-                ('do_link_check', models.BooleanField(default=False, verbose_name='Tjek links')),
-                ('do_external_link_check', models.BooleanField(default=False, verbose_name='Eksterne links')),
-                ('do_last_modified_check_head_request', models.BooleanField(default=True, verbose_name='Brug HTTP HEAD-forespørgsler')),
-                ('do_collect_cookies', models.BooleanField(default=False, verbose_name='Saml cookies')),
-                ('validation_method', models.IntegerField(choices=[(0, 'robots.txt'), (1, 'webscan.html'), (2, 'Meta-felt')], default=0, verbose_name='Valideringsmetode')),
-                ('sitemap', models.FileField(blank=True, upload_to='sitemaps', verbose_name='Sitemap Fil')),
-                ('sitemap_url', models.CharField(blank=True, default='', max_length=2048, verbose_name='Sitemap URL')),
-                ('download_sitemap', models.BooleanField(default=True, verbose_name='Hent Sitemap fra serveren')),
+                ('scanner_ptr',
+                 models.OneToOneField(
+                     auto_created=True,
+                     on_delete=django.db.models.deletion.CASCADE,
+                     parent_link=True,
+                     primary_key=True,
+                     serialize=False,
+                     to='os2datascanner.Scanner')),
+                ('do_link_check',
+                 models.BooleanField(default=False,
+                                     verbose_name='Tjek links')),
+                ('do_external_link_check',
+                 models.BooleanField(
+                     default=False, verbose_name='Eksterne links')),
+                ('do_last_modified_check_head_request',
+                 models.BooleanField(
+                     default=True,
+                     verbose_name='Brug HTTP HEAD-forespørgsler')),
+                ('do_collect_cookies',
+                 models.BooleanField(
+                     default=False, verbose_name='Saml cookies')),
+                ('validation_method',
+                 models.IntegerField(
+                     choices=[(0, 'robots.txt'), (1, 'webscan.html'),
+                              (2, 'Meta-felt')],
+                     default=0,
+                     verbose_name='Valideringsmetode')),
+                ('sitemap',
+                 models.FileField(
+                     blank=True,
+                     upload_to='sitemaps',
+                     verbose_name='Sitemap Fil')),
+                ('sitemap_url',
+                 models.CharField(
+                     blank=True,
+                     default='',
+                     max_length=2048,
+                     verbose_name='Sitemap URL')),
+                ('download_sitemap',
+                 models.BooleanField(
+                     default=True, verbose_name='Hent Sitemap fra serveren')),
             ],
-            bases=('os2datascanner.scanner',),
+            bases=('os2datascanner.scanner', ),
         ),
         migrations.CreateModel(
             name='WebVersion',
             fields=[
-                ('version_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='os2datascanner.Version')),
-                ('mime_type', models.CharField(max_length=256, null=True, verbose_name='Mime-type')),
-                ('status_code', models.IntegerField(blank=True, null=True, verbose_name='Status code')),
-                ('status_message', models.CharField(blank=True, max_length=256, null=True, verbose_name='Status Message')),
-                ('referrers', models.ManyToManyField(related_name='os2datascanner_webversion_linked_urls', to='os2datascanner.ReferrerUrl', verbose_name='Referrers')),
+                ('version_ptr',
+                 models.OneToOneField(
+                     auto_created=True,
+                     on_delete=django.db.models.deletion.CASCADE,
+                     parent_link=True,
+                     primary_key=True,
+                     serialize=False,
+                     to='os2datascanner.Version')),
+                ('mime_type',
+                 models.CharField(
+                     max_length=256, null=True, verbose_name='Mime-type')),
+                ('status_code',
+                 models.IntegerField(
+                     blank=True, null=True, verbose_name='Status code')),
+                ('status_message',
+                 models.CharField(
+                     blank=True,
+                     max_length=256,
+                     null=True,
+                     verbose_name='Status Message')),
+                ('referrers',
+                 models.ManyToManyField(
+                     related_name='os2datascanner_webversion_linked_urls',
+                     to='os2datascanner.ReferrerUrl',
+                     verbose_name='Referrers')),
             ],
             options={
                 'abstract': False,
             },
-            bases=('os2datascanner.version',),
+            bases=('os2datascanner.version', ),
         ),
         migrations.AddField(
             model_name='version',
             name='location',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='versions', to='os2datascanner.Location', verbose_name='Location'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name='versions',
+                to='os2datascanner.Location',
+                verbose_name='Location'),
         ),
         migrations.AddField(
             model_name='version',
             name='scan',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='versions', to='os2datascanner.Scan', verbose_name='Scan'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='versions',
+                to='os2datascanner.Scan',
+                verbose_name='Scan'),
         ),
         migrations.AddField(
             model_name='urllastmodified',
             name='scanner',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='os2datascanner.Scanner', verbose_name='WebScanner'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to='os2datascanner.Scanner',
+                verbose_name='WebScanner'),
         ),
         migrations.AddField(
             model_name='summary',
             name='recipients',
-            field=models.ManyToManyField(blank=True, to='os2datascanner.UserProfile', verbose_name='Modtagere'),
+            field=models.ManyToManyField(
+                blank=True,
+                to='os2datascanner.UserProfile',
+                verbose_name='Modtagere'),
         ),
         migrations.AddField(
             model_name='statistic',
             name='scan',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='scanjob', to='os2datascanner.Scan', verbose_name='scanjob'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='scanjob',
+                to='os2datascanner.Scan',
+                verbose_name='scanjob'),
         ),
         migrations.AddField(
             model_name='scanner',
             name='authentication',
-            field=models.OneToOneField(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='os2datascanner_scanner_authentication', to='os2datascanner.Authentication', verbose_name='Brugernavn'),
+            field=models.OneToOneField(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name='os2datascanner_scanner_authentication',
+                to='os2datascanner.Authentication',
+                verbose_name='Brugernavn'),
         ),
         migrations.AddField(
             model_name='scanner',
             name='group',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='os2datascanner.Group', verbose_name='Gruppe'),
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to='os2datascanner.Group',
+                verbose_name='Gruppe'),
         ),
         migrations.AddField(
             model_name='scanner',
             name='organization',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='os2datascanner.Organization', verbose_name='Organisation'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                to='os2datascanner.Organization',
+                verbose_name='Organisation'),
         ),
         migrations.AddField(
             model_name='scanner',
             name='recipients',
-            field=models.ManyToManyField(blank=True, to='os2datascanner.UserProfile', verbose_name='Modtagere'),
+            field=models.ManyToManyField(
+                blank=True,
+                to='os2datascanner.UserProfile',
+                verbose_name='Modtagere'),
         ),
         migrations.AddField(
             model_name='scanner',
             name='regex_rules',
-            field=models.ManyToManyField(blank=True, related_name='scanners', to='os2datascanner.RegexRule', verbose_name='Regex-regler'),
+            field=models.ManyToManyField(
+                blank=True,
+                related_name='scanners',
+                to='os2datascanner.RegexRule',
+                verbose_name='Regex-regler'),
         ),
         migrations.AddField(
             model_name='scan',
             name='recipients',
-            field=models.ManyToManyField(blank=True, to='os2datascanner.UserProfile'),
+            field=models.ManyToManyField(
+                blank=True, to='os2datascanner.UserProfile'),
         ),
         migrations.AddField(
             model_name='scan',
             name='regex_rules',
-            field=models.ManyToManyField(blank=True, related_name='scans', to='os2datascanner.RegexRule', verbose_name='Regex-regler'),
+            field=models.ManyToManyField(
+                blank=True,
+                related_name='scans',
+                to='os2datascanner.RegexRule',
+                verbose_name='Regex-regler'),
         ),
         migrations.AddField(
             model_name='scan',
             name='scanner',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='webscans', to='os2datascanner.Scanner', verbose_name='webscanner'),
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name='webscans',
+                to='os2datascanner.Scanner',
+                verbose_name='webscanner'),
         ),
         migrations.AddField(
             model_name='regexpattern',
             name='regex',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, related_name='patterns', to='os2datascanner.RegexRule', verbose_name='Regex'),
+            field=models.ForeignKey(
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='patterns',
+                to='os2datascanner.RegexRule',
+                verbose_name='Regex'),
         ),
         migrations.AddField(
             model_name='location',
             name='scanner',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='files', to='os2datascanner.Scanner', verbose_name='Scan'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='files',
+                to='os2datascanner.Scanner',
+                verbose_name='Scan'),
         ),
         migrations.AddField(
             model_name='group',
             name='organization',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='groups', to='os2datascanner.Organization', verbose_name='Organisation'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name='groups',
+                to='os2datascanner.Organization',
+                verbose_name='Organisation'),
         ),
         migrations.AddField(
             model_name='group',
             name='user_profiles',
-            field=models.ManyToManyField(blank=True, related_name='groups', to='os2datascanner.UserProfile', verbose_name='Brugere'),
+            field=models.ManyToManyField(
+                blank=True,
+                related_name='groups',
+                to='os2datascanner.UserProfile',
+                verbose_name='Brugere'),
         ),
         migrations.AlterUniqueTogether(
             name='urllastmodified',
@@ -431,12 +927,18 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='summary',
             name='scanners',
-            field=models.ManyToManyField(blank=True, to='os2datascanner.WebScanner', verbose_name='Scannere'),
+            field=models.ManyToManyField(
+                blank=True,
+                to='os2datascanner.WebScanner',
+                verbose_name='Scannere'),
         ),
         migrations.AddField(
             model_name='match',
             name='url',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='os2datascanner.WebVersion', verbose_name='URL'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to='os2datascanner.WebVersion',
+                verbose_name='URL'),
         ),
         migrations.AlterUniqueTogether(
             name='location',
@@ -445,6 +947,9 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='conversionqueueitem',
             name='url',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='os2datascanner.WebVersion', verbose_name='URL'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to='os2datascanner.WebVersion',
+                verbose_name='URL'),
         ),
     ]

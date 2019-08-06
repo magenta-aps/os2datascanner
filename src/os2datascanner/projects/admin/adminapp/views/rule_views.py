@@ -7,6 +7,7 @@ from ..models.rules.regexrule_model import RegexRule, RegexPattern
 from django import forms
 from django.db import transaction
 
+
 class RuleList(RestrictedListView):
     """Displays list of scanners."""
 
@@ -16,8 +17,10 @@ class RuleList(RestrictedListView):
     def get_context_data(self):
         context = super().get_context_data()
 
-        context["cprrule_list"] = self.get_queryset().filter(cprrule__isnull=False)
-        context["regexrule_list"] = self.get_queryset().filter(regexrule__isnull=False)
+        context["cprrule_list"] = self.get_queryset().filter(
+            cprrule__isnull=False)
+        context["regexrule_list"] = self.get_queryset().filter(
+            regexrule__isnull=False)
 
         return context
 
@@ -65,7 +68,7 @@ class RegexRuleCreate(RuleCreate):
         idx = 0
         for field_name, value in self.patterns:
             form.fields[field_name] = forms.CharField(
-                    required=True, initial=value, label='Udtryk')
+                required=True, initial=value, label='Udtryk')
             idx += 1
 
         return form
@@ -79,15 +82,18 @@ class RegexRuleCreate(RuleCreate):
         :param form:
         :return:
         """
-        form_patterns = [form.cleaned_data[field_name] for field_name in form.cleaned_data if
-                         field_name.startswith('pattern_') and form.cleaned_data[field_name] != '']
+        form_patterns = [
+            form.cleaned_data[field_name] for field_name in form.cleaned_data
+            if field_name.startswith('pattern_')
+            and form.cleaned_data[field_name] != ''
+        ]
 
         try:
             with transaction.atomic():
                 regexrule = RuleCreate._save_rule_form(form)
                 for pattern in form_patterns:
                     r_ = RegexPattern.objects.create(
-                            regex=regexrule, pattern_string=pattern)
+                        regex=regexrule, pattern_string=pattern)
                     r_.save()
 
                 # Skip the RuleCreate implementation of form_valid -- we've
@@ -104,7 +110,8 @@ class RegexRuleCreate(RuleCreate):
 class CPRRuleCreate(RuleCreate):
     model = CPRRule
     fields = RuleCreate.fields + [
-            'do_modulus11', 'ignore_irrelevant', 'whitelist']
+        'do_modulus11', 'ignore_irrelevant', 'whitelist'
+    ]
 
     def get_success_url(self):
         """The URL to redirect to after successful creation."""
@@ -148,18 +155,18 @@ class RegexRuleUpdate(RuleUpdate):
         if not form.data:
             # create extra fields to hold the pattern strings
             for i in range(len(regex_patterns)):
-                field_name = 'pattern_%s' % (i,)
+                field_name = 'pattern_%s' % (i, )
                 form.fields[field_name] = forms.CharField(
-                        required=True,
-                        initial=regex_patterns[i].pattern_string,
-                        label='Udtryk')
+                    required=True,
+                    initial=regex_patterns[i].pattern_string,
+                    label='Udtryk')
         else:
             self.patterns = extract_pattern_fields(form.data)
 
             idx = 0
             for field_name, value in self.patterns:
                 form.fields[field_name] = forms.CharField(
-                        required=True, initial=value, label='Udtryk')
+                    required=True, initial=value, label='Udtryk')
                 idx += 1
 
         # assign class attribute to all fields
@@ -175,8 +182,11 @@ class RegexRuleUpdate(RuleUpdate):
         :param form:
         :return:
         """
-        form_patterns = [form.cleaned_data[field_name] for field_name in form.cleaned_data if
-                         field_name.startswith('pattern_') and form.cleaned_data[field_name] != '']
+        form_patterns = [
+            form.cleaned_data[field_name] for field_name in form.cleaned_data
+            if field_name.startswith('pattern_')
+            and form.cleaned_data[field_name] != ''
+        ]
 
         try:
             with transaction.atomic():
@@ -185,7 +195,7 @@ class RegexRuleUpdate(RuleUpdate):
                 self.object.patterns.all().delete()
                 for pattern in form_patterns:
                     r_ = RegexPattern.objects.create(
-                            regex=regexrule, pattern_string=pattern)
+                        regex=regexrule, pattern_string=pattern)
                     r_.save()
 
                 # Skip the RuleUpdate implementation of form_valid -- we've
@@ -210,11 +220,13 @@ class RegexRuleUpdate(RuleUpdate):
 class CPRRuleUpdate(RuleUpdate):
     model = CPRRule
     fields = RuleUpdate.fields + [
-            'do_modulus11', 'ignore_irrelevant', 'whitelist']
+        'do_modulus11', 'ignore_irrelevant', 'whitelist'
+    ]
 
     def get_success_url(self):
         """The URL to redirect to after successful update."""
         return '/rules/cpr/%s/saved/' % self.object.pk
+
 
 class RuleDelete(RestrictedDeleteView):
     """Delete a rule view."""
@@ -237,5 +249,5 @@ def extract_pattern_fields(form_fields):
     if not form_fields:
         return [('pattern_0', '')]
 
-    return [(field_name, form_fields[field_name]) for field_name in form_fields if
-            field_name.startswith('pattern_')]
+    return [(field_name, form_fields[field_name]) for field_name in form_fields
+            if field_name.startswith('pattern_')]

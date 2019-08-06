@@ -49,8 +49,12 @@ class AuthenticationAdmin(admin.ModelAdmin):
 
 @admin.register(Match)
 class MatchAdmin(admin.ModelAdmin):
-    list_display = ('scan', 'sensitivity', 'url',)
-    list_filter = ('sensitivity',)
+    list_display = (
+        'scan',
+        'sensitivity',
+        'url',
+    )
+    list_filter = ('sensitivity', )
 
 
 @admin.register(CPRRule)
@@ -58,7 +62,7 @@ class MatchAdmin(admin.ModelAdmin):
 @admin.register(RegexRule)
 @admin.register(AddressRule)
 class RuleAdmin(admin.ModelAdmin):
-    list_filter = ('sensitivity',)
+    list_filter = ('sensitivity', )
     list_display = ('name', 'organization', 'group', 'sensitivity')
 
 
@@ -70,8 +74,8 @@ class RegexPatternAdmin(admin.ModelAdmin):
 @admin.register(WebScan)
 class WebScanAdmin(admin.ModelAdmin):
     date_hierarchy = 'creation_time'
-    list_display = ('scanner', 'status', 'creation_time',
-                    'start_time', 'end_time', 'is_visible')
+    list_display = ('scanner', 'status', 'creation_time', 'start_time',
+                    'end_time', 'is_visible')
     list_filter = ('status', 'is_visible', 'scanner')
 
 
@@ -80,6 +84,7 @@ class ScanAdmin(WebScanAdmin):
     '''
     Exclude web reports so they aren't shown in two places
     '''
+
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         return qs.filter(webscan__isnull=True)
@@ -91,31 +96,34 @@ class TypeStatisticsInline(admin.TabularInline):
 
 @admin.register(Statistic)
 class StatisticAdmin(admin.ModelAdmin):
-    inlines = (TypeStatisticsInline,)
+    inlines = (TypeStatisticsInline, )
     list_display = ('scan', 'files_scraped_count')
 
 
 @admin.register(WebVersion)
 class WebVersionAdmin(admin.ModelAdmin):
-    list_filter = ('scan',)
+    list_filter = ('scan', )
     list_display = ('location', 'scan')
+
 
 @admin.register(UrlLastModified)
 class UrlModifiedAdmin(admin.ModelAdmin):
     date_hierarchy = 'last_modified'
-    list_filter = ('scanner',)
+    list_filter = ('scanner', )
     list_display = ('url', 'scanner', 'last_modified')
+
 
 @admin.register(ConversionQueueItem)
 class ConversionQueueItemAdmin(admin.ModelAdmin):
     date_hierarchy = 'process_start_time'
-    list_filter = ('status',)
-    list_display = ('file', 'type', 'page_no', 'status',
-                    'process_start_time')
+    list_filter = ('status', )
+    list_display = ('file', 'type', 'page_no', 'status', 'process_start_time')
+
 
 @admin.register(ReferrerUrl)
 class ReferrerUrlAdmin(admin.ModelAdmin):
     list_display = ('location', 'scan')
+
 
 @admin.register(FileScanner)
 @admin.register(ExchangeScanner)
@@ -123,12 +131,12 @@ class ReferrerUrlAdmin(admin.ModelAdmin):
 class ScannerAdmin(admin.ModelAdmin):
     list_display = ('name', 'url', 'validation_status')
 
+
 for _cls in [Group, Organization]:
     admin.site.register(_cls)
 
 
 class ProfileInline(admin.TabularInline):
-
     """Inline class for user profiles."""
 
     model = UserProfile
@@ -143,15 +151,13 @@ class ProfileInline(admin.TabularInline):
         if db_field.name == 'organization':
             if not request.user.is_superuser:
                 field.queryset = Organization.objects.filter(
-                    name=request.user.profile.organization.name
-                )
+                    name=request.user.profile.organization.name)
                 field.empty_label = None
 
         return field
 
 
 class MyUserAdmin(UserAdmin):
-
     """Custom user admin class."""
 
     inlines = [ProfileInline]
@@ -160,12 +166,15 @@ class MyUserAdmin(UserAdmin):
     def get_form(self, request, obj=None, **kwargs):
         if not request.user.is_superuser:
             self.fieldsets = (
-                (None,
-                 {'fields': ('username', 'password', 'is_active')}),
-                (_('Personal info'),
-                 {'fields': ('first_name', 'last_name', 'email')}),
-                (_('Important dates'), {'fields': ('last_login',
-                                                   'date_joined')}),
+                (None, {
+                    'fields': ('username', 'password', 'is_active')
+                }),
+                (_('Personal info'), {
+                    'fields': ('first_name', 'last_name', 'email')
+                }),
+                (_('Important dates'), {
+                    'fields': ('last_login', 'date_joined')
+                }),
             )
 
             self.exclude = ['is_superuser', 'permissions', 'groups']
@@ -179,8 +188,7 @@ class MyUserAdmin(UserAdmin):
         if request.user.is_superuser:
             return qs
         return qs.filter(
-            profile__organization=request.user.profile.organization
-        )
+            profile__organization=request.user.profile.organization)
 
 
 admin.site.unregister(User)

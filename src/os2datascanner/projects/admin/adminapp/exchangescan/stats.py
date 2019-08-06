@@ -86,8 +86,7 @@ class Stats(multiprocessing.Process):
         error = True
         while error:
             try:
-                du_output = subprocess.check_output(['du', '-s',
-                                                     export_path],
+                du_output = subprocess.check_output(['du', '-s', export_path],
                                                     stderr=subprocess.DEVNULL)
                 error = False
             except subprocess.CalledProcessError:
@@ -122,7 +121,7 @@ class Stats(multiprocessing.Process):
             try:
                 process = psutil.Process(pid)
                 mem_info = process.memory_full_info()
-                used_memory = mem_info.uss/1024**2
+                used_memory = mem_info.uss / 1024**2
                 if self.log_data:
                     label = '{} memory'.format(pid)
                     dt = (time.time() - self.start_time)
@@ -133,38 +132,36 @@ class Stats(multiprocessing.Process):
         return mem_list
 
     def status(self):
-        template = ('Threads: {}. ' +
-                    'Queue: {}. ' +
-                    'Export: {:.3f}GB. ' +
-                    'Time: {:.2f}min. ' +
-                    'Speed: {:.2f}MB/s. ' +
-                    'Memory consumption: {:.3f}GB. ' +
-                    'Scanned users: {} / {}')
+        template = (
+            'Threads: {}. ' + 'Queue: {}. ' + 'Export: {:.3f}GB. ' +
+            'Time: {:.2f}min. ' + 'Speed: {:.2f}MB/s. ' +
+            'Memory consumption: {:.3f}GB. ' + 'Scanned users: {} / {}')
         memory = sum(self.memory_info().values()) / 1024
         processes = self.number_of_threads()[1]
         dt = (time.time() - self.start_time)
         users = self.exported_users()
-        ret_str = template.format(processes,
-                                  self.user_queue.qsize(),
-                                  self.disk_usage() / 1024,
-                                  dt / 60.0,
-                                  self.amount_of_exported_data() / dt,
-                                  memory,
+        ret_str = template.format(processes, self.user_queue.qsize(),
+                                  self.disk_usage() / 1024, dt / 60.0,
+                                  self.amount_of_exported_data() / dt, memory,
                                   users[0], users[1])
         return ret_str
 
     def init_logging(self):
         if self.log_data:
             self.comment = 'Run'
-            self.data_set_saver = DataSetSaver('measurements_mailscan',
-                                               'xy_values_mailscan',
-                                               credentials.user, credentials.passwd)
+            self.data_set_saver = DataSetSaver(
+                'measurements_mailscan', 'xy_values_mailscan',
+                credentials.user, credentials.passwd)
             self.data_set_saver.start()
             # PyExpLabSys does does not excell in db-normalization - add
             # metadata to all channels
-            metadata = {"Time": CustomColumn(self.start_time, "FROM_UNIXTIME(%s)"),
-                        "comment": self.comment, "type": 1, "label": None,
-                        "processes": self.number_of_threads()[1]}
+            metadata = {
+                "Time": CustomColumn(self.start_time, "FROM_UNIXTIME(%s)"),
+                "comment": self.comment,
+                "type": 1,
+                "label": None,
+                "processes": self.number_of_threads()[1]
+            }
 
             metadata['label'] = 'Avg export speed'
             self.data_set_saver.add_measurement(metadata['label'], metadata)
@@ -183,9 +180,11 @@ class Stats(multiprocessing.Process):
                     continue
                 metadata['processes'] = 1
                 metadata['label'] = '{} memory'.format(scanner)
-                self.data_set_saver.add_measurement(metadata['label'], metadata)
+                self.data_set_saver.add_measurement(metadata['label'],
+                                                    metadata)
                 metadata['label'] = '{} exported users'.format(scanner)
-                self.data_set_saver.add_measurement(metadata['label'], metadata)
+                self.data_set_saver.add_measurement(metadata['label'],
+                                                    metadata)
 
     def run(self):
         self.amqp_update()
@@ -200,15 +199,13 @@ class Stats(multiprocessing.Process):
             # print(status)
 
             dt = int((time.time() - self.start_time))
-            msg = 'Run-time: {}min {}s  '.format(int(dt / 60),
-                                                 int(dt % 60))
+            msg = 'Run-time: {}min {}s  '.format(int(dt / 60), int(dt % 60))
             self.screen.addstr(2, 3, msg)
 
             users = self.exported_users()
             msg = 'Exported users: {}/{}  '.format(users[0], users[1])
             self.screen.addstr(3, 3, msg)
 
-           
             total_export_size = self.amount_of_exported_data()
             msg = 'Total export: {:.3f}MB   '.format(total_export_size)
             self.screen.addstr(4, 3, msg)
@@ -224,7 +221,7 @@ class Stats(multiprocessing.Process):
             msg = 'amqp update time: {:.1f}ms  '
             update_time = self.amqp_messages['global']['amqp_time'] * 1000
             self.screen.addstr(7, 3, msg.format(update_time))
-                                                    
+
             cpu_usage = psutil.cpu_percent(percpu=True)
             msg = 'CPU{} usage: {}%  '
             for i in range(0, len(cpu_usage)):
@@ -243,7 +240,6 @@ class Stats(multiprocessing.Process):
                 label = 'Total memory'
                 self.data_set_saver.save_point(label,
                                                (dt, sum(mem_info.values())))
-
 
             i = i + 2
             msg = 'Total threads: {}.  '
@@ -265,8 +261,8 @@ class Stats(multiprocessing.Process):
                 i = i + 1
                 try:
                     if mem_info[key] > 0:
-                        msg = 'Current path: {}/{}'.format(data['rel_path'],
-                                                           data['folder'])
+                        msg = 'Current path: {}/{}'.format(
+                            data['rel_path'], data['folder'])
                     else:
                         msg = 'Current path: {}'.format(data['rel_path'])
                     self.screen.addstr(2 + i, 50, msg)
@@ -277,9 +273,10 @@ class Stats(multiprocessing.Process):
                     else:
                         run_time = 0
                     msg = 'Progress: {} of {} mails. Export time: {:.1f}min'
-                    self.screen.addstr(2 + i, 50, msg.format(data['total_scanned'],
-                                                             data['total_count'],
-                                                             run_time))
+                    self.screen.addstr(
+                        2 + i, 50,
+                        msg.format(data['total_scanned'], data['total_count'],
+                                   run_time))
                     self.screen.clrtoeol()
                     i = i + 1
                     msg = 'Exported users: {}. Exported mails: {} Total mails: {}. Memory consumption: {:.1f}MB   '
@@ -290,8 +287,7 @@ class Stats(multiprocessing.Process):
                         self.data_set_saver.save_point(label, (dt, eu))
                     msg = msg.format(data['exported_users'],
                                      data['exported_mails'],
-                                     data['total_mails'],
-                                     mem_info[key])
+                                     data['total_mails'], mem_info[key])
                     exported_grand_total += data['exported_mails']
                     exported_grand_total += data['total_mails']
                     self.screen.addstr(2 + i, 50, msg)
@@ -312,7 +308,6 @@ class Stats(multiprocessing.Process):
                 self.data_set_saver.save_point(label,
                                                (dt, exported_grand_total))
 
-            
             key = self.screen.getch()
             if key == ord('q'):
                 # Quit program

@@ -24,7 +24,6 @@ from subprocess import run, PIPE, check_call
 
 
 class PDFProcessor(Processor):
-
     """Processor for PDF documents using pdftohtml."""
 
     item_type = "pdf"
@@ -50,8 +49,7 @@ class PDFProcessor(Processor):
             extra_options.append("-i")
 
         command = ["pdftohtml"]
-        command.extend(["-noframes", "-hidden", "-nodrm", "-enc",
-                        "UTF-8"])
+        command.extend(["-noframes", "-hidden", "-nodrm", "-enc", "UTF-8"])
         command.extend(extra_options)
         command.append(new_file_path)
 
@@ -59,8 +57,7 @@ class PDFProcessor(Processor):
 
         if completed_process.stderr:
             print('pdftohtml conversion error: {} \non document {}'.format(
-                  completed_process.stderr.decode('utf-8'), new_file_path)
-            )
+                completed_process.stderr.decode('utf-8'), new_file_path))
 
         # pdftohtml returns 1 if pdf is not type pdf or if pdf could not be converted.
         if completed_process.returncode != 0:
@@ -70,9 +67,7 @@ class PDFProcessor(Processor):
         # generated files
         result_file = regex.sub("\\.pdf$", ".html", new_file_path)
         if os.path.exists(result_file):
-            check_call([
-                'sed', '-i', 's/\\xff//;s/\\xfe//', result_file
-            ])
+            check_call(['sed', '-i', 's/\\xff//;s/\\xfe//', result_file])
 
         os.remove(new_file_path)
         return True

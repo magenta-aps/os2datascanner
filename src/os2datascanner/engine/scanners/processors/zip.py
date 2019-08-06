@@ -20,7 +20,6 @@ from .processor import Processor
 
 
 class ZipProcessor(Processor):
-
     """A processor which can handle zip-compressed files using unzip."""
 
     item_type = "zip"
@@ -40,8 +39,8 @@ class ZipProcessor(Processor):
             zip_item.extractall(tmp_dir)
             return True
         except (RuntimeError, KeyError) as re:
-            self.logger.exception('Extracting zip file failed',
-                                  exc_info=re, file=item.file_path)
+            self.logger.exception(
+                'Extracting zip file failed', exc_info=re, file=item.file_path)
             return False
 
 

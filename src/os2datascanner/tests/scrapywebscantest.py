@@ -34,18 +34,16 @@ def spider_error(failure, response, spider):
 
 if __name__ == '__main__':
     process = CrawlerProcess({
-        'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
+        'USER_AGENT':
+        'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
     })
 
     crawler = process.create_crawler(ScannerSpider())
-    crawler.signals.connect(response_received,
-                            signal=signals.response_received)
-    crawler.signals.connect(engine_started,
-                            signal=signals.engine_started)
-    crawler.signals.connect(spider_opened,
-                            signal=signals.spider_opened)
-    crawler.signals.connect(spider_error,
-                            signal=signals.spider_error)
+    crawler.signals.connect(
+        response_received, signal=signals.response_received)
+    crawler.signals.connect(engine_started, signal=signals.engine_started)
+    crawler.signals.connect(spider_opened, signal=signals.spider_opened)
+    crawler.signals.connect(spider_error, signal=signals.spider_error)
     #crawler.crawl()
     #import pdb; pdb.set_trace()
     process.crawl(crawler)

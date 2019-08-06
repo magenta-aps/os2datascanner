@@ -18,16 +18,14 @@
 
 from django.db import models
 
-
 from .rule_model import Rule
 
 
 class CPRRule(Rule):
     do_modulus11 = models.BooleanField(
-            default=False, verbose_name='Tjek modulus-11')
+        default=False, verbose_name='Tjek modulus-11')
     ignore_irrelevant = models.BooleanField(
-            default=False, verbose_name='Ignorer ugyldige fødselsdatoer')
+        default=False, verbose_name='Ignorer ugyldige fødselsdatoer')
 
-    whitelist = models.TextField(blank=True,
-                                 default="",
-                                 verbose_name='Godkendte CPR-numre')
+    whitelist = models.TextField(
+        blank=True, default="", verbose_name='Godkendte CPR-numre')

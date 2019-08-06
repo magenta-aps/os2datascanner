@@ -16,18 +16,14 @@ from .base_spider import BaseScannerSpider
 
 
 class SitemapURLGathererSpider(BaseScannerSpider, SitemapSpider):
-
     """A sitemap spider that stores URLs found in the sitemaps provided."""
 
     name = 'sitemap'
 
     def __init__(self, scanner, sitemap_urls, uploaded_sitemap_urls,
-                 sitemap_alternate_links,
-                 *a,
-                 **kw):
+                 sitemap_alternate_links, *a, **kw):
         """Initialize the sitemap spider."""
-        super().__init__(scanner=scanner, *a,
-                                                       **kw)
+        super().__init__(scanner=scanner, *a, **kw)
         self.sitemap_urls = sitemap_urls
         self.uploaded_sitemap_urls = uploaded_sitemap_urls
         self.sitemap_alternate_links = sitemap_alternate_links
@@ -44,8 +40,8 @@ class SitemapURLGathererSpider(BaseScannerSpider, SitemapSpider):
                 # Specify dont_filter because this is an uploaded
                 # sitemap file with a file:// URL and we don't want it
                 # filtered as an offsite request.
-                requests.append(Request(x, callback=self._parse_sitemap,
-                                        dont_filter=True))
+                requests.append(
+                    Request(x, callback=self._parse_sitemap, dont_filter=True))
             except Exception:
                 logging.exception('adding request for url %r failed', x)
 
@@ -60,7 +56,9 @@ class SitemapURLGathererSpider(BaseScannerSpider, SitemapSpider):
         else:
             body = self._get_sitemap_body(response)
             if body is None:
-                logging.warning("Ignoring invalid sitemap: %(response)s", response=response)
+                logging.warning(
+                    "Ignoring invalid sitemap: %(response)s",
+                    response=response)
                 return
             s = Sitemap(body)
             if s.type == 'sitemapindex':
@@ -93,7 +91,7 @@ class SitemapURLGathererSpider(BaseScannerSpider, SitemapSpider):
 def parse_w3c_datetime(date_str):
     """Parse a W3C date-time string into a datetime object."""
     # Timezone is assumed to be UTC if not specified
-    return dateutil.parser.parse(date_str,
-                                 default=datetime.datetime.now().
-                                 replace(hour=0, minute=0, second=0,
-                                         microsecond=0, tzinfo=dateutil.tz.UTC))
+    return dateutil.parser.parse(
+        date_str,
+        default=datetime.datetime.now().replace(
+            hour=0, minute=0, second=0, microsecond=0, tzinfo=dateutil.tz.UTC))

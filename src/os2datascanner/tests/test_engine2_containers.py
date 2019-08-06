@@ -28,8 +28,7 @@ class Engine2ContainerTest(unittest.TestCase):
                             url = fp.read().decode("utf-8")
                         process(Source.from_url(url), depth + 1)
                     elif handle.get_name() == "test-vector" or isinstance(
-                        source, DataSource
-                    ):
+                            source, DataSource):
                         with handle.follow(sm).make_stream() as fp:
                             content = fp.read().decode("utf-8")
                         self.assertEqual(

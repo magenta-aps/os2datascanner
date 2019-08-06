@@ -13,7 +13,6 @@
 #
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( http://www.os2web.dk/ )
-
 """Rules for name scanning."""
 
 import regex
@@ -32,21 +31,15 @@ _house_number = "[1-9][0-9]*[a-zA-Z]?"
 _zip_code = "[1-9][0-9][0-9][0-9]"
 
 _street_address = "(?P<street_name>{0})(?P<house_number>{1}{2})?".format(
-    _simple_name, _whitespace, _house_number
-)
-_zip_city = "(?P<zip_code>{0}){1}(?P<city>{2})".format(
-    _zip_code,
-    _whitespace,
-    _simple_name
-)
+    _simple_name, _whitespace, _house_number)
+_zip_city = "(?P<zip_code>{0}){1}(?P<city>{2})".format(_zip_code, _whitespace,
+                                                       _simple_name)
 _optional_comma = ",?"
 _optional_whitespace = "[^\\S\\n\\r]?"
 
 full_address_regex = regex.compile(
     "\\b" + _street_address + _optional_comma + "(" + _optional_whitespace +
-    _zip_city + ")?" + "\\b",
-    regex.UNICODE
-)
+    _zip_city + ")?" + "\\b", regex.UNICODE)
 
 
 def match_full_address(text):
@@ -70,9 +63,8 @@ def match_full_address(text):
         else:
             house_number = ''
         matched_text = m.group(0)
-        matches.add(
-            (street_address, house_number, zip_code, city, matched_text)
-        )
+        matches.add((street_address, house_number, zip_code, city,
+                     matched_text))
     return matches
 
 
@@ -88,7 +80,6 @@ def load_whitelist(whitelist):
 
 
 class AddressRule(Rule):
-
     """Represents a rule which scans for Full Names in text.
 
     The rule loads a list of names from first and last name files and matches
@@ -98,8 +89,12 @@ class AddressRule(Rule):
 
     name = 'address'
 
-    def __init__(self, name, database, sensitivity=Sensitivity.HIGH,
-            whitelist=None, blacklist=None):
+    def __init__(self,
+                 name,
+                 database,
+                 sensitivity=Sensitivity.HIGH,
+                 whitelist=None,
+                 blacklist=None):
         """Initialize the rule with an optional whitelist.
 
         The whitelist should contains a multi-line string, with one name per
@@ -132,20 +127,18 @@ class AddressRule(Rule):
             street_name = address[0].upper()
             house_number = address[1].upper() if address[1] else ''
             zip_code = address[2].upper() if address[2] else ''
-            city = address[3].upper()if address[3] else ''
+            city = address[3].upper() if address[3] else ''
 
             street_address = "%s %s" % (street_name, house_number)
             full_address = "%s %s, %s %s" % (street_name, house_number,
                                              zip_code, city)
 
-            if (
-                street_address in self.whitelist or
-                full_address in self.whitelist
-            ):
+            if (street_address in self.whitelist
+                    or full_address in self.whitelist):
                 continue
-            blacklisted = (street_name in self.blacklist or
-                           street_address in self.blacklist or
-                           full_address in self.blacklist)
+            blacklisted = (street_name in self.blacklist
+                           or street_address in self.blacklist
+                           or full_address in self.blacklist)
             street_match = street_name[:20] in self.street_names
 
             if blacklisted or (street_match and house_number):
@@ -167,7 +160,7 @@ class AddressRule(Rule):
             unmatched_text = unmatched_text.replace(matched_text, "", 1)
 
             matches.add(
-                MatchItem(matched_data=matched_text,
-                          sensitivity=self._clamp_sensitivity(sensitivity))
-            )
+                MatchItem(
+                    matched_data=matched_text,
+                    sensitivity=self._clamp_sensitivity(sensitivity)))
         return matches

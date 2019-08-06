@@ -34,25 +34,25 @@ class StartWebScan(StartScan, multiprocessing.Process):
             # Do external link check
             self.external_link_check(self.scanner_crawler.spider.external_urls)
 
-
     @defer.inlineCallbacks
     def run_crawlers(self):
         # Don't sitemap scan when running over RPC or if no sitemap is set on
         if not self.scanner.process_urls:
             if self.scanner.get_sitemap_urls() \
                     or self.scanner.get_uploaded_sitemap_urls():
-                yield self.crawler_process.crawl(self.make_sitemap_crawler(),
-                                                 scanner=self.scanner,
-                                                 runner=self,
-                                                 sitemap_urls=self.scanner.get_sitemap_urls(),
-                                                 uploaded_sitemap_urls=
-                                                 self.scanner.get_uploaded_sitemap_urls(),
-                                                 sitemap_alternate_links=True)
+                yield self.crawler_process.crawl(
+                    self.make_sitemap_crawler(),
+                    scanner=self.scanner,
+                    runner=self,
+                    sitemap_urls=self.scanner.get_sitemap_urls(),
+                    uploaded_sitemap_urls=self.scanner.
+                    get_uploaded_sitemap_urls(),
+                    sitemap_alternate_links=True)
 
         self.make_scanner_crawler(WebSpider)
-        yield self.crawler_process.crawl(self.scanner_crawler,
-                                         scanner=self.scanner,
-                                         runner=self)
+        yield self.crawler_process.crawl(
+            self.scanner_crawler, scanner=self.scanner, runner=self)
+
     def make_sitemap_crawler(self):
         """Setup the sitemap spider and crawler."""
         self.sitemap_crawler = \
@@ -69,7 +69,8 @@ class StartWebScan(StartScan, multiprocessing.Process):
 
     def external_link_check(self, external_urls):
         """Perform external link checking."""
-        self.logger.info("Link-checking external URLs", url_count=len(external_urls))
+        self.logger.info(
+            "Link-checking external URLs", url_count=len(external_urls))
 
         for url in external_urls:
             url_parse = urlparse(url)
@@ -82,7 +83,8 @@ class StartWebScan(StartScan, multiprocessing.Process):
 
             result = linkchecker.check_url(url)
             if result is not None:
-                broken_url = self.scanner.mint_url(url=url,
-                                 status_code=result["status_code"],
-                                 status_message=result["status_message"])
+                broken_url = self.scanner.mint_url(
+                    url=url,
+                    status_code=result["status_code"],
+                    status_message=result["status_message"])
                 self.scanner_crawler.spider.associate_url_referrers(broken_url)

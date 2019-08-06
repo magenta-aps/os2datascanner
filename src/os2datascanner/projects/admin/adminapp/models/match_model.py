@@ -20,7 +20,6 @@ from .sensitivity_level import Sensitivity
 
 
 class Match(models.Model):
-
     """The data associated with a single match in a single URL."""
     url = models.ForeignKey(
         "Version",
@@ -31,9 +30,10 @@ class Match(models.Model):
     )
     matched_data = models.TextField(verbose_name='Data match')
     matched_rule = models.CharField(max_length=256, verbose_name='Regel match')
-    sensitivity = models.IntegerField(choices=Sensitivity.choices,
-                                      default=Sensitivity.HIGH,
-                                      verbose_name='Følsomhed')
+    sensitivity = models.IntegerField(
+        choices=Sensitivity.choices,
+        default=Sensitivity.HIGH,
+        verbose_name='Følsomhed')
     match_context = models.CharField(max_length=1152, verbose_name='Kontekst')
     page_no = models.IntegerField(null=True, verbose_name='Side')
 
@@ -69,8 +69,8 @@ class Match(models.Model):
     def __str__(self):
         """Return a string representation of the match."""
         return "Match: %s; [%s] %s <%s>" % (self.get_sensitivity_display(),
-                                             self.matched_rule,
-                                             self.matched_data, self.url)
+                                            self.matched_rule,
+                                            self.matched_data, self.url)
 
     class Meta:
         abstract = False

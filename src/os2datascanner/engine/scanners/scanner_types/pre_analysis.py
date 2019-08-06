@@ -15,16 +15,21 @@ logger = structlog.get_logger()
 
 
 def _type_dict(group, sub, mime=None, relevant=False, supported=None):
-    type_dict = {'super-group': group,
-                 'sub-group': sub,
-                 'mime': mime,
-                 'relevant': relevant,
-                 'supported': supported}
+    type_dict = {
+        'super-group': group,
+        'sub-group': sub,
+        'mime': mime,
+        'relevant': relevant,
+        'supported': supported
+    }
     return type_dict
+
 
 # stat(2) calls over the network seem to be very expensive, so this cache
 # class stores and reuses their results as much as possible
 from stat import S_ISREG, S_ISDIR, S_ISLNK
+
+
 class _statcache(dict):
     def __missing__(self, path):
         try:
@@ -40,24 +45,26 @@ class _statcache(dict):
 
     def is_file(self, path):
         return self._test_if(path, lambda s: S_ISREG(s.st_mode), False)
+
     def is_dir(self, path):
         return self._test_if(path, lambda s: S_ISDIR(s.st_mode), False)
+
     def is_symlink(self, path):
         return self._test_if(path, lambda s: S_ISLNK(s.st_mode), False)
+
 
 statcache = _statcache()
 
 types = {}
 
 # Seveal of the ascii-types should be sorted by the mime-type
-types['ASCII'] = _type_dict(
-    'Text', 'Text',
-    ['javascript', 'x-sql', 'json', 'x-diff', 'text/plain', 'x-trash', 'csv',
-     'rdp', 'markdown', 'x-ica', 'text/css', 'x-info', 'x-ctx', 'x-cache',
-     'rfc822', 'x-csrc', 'x-mif', 'x-chdr', 'x-troff-man', 'x-ruby'],
-    True, 'text.py')
-types['Rich Text'] = _type_dict('Text', 'Text', ['application/rtf'],
-                                True, 'text.py')
+types['ASCII'] = _type_dict('Text', 'Text', [
+    'javascript', 'x-sql', 'json', 'x-diff', 'text/plain', 'x-trash', 'csv',
+    'rdp', 'markdown', 'x-ica', 'text/css', 'x-info', 'x-ctx', 'x-cache',
+    'rfc822', 'x-csrc', 'x-mif', 'x-chdr', 'x-troff-man', 'x-ruby'
+], True, 'text.py')
+types['Rich Text'] = _type_dict('Text', 'Text', ['application/rtf'], True,
+                                'text.py')
 types['ISO-8859'] = _type_dict('Text', 'Text', None, True, 'text.py')
 types['UTF-'] = _type_dict('Text', 'Text', None, True, 'text.py')
 types['vCalendar'] = _type_dict('Text', 'Text', ['calendar'], True, None)
@@ -66,25 +73,23 @@ types['vCard'] = _type_dict('Text', 'Text', ['vcard'], True, None)
 types['sendmail m4'] = _type_dict('Text', 'Text', None, True, None)
 types['Microsoft Word'] = _type_dict('Text', 'Office', ['msword'], True,
                                      'libreoffice.py')
-types['Excel'] = _type_dict('Text', 'Office', ['vnd.ms-excel'],
-                            True, 'libreoffice.py')
-types['PowerPoint'] = _type_dict('Text', 'Office',
-                                 ['vnd.ms-powerpoint'], True, 'libreoffice.py')
-types['OpenDocument'] = _type_dict('Text', 'Office',
-                                   ['vnd.oasis.opendocument.text',
-                                    'vnd.oasis.opendocument.database',
-                                    'vnd.oasis.opendocument.presentation',
-                                    'vnd.oasis.opendocument.spreadsheet'],
-                                   True, 'libreoffice.py')
+types['Excel'] = _type_dict('Text', 'Office', ['vnd.ms-excel'], True,
+                            'libreoffice.py')
+types['PowerPoint'] = _type_dict('Text', 'Office', ['vnd.ms-powerpoint'], True,
+                                 'libreoffice.py')
+types['OpenDocument'] = _type_dict('Text', 'Office', [
+    'vnd.oasis.opendocument.text', 'vnd.oasis.opendocument.database',
+    'vnd.oasis.opendocument.presentation', 'vnd.oasis.opendocument.spreadsheet'
+], True, 'libreoffice.py')
 
 # For some of these, magic is plain wrong
-types['Composite'] = _type_dict('Text', 'Office', ['vnd.visio', 'x-msi'],
-                                True, 'libreoffice.py')
+types['Composite'] = _type_dict('Text', 'Office', ['vnd.visio', 'x-msi'], True,
+                                'libreoffice.py')
 
 # Several fils wrongly ends up here
 types['XML'] = _type_dict('Text', 'Structured Text',
-                          ['xml', 'x-ms-manifest', 'x-ganttproject'],
-                          True, 'xml.py')
+                          ['xml', 'x-ms-manifest', 'x-ganttproject'], True,
+                          'xml.py')
 
 # hta should not be send here by libmagic?
 types['HTML'] = _type_dict('Text', 'Structured Text',
@@ -93,7 +98,8 @@ types['HTML'] = _type_dict('Text', 'Structured Text',
 types['C#'] = _type_dict('Text', 'Source Code', ['x-pdb'], True, None)
 types['Perl'] = _type_dict('Text', 'Source Code', ['x-perl'], True, None)
 types['Python'] = _type_dict('Text', 'Source Code', ['x-python'], False, None)
-types['shell script'] = _type_dict('Text', 'Source Code', ['x-sh'], False, None)
+types['shell script'] = _type_dict('Text', 'Source Code', ['x-sh'], False,
+                                   None)
 types['Java'] = _type_dict('Text', 'Source Code', ['x-java'], True, None)
 types['Dyalog APL'] = _type_dict('Text', 'Source Code', None, True, None)
 types['byte-compiled'] = _type_dict('Binary', 'Source Code', None, False, None)
@@ -115,10 +121,10 @@ types['FoxPro'] = _type_dict('Data', 'Data', None, False, None)
 types['GVariant'] = _type_dict('Data', 'Data', None, False, None)
 types['Debian'] = _type_dict('Data', 'Data', ['x-debian-package'], False, None)
 types['dBase III'] = _type_dict('Data', 'Data', None, False, None)
-types['PEM certificate'] = _type_dict('Data', 'Data',
-                                      ['x-x509-ca-cert'], False, None)
-types['OpenType'] = _type_dict('Data', 'Data', ['vnd.ms-fontobject'],
-                               False, None)
+types['PEM certificate'] = _type_dict('Data', 'Data', ['x-x509-ca-cert'],
+                                      False, None)
+types['OpenType'] = _type_dict('Data', 'Data', ['vnd.ms-fontobject'], False,
+                               None)
 types['RSA'] = _type_dict('Data', 'Data', None, False, None)
 types['OpenSSH'] = _type_dict('Data', 'Data', None, False, None)
 types['Applesoft'] = _type_dict('Data', 'Data', None, False, None)
@@ -133,7 +139,8 @@ types['Compiled terminfo'] = _type_dict('Data', 'Data', None, False, None)
 types['GPG'] = _type_dict('Data', 'Data', None, False, None)
 types['PGP'] = _type_dict('Data', 'Data', ['pgp'], False, None)
 types['Mini Dump'] = _type_dict('Data', 'Data', None, False, None)
-types['Font'] = _type_dict('Data', 'Data', ['font-woff', 'x-font'], False, None)
+types['Font'] = _type_dict('Data', 'Data', ['font-woff', 'x-font'], False,
+                           None)
 types['GUS patch'] = _type_dict('Data', 'Data', None, False, None)
 types['TrueType'] = _type_dict('Data', 'Data', ['font-sfnt'], False, None)
 types['SoftQuad'] = _type_dict('Data', 'Data', None, False, None)
@@ -151,11 +158,12 @@ types['Transport Neutral'] = _type_dict('Data', 'Data', None, False, None)
 types['shortcut'] = _type_dict('Data', 'Data', None, False, None)
 types['Windows Registry'] = _type_dict('Data', 'Data', None, False, None)
 types['init='] = _type_dict('Data', 'Data', None, False, None)
-types['tcpdump'] = _type_dict('Data', 'Data', ['vnd.tcpdump.pcap'],
-                              False, None)
+types['tcpdump'] = _type_dict('Data', 'Data', ['vnd.tcpdump.pcap'], False,
+                              None)
 
 # In principle, this could be relevat, but hard...
-types['Access Database'] = _type_dict('Data', 'Data', ['msaccess'], False, None)
+types['Access Database'] = _type_dict('Data', 'Data', ['msaccess'], False,
+                                      None)
 
 types['Solitaire Image'] = _type_dict('Data', 'Data', None, False, None)
 types['GeoSwath RDF'] = _type_dict('Data', 'Data', None, False, None)
@@ -169,26 +177,27 @@ types['empty'] = _type_dict('Data', 'Data', None, False, None)
 # Several types ends here, include some certificates
 # x-maker is identifed wrong by magic
 # midi is wrong by mime...
-types['data'] = _type_dict('Data', 'Cache Data',
-                           ['vnd.ms-pki.seccat', 'x-cerius', 'x-pkcs12',
-                            'onenote', 'x-koan', 'audio/ogg', 'x-maker',
-                            'x-internet-signup', 'midi', 'x-director',
-                            'x-cdx'], False, None)
+types['data'] = _type_dict('Data', 'Cache Data', [
+    'vnd.ms-pki.seccat', 'x-cerius', 'x-pkcs12', 'onenote', 'x-koan',
+    'audio/ogg', 'x-maker', 'x-internet-signup', 'midi', 'x-director', 'x-cdx'
+], False, None)
 types['PDF'] = _type_dict('Media', 'PDF', ['pdf'], True, 'pdf.py')
 types['PostScript'] = _type_dict('Media', 'PDF', ['postscript'], True, None)
 types['PNG'] = _type_dict('Media', 'Image', ['png'], True, 'ocr.py')
 types['GIF'] = _type_dict('Media', 'Image', ['gif'], True, 'ocr.py')
 
 # Why is bmp in jpeg?
-types['JPEG'] = _type_dict('Media', 'Image',
-                           ['jpeg', 'x-ms-bmp'], True, 'ocr.py')
-types['tiff'] = _type_dict('Media', 'Image',
-                           ['tiff', 'x-nikon-nef'], True, 'ocr.py')
+types['JPEG'] = _type_dict('Media', 'Image', ['jpeg', 'x-ms-bmp'], True,
+                           'ocr.py')
+types['tiff'] = _type_dict('Media', 'Image', ['tiff', 'x-nikon-nef'], True,
+                           'ocr.py')
 types['YUV'] = _type_dict('Media', 'Image', None, True, None)
-types['Icon'] = _type_dict('Media', 'Image', ['vnd.microsoft.icon'], False, None)
+types['Icon'] = _type_dict('Media', 'Image', ['vnd.microsoft.icon'], False,
+                           None)
 types['SVG'] = _type_dict('Media', 'Image', None, False, None)
 types['Photoshop'] = _type_dict('Media', 'Image', ['x-photoshop'], True, None)
-types['RIFF'] = _type_dict('Media', 'Video', ['x-wav', 'x-msvideo'], False, None)
+types['RIFF'] = _type_dict('Media', 'Video', ['x-wav', 'x-msvideo'], False,
+                           None)
 types['bitmap'] = _type_dict('Media', 'Image', None, False, None)
 types['ISO Media'] = _type_dict('Container', 'ISO Image', None, True, None)
 types['ISO Image'] = _type_dict('Container', 'ISO Image', None, True, None)
@@ -196,27 +205,25 @@ types['ISO 9660'] = _type_dict('Container', 'ISO Image', ['x-iso9660-image'],
                                True, None)
 
 # Some of these are not a real zip-files. Combined type-check would help.
-types['Zip'] = _type_dict('Container', 'Archive',
-                          ['application/zip', 'x-xpinstall', 'java-archive',
-                           'vnd.android.package-archive',
-                           'vnd.ms-word.document.macroEnabled.12',
-                           'vnd.ms-word.template.macroEnabled.12',
-                           'vnd.google-earth.kmz',
-                           'vnd.ms-officetheme'],
-                          True, 'zip.py')
+types['Zip'] = _type_dict('Container', 'Archive', [
+    'application/zip', 'x-xpinstall', 'java-archive',
+    'vnd.android.package-archive', 'vnd.ms-word.document.macroEnabled.12',
+    'vnd.ms-word.template.macroEnabled.12', 'vnd.google-earth.kmz',
+    'vnd.ms-officetheme'
+], True, 'zip.py')
 types['xz'] = _type_dict('Container', 'Archive', ['xz'], True, None)
 types['gzip'] = _type_dict('Container', 'Archive', ['gzip'], True, None)
-types['7-zip'] = _type_dict('Container', 'Archive',
-                            ['x-7z-compressed'], True, None)
+types['7-zip'] = _type_dict('Container', 'Archive', ['x-7z-compressed'], True,
+                            None)
 types['bzip'] = _type_dict('Container', 'Archive', ['bzip2'], True, None)
-types['Microsoft Cabinet'] = _type_dict('Container', 'Archive',
-                                        ['x-cab'], True, None)
+types['Microsoft Cabinet'] = _type_dict('Container', 'Archive', ['x-cab'],
+                                        True, None)
 types['Tar'] = _type_dict('Container', 'Archive', ['x-tar'], True, None)
 types['Par archive'] = _type_dict('Container', 'Archive', None, True, None)
 types['current ar archive'] = _type_dict('Container', 'Archive', None, True,
                                          None)
-types['RAR archive'] = _type_dict('Container', 'Archive',
-                                  ['application/rar'], True, None)
+types['RAR archive'] = _type_dict('Container', 'Archive', ['application/rar'],
+                                  True, None)
 types['XZ'] = _type_dict('Container', 'Archive', None, True, None)
 types['zlib'] = _type_dict('Container', 'Archive', None, True, None)
 types['VirtualBox'] = _type_dict('Container', 'Virtual Machine', None, False,
@@ -228,6 +235,7 @@ types['Executable'] = _type_dict('Data', 'Executable', ['x-msdos-program'],
 types['amd 29K'] = _type_dict('Data', 'Executable', None, False, None)
 
 types['ERROR'] = _type_dict('Error', 'Error', None, True, None)
+
 
 def file_type_group(filetype, mime=False):
     # Todo: A combined magic + mime-search will be even more accurate
@@ -242,7 +250,7 @@ def file_type_group(filetype, mime=False):
             mimetypes = current_type['mime']
             if mimetypes is None:
                 continue
-            assert(isinstance(mimetypes, list))
+            assert (isinstance(mimetypes, list))
             for mimetype in mimetypes:
                 if filetype.find(mimetype) > -1:
                     filetype = current_type
@@ -264,6 +272,8 @@ def _to_filesize(filesize):
 
 
 _HIDDEN = 0x02
+
+
 def _is_hidden(path):
     try:
         if path.name.startswith("."):
@@ -290,9 +300,10 @@ class PreDataScanner(object):
         self.read_file_system(path)
 
     def read_file_system(self, path):
-        self.nodes[path] = {'size': 0,
-                            'filetype': _type_dict('Directory', 'Directory',
-                                                   False, None)}
+        self.nodes[path] = {
+            'size': 0,
+            'filetype': _type_dict('Directory', 'Directory', False, None)
+        }
         self.read_dirtree(path)
 
         # We have not yet read the files, so at this point the
@@ -330,9 +341,10 @@ class PreDataScanner(object):
                     current_speed=current_speed,
                 )
 
-            self.nodes[item] = {'size': 0,
-                                'filetype': _type_dict('Directory', 'Directory',
-                                                       False, None)}
+            self.nodes[item] = {
+                'size': 0,
+                'filetype': _type_dict('Directory', 'Directory', False, None)
+            }
 
     def read_files(self):
         self.logger.debug('read_files')
@@ -386,7 +398,8 @@ class PreDataScanner(object):
                 filetype = 'ASCII'
             elif node.suffix == '.html':
                 filetype = 'HTML'
-        if self.detection_method in ['magic', 'fast-magic'] and filetype is None:
+        if self.detection_method in ['magic', 'fast-magic'
+                                     ] and filetype is None:
             try:
                 filetype = magic.from_buffer(open(str(node), 'rb').read(512))
             except TypeError:
@@ -444,15 +457,12 @@ class PreDataScanner(object):
                 filetype = self._find_file_type(node)
                 self.nodes[node]['filetype'] = filetype
             else:
-                self.nodes[node]['filetype'] = _type_dict('Directory', 'Directory',
-                                                          False, None)
+                self.nodes[node]['filetype'] = _type_dict(
+                    'Directory', 'Directory', False, None)
         return total_size
 
     def summarize_file_types(self):
-        types = {'super': {},
-                 'sub': {},
-                 'supported': 0,
-                 'relevant': 0}
+        types = {'super': {}, 'sub': {}, 'supported': 0, 'relevant': 0}
 
         for node in self.nodes.keys():
             node_info = self.nodes[node]
@@ -468,17 +478,22 @@ class PreDataScanner(object):
 
             if supergroup in types['super']:
                 types['super'][supergroup]['count'] += 1
-                types['super'][supergroup]['sizedist'].append(node_info['size'])
+                types['super'][supergroup]['sizedist'].append(
+                    node_info['size'])
             else:
-                types['super'][supergroup] = {'count': 1,
-                                              'sizedist': [node_info['size']]}
+                types['super'][supergroup] = {
+                    'count': 1,
+                    'sizedist': [node_info['size']]
+                }
             if subgroup in types['sub']:
                 types['sub'][subgroup]['count'] += 1
                 types['sub'][subgroup]['sizedist'].append(node_info['size'])
             else:
-                types['sub'][subgroup] = {'count': 1,
-                                          'sizedist': [node_info['size']],
-                                          'supergroup': supergroup}
+                types['sub'][subgroup] = {
+                    'count': 1,
+                    'sizedist': [node_info['size']],
+                    'supergroup': supergroup
+                }
         return types
 
     def update_stats(self):
@@ -496,7 +511,8 @@ class PreDataScanner(object):
             if file_info['filetype']['supported'] is not None:
                 self.stats['supported_file_count'] += 1
                 self.stats['supported_file_size'] += file_info['size']
-            if (file_info['filetype']['supported'] is None and file_info['filetype']['relevant']):
+            if (file_info['filetype']['supported'] is None
+                    and file_info['filetype']['relevant']):
                 self.stats['relevant_unsupported_count'] += 1
                 self.stats['relevant_unsupported_size'] += file_info['size']
 
@@ -515,8 +531,7 @@ class PreDataScanner(object):
             size_list = np.array(stat['sizedist'])
             size_list = size_list / 1024**2
 
-            plt.hist(size_list,
-                    range=(0, max(size_list)), bins=50, log=True)
+            plt.hist(size_list, range=(0, max(size_list)), bins=50, log=True)
             plt.title(filetype)
             plt.xlabel('Size / MB')
             plt.savefig(pp, format='pdf')
@@ -538,15 +553,20 @@ class PreDataScanner(object):
         compact_labels.append('Other')
         compact_sizes.append(other)
 
-        explode = [0.4 if (i / self.stats['total_size']) < 0.05 else 0
-                   for i in compact_sizes]
+        explode = [
+            0.4 if (i / self.stats['total_size']) < 0.05 else 0
+            for i in compact_sizes
+        ]
 
         fig1, ax1 = plt.subplots()
         textprops = {'fontsize': 'x-small'}
-        wedges, texts, autotext = ax1.pie(compact_sizes, autopct='%1.0f%%',
-                                          shadow=False, startangle=90,
-                                          explode=explode,
-                                          textprops=textprops)
+        wedges, texts, autotext = ax1.pie(
+            compact_sizes,
+            autopct='%1.0f%%',
+            shadow=False,
+            startangle=90,
+            explode=explode,
+            textprops=textprops)
         ax1.axis('equal')
         ax1.legend(wedges, compact_labels, fontsize='x-small')
 

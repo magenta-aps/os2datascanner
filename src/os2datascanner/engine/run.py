@@ -29,13 +29,13 @@ from scrapy.exceptions import DontCloseSpider
 
 import os
 os.umask(0o007)
-os.environ["SCRAPY_SETTINGS_MODULE"] = "os2datascanner.engine.scanners.settings"
+os.environ[
+    "SCRAPY_SETTINGS_MODULE"] = "os2datascanner.engine.scanners.settings"
 
 from os2datascanner.projects.admin.adminapp.models.statistic_model import Statistic
 from os2datascanner.projects.admin.adminapp.models.conversionqueueitem_model import ConversionQueueItem
 
 from django.core.exceptions import MultipleObjectsReturned
-
 
 logger = structlog.get_logger()
 
@@ -102,29 +102,27 @@ class StartScan(object):
 
     def store_stats(self):
         """Stores scrapy scanning stats when scan is completed."""
-        self.logger.info('store_stats', **self.scanner_crawler.stats.get_stats())
+        self.logger.info('store_stats',
+                         **self.scanner_crawler.stats.get_stats())
 
         try:
-            statistics, created = Statistic.objects.get_or_create(scan=self.scanner.scan_object)
+            statistics, created = Statistic.objects.get_or_create(
+                scan=self.scanner.scan_object)
         except MultipleObjectsReturned as exc:
-            self.logger.exception('Multiple statistics objects found',
-                             exc_info=exc)
+            self.logger.exception(
+                'Multiple statistics objects found', exc_info=exc)
 
         if self.scanner_crawler.stats.get_value(
                 'last_modified_check/pages_skipped'):
             statistics.files_skipped_count += self.scanner_crawler.stats.get_value(
-                'last_modified_check/pages_skipped'
-            )
-        if self.scanner_crawler.stats.get_value(
-                'downloader/request_count'):
+                'last_modified_check/pages_skipped')
+        if self.scanner_crawler.stats.get_value('downloader/request_count'):
             statistics.files_scraped_count += self.scanner_crawler.stats.get_value(
-                'downloader/request_count'
-            )
+                'downloader/request_count')
         if self.scanner_crawler.stats.get_value(
                 'downloader/exception_type_count/builtins.IsADirectoryError'):
             statistics.files_is_dir_count += self.scanner_crawler.stats.get_value(
-                'downloader/exception_type_count/builtins.IsADirectoryError'
-            )
+                'downloader/exception_type_count/builtins.IsADirectoryError')
 
         statistics.save()
         self.logger.debug('store_stats_done')
@@ -136,9 +134,13 @@ class StartScan(object):
         The scan is only stopped when the spider signals it has stopped.
 
         So we only print the error to the log."""
-        self.logger.error("spider_error", exc_info=(
-            failure.type, failure.value, failure.getTracebackObject(),
-        ))
+        self.logger.error(
+            "spider_error",
+            exc_info=(
+                failure.type,
+                failure.value,
+                failure.getTracebackObject(),
+            ))
 
     def handle_idle(self, spider):
         """Handle when the spider is idle.
@@ -148,16 +150,18 @@ class StartScan(object):
         self.logger.debug("spider_idle")
         # Keep spider alive if there are still queue items to be processed
         remaining_queue_items = ConversionQueueItem.objects.filter(
-            status__in=[ConversionQueueItem.NEW,
-                        ConversionQueueItem.PROCESSING],
-            url__scan=self.scanner.scan_object
-        ).count()
+            status__in=[
+                ConversionQueueItem.NEW, ConversionQueueItem.PROCESSING
+            ],
+            url__scan=self.scanner.scan_object).count()
 
         if remaining_queue_items > 0:
-            self.logger.info("Keeping spider alive",
-                             remaining_queue_items=remaining_queue_items)
+            self.logger.info(
+                "Keeping spider alive",
+                remaining_queue_items=remaining_queue_items)
 
             raise DontCloseSpider
         else:
-            self.logger.info("No more active processors, closing spider...",
-                             remaining_queue_items=remaining_queue_items)
+            self.logger.info(
+                "No more active processors, closing spider...",
+                remaining_queue_items=remaining_queue_items)

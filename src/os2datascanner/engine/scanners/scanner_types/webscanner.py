@@ -28,7 +28,8 @@ class WebScanner(Scanner):
         """Return a list of valid domain urls."""
         scanner = self.get_scanner_object()
 
-        if scanner.url.startswith('http://') or scanner.url.startswith('https://'):
+        if scanner.url.startswith('http://') or scanner.url.startswith(
+                'https://'):
             return urlparse(scanner.url).hostname
         else:
             return scanner.url

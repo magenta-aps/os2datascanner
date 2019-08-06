@@ -14,7 +14,6 @@ from .middlewares import LastModifiedCheckMiddleware
 
 
 class WebScanLastModifiedCheckMiddleware(LastModifiedCheckMiddleware):
-
     def __init__(self, crawler):
         super().__init__(crawler)
 
@@ -24,10 +23,10 @@ class WebScanLastModifiedCheckMiddleware(LastModifiedCheckMiddleware):
         # if the spider says we should and if we haven't
         # already checked the last modified date.
         if (spider.scanner.do_last_modified_check_head_request
-            and not request.meta.get('skip_modified_check', False) and
-                    request.method != "HEAD" and
-                    self.get_stored_last_modified_date(request.url, spider) is not
-                    None):
+                and not request.meta.get('skip_modified_check', False)
+                and request.method != "HEAD"
+                and self.get_stored_last_modified_date(request.url,
+                                                       spider) is not None):
             logging.debug("Replacing with HEAD request %s" % request)
             return request.replace(method='HEAD')
         else:
@@ -49,7 +48,8 @@ class WebScanLastModifiedCheckMiddleware(LastModifiedCheckMiddleware):
         # Check the Last-Modified header to see if the content has been
         # updated since the last time we checked it.
         if self.has_been_modified(request, response, spider):
-            logging.debug("Page has been modified since Last-Modified {}".format(response))
+            logging.debug("Page has been modified since Last-Modified {}".
+                          format(response))
             # request.method only available for webscanner
             if request.method == 'HEAD':
                 # Issue a new GET request, since the data was updated
@@ -71,10 +71,11 @@ class WebScanLastModifiedCheckMiddleware(LastModifiedCheckMiddleware):
             # page the last time we visited it.
             links = self.get_stored_links(response.url, spider)
             for link in links:
-                req = Request(link.url,
-                              callback=request.callback,
-                              errback=request.errback,
-                              headers={"referer": response.url})
+                req = Request(
+                    link.url,
+                    callback=request.callback,
+                    errback=request.errback,
+                    headers={"referer": response.url})
                 logging.debug("Adding request {}".format(req))
                 self.crawler.engine.crawl(req, spider)
             # Ignore the request, since the content has not been modified
@@ -106,11 +107,11 @@ class WebScanLastModifiedCheckMiddleware(LastModifiedCheckMiddleware):
         if sitemap_lastmod_date is not None:
             last_modified = sitemap_lastmod_date
             logging.debug(
-                    "Using sitemap's last-modified date: %s" % last_modified)
+                "Using sitemap's last-modified date: %s" % last_modified)
         elif last_modified_header_date is not None:
             last_modified = last_modified_header_date
             logging.debug(
-                    "Using header's last-modified date: %s" % last_modified)
+                "Using header's last-modified date: %s" % last_modified)
         else:
             last_modified = None
 
@@ -119,14 +120,12 @@ class WebScanLastModifiedCheckMiddleware(LastModifiedCheckMiddleware):
             canonical_url = canonicalize_url(response.url)
             try:
                 url_last_modified = UrlLastModified.objects.get(
-                    url=canonical_url,
-                    scanner=self.get_scanner_object(spider)
-                )
+                    url=canonical_url, scanner=self.get_scanner_object(spider))
                 stored_last_modified = url_last_modified.last_modified
-                logging.info("Comparing header %s against stored %s" % (
-                    last_modified, stored_last_modified))
+                logging.info("Comparing header %s against stored %s" %
+                             (last_modified, stored_last_modified))
                 if (stored_last_modified is not None
-                    and last_modified == stored_last_modified):
+                        and last_modified == stored_last_modified):
                     return False
                 else:
                     # Update last-modified date in database
@@ -138,10 +137,9 @@ class WebScanLastModifiedCheckMiddleware(LastModifiedCheckMiddleware):
                 url_last_modified = UrlLastModified(
                     url=canonical_url,
                     last_modified=last_modified,
-                    scanner=self.get_scanner_object(spider)
-                )
+                    scanner=self.get_scanner_object(spider))
                 logging.debug("Saving new last-modified value {}".format(
-                              url_last_modified))
+                    url_last_modified))
                 url_last_modified.save()
                 return True
         else:
@@ -162,8 +160,8 @@ class WebScanLastModifiedCheckMiddleware(LastModifiedCheckMiddleware):
 
     def get_stored_last_modified_date(self, url, spider):
         """Return the last modified date that has been stored for this URL."""
-        url_last_modified_object = self.get_stored_last_modified_object(url,
-                                                                        spider)
+        url_last_modified_object = self.get_stored_last_modified_object(
+            url, spider)
         if url_last_modified_object is not None:
             return url_last_modified_object.last_modified
         else:
@@ -182,4 +180,3 @@ class WebScanLastModifiedCheckMiddleware(LastModifiedCheckMiddleware):
     def get_scanner_object(self, spider):
         """Return the spider's scanner object."""
         return spider.scanner.scan_object.scanner
-

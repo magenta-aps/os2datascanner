@@ -16,7 +16,6 @@
 
 
 class Sensitivity:
-
     """Name space for sensitivity values."""
 
     def __init__(self):

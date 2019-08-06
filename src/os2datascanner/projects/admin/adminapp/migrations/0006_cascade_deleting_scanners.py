@@ -16,6 +16,10 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='version',
             name='location',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='versions', to='os2datascanner.Location', verbose_name='Location'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='versions',
+                to='os2datascanner.Location',
+                verbose_name='Location'),
         ),
     ]

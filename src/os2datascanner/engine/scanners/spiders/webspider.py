@@ -38,10 +38,8 @@ class WebSpider(ScannerSpider):
             self.crawl = True
             # Otherwise, use the roots of the domains as starting URLs
             for url in self.allowed_domains:
-                if (
-                            not url.startswith('http://') and
-                            not url.startswith('https://')
-                ):
+                if (not url.startswith('http://')
+                        and not url.startswith('https://')):
                     url = 'http://%s/' % url
 
                 # Remove wildcards
@@ -52,8 +50,7 @@ class WebSpider(ScannerSpider):
             self.link_extractor = LxmlLinkExtractor(
                 deny_extensions=(),
                 tags=('a', 'area', 'frame', 'iframe', 'script'),
-                attrs=('href', 'src')
-            )
+                attrs=('href', 'src'))
             self.referrers = {}
             self.broken_url_objects = {}
             # Dict to cache referrer URL objects
@@ -72,22 +69,22 @@ class WebSpider(ScannerSpider):
             try:
                 logging.info("Adding request for sitemap URL {0}".format(url))
                 requests.append(
-                    Request(url["url"],
-                            callback=self.parse,
-                            errback=self.handle_error,
-                            # Add the lastmod date from the sitemap
-                            meta={"lastmod": url.get("lastmod", None)})
-                )
+                    Request(
+                        url["url"],
+                        callback=self.parse,
+                        errback=self.handle_error,
+                        # Add the lastmod date from the sitemap
+                        meta={"lastmod": url.get("lastmod", None)}))
             except Exception:
                 logging.exception('adding request for url %r failed', url)
 
         for url in self.start_urls:
             try:
-                requests.append(Request(url, callback=self.parse,
-                                        errback=self.handle_error))
+                requests.append(
+                    Request(
+                        url, callback=self.parse, errback=self.handle_error))
             except Exception:
                 logging.exception('adding request for url %r failed', url)
-
 
         return requests
 
@@ -105,8 +102,8 @@ class WebSpider(ScannerSpider):
             for request in requests:
                 target_url = request.url
                 self.referrers.setdefault(target_url, []).append(source_url)
-                if (self.scanner.do_external_link_check and
-                        self.is_offsite(request)):
+                if (self.scanner.do_external_link_check
+                        and self.is_offsite(request)):
                     # Save external URLs for later checking
                     self.external_urls.add(target_url)
                 else:
@@ -124,7 +121,8 @@ class WebSpider(ScannerSpider):
         If link checking is enabled, saves the broken URL and referrers.
         """
         try:
-            logging.info("Handle error response status code: {}".format(failure.value.response))
+            logging.info("Handle error response status code: {}".format(
+                failure.value.response))
             logging.info("Url that failed: {}".format(
                 failure.value.response.request.url))
         except Exception:
@@ -132,11 +130,12 @@ class WebSpider(ScannerSpider):
 
         # If we should not do link check or failure is ignore request
         # and it is not a http error we know it is a last-modified check.
-        if (not self.scanner.do_link_check or
-                (isinstance(failure.value, IgnoreRequest) and not isinstance(
-                    failure.value, HttpError))):
-            logging.info("We do not do link check or failure is an instance of "
-                         "IgnoreRequest: {}".format(failure.value))
+        if (not self.scanner.do_link_check
+                or (isinstance(failure.value, IgnoreRequest)
+                    and not isinstance(failure.value, HttpError))):
+            logging.info(
+                "We do not do link check or failure is an instance of "
+                "IgnoreRequest: {}".format(failure.value))
             return
 
         if hasattr(failure.value, "response"):
@@ -171,8 +170,9 @@ class WebSpider(ScannerSpider):
         r = []
         if isinstance(response, HtmlResponse):
             links = self.link_extractor.extract_links(response)
-            r.extend(Request(x.url, callback=self.parse,
-                             errback=self.handle_error) for x in links)
+            r.extend(
+                Request(x.url, callback=self.parse, errback=self.handle_error)
+                for x in links)
         return r
 
     def associate_url_referrers(self, url_object):
@@ -193,7 +193,8 @@ class WebSpider(ScannerSpider):
                 url=referrer,
             )
             self.referrer_url_objects[referrer] = ReferrerUrl(
-                location=l, scan=self.scanner.scan_object,
+                location=l,
+                scan=self.scanner.scan_object,
             )
             self.referrer_url_objects[referrer].save()
         return self.referrer_url_objects[referrer]

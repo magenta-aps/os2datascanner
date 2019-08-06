@@ -26,7 +26,6 @@ import unicodecsv
 
 
 class CSVProcessor(Processor):
-
     """Processes CSV files."""
 
     item_type = "csv"
@@ -86,8 +85,7 @@ class CSVProcessor(Processor):
 
         # print "*** 3 ***"
         # Read CSV file
-        reader = unicodecsv.reader(io.StringIO(data.encode('utf-8')),
-                                   dialect)
+        reader = unicodecsv.reader(io.StringIO(data.encode('utf-8')), dialect)
         first_row = True
         header_row = []
         for row in reader:
@@ -118,14 +116,14 @@ class CSVProcessor(Processor):
                     if not match['sensitivity'] == Sensitivity.HIGH:
                         continue
 
-                    if (scanner.scan_object.do_cpr_replace and
-                            match['matched_rule'] == 'cpr'):
+                    if (scanner.scan_object.do_cpr_replace
+                            and match['matched_rule'] == 'cpr'):
                         replacement = scanner.scan_object.cpr_replace_text
-                    elif (scanner.scan_object.do_name_replace and
-                          match['matched_rule'] == 'name'):
+                    elif (scanner.scan_object.do_name_replace
+                          and match['matched_rule'] == 'name'):
                         replacement = scanner.scan_object.name_replace_text
-                    elif (scanner.scan_object.do_address_replace and
-                          match['matched_rule'] == 'address'):
+                    elif (scanner.scan_object.do_address_replace
+                          and match['matched_rule'] == 'address'):
                         replacement = scanner.scan_object.address_replace_text
                     else:
                         replacement = None
@@ -143,18 +141,18 @@ class CSVProcessor(Processor):
 
             # Add annotation cell indicating which rules were matched and in
             # which column
-            annotation = ", ".join("%s (%s)" % (
-                Match.get_matched_rule_display_name(warning[0]),
-                header_row[warning[1]]
-            ) for warning in warnings_in_row)
+            annotation = ", ".join(
+                "%s (%s)" % (Match.get_matched_rule_display_name(warning[0]),
+                             header_row[warning[1]])
+                for warning in warnings_in_row)
             row.append(annotation)
             rows.append(row)
 
         # print "*** 4 ***"
         # Write to output file
         with open(scanner.scan_object.scan_output_file, 'w') as f:
-            writer = unicodecsv.writer(f, delimiter=';', quotechar='"',
-                                       escapechar='|')
+            writer = unicodecsv.writer(
+                f, delimiter=';', quotechar='"', escapechar='|')
             writer.writerows(rows)
         # print "*** 5 ***"
         return True

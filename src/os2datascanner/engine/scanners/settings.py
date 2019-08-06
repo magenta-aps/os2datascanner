@@ -31,25 +31,34 @@ NEWSPIDER_MODULE = 'os2datascanner.engine.scanners.spiders'
 
 SPIDER_MIDDLEWARES = {
     # Disable default OffsiteMiddleware
-    'scrapy.spidermiddlewares.offsite.OffsiteMiddleware': None,
+    'scrapy.spidermiddlewares.offsite.OffsiteMiddleware':
+    None,
 
     # Use our own custom OffsiteMiddleware which doesn't allow subdomains
-    'os2datascanner.engine.scanners.middlewares.middlewares.NoSubdomainOffsiteMiddleware': 500,
-
-    'os2datascanner.engine.scanners.middlewares.middlewares.ExclusionRuleMiddleware': 1000,
-    'os2datascanner.engine.scanners.middlewares.middlewares.LastModifiedLinkStorageMiddleware': 1100
+    'os2datascanner.engine.scanners.middlewares.middlewares.NoSubdomainOffsiteMiddleware':
+    500,
+    'os2datascanner.engine.scanners.middlewares.middlewares.ExclusionRuleMiddleware':
+    1000,
+    'os2datascanner.engine.scanners.middlewares.middlewares.LastModifiedLinkStorageMiddleware':
+    1100
 }
 
 COOKIES_ENABLED = True
 COOKIES_DEBUG = True
 
 DOWNLOADER_MIDDLEWARES = {
-    'scrapy.downloadermiddlewares.redirect.RedirectMiddleware': None,
-    'os2datascanner.engine.scanners.middlewares.middlewares.OffsiteRedirectMiddleware': 600,
-    'os2datascanner.engine.scanners.middlewares.middlewares.CookieCollectorMiddleware': 700,
-    'os2datascanner.engine.scanners.middlewares.middlewares.OffsiteDownloaderMiddleware': 1000,
-    'os2datascanner.engine.scanners.middlewares.middlewares.ExclusionRuleDownloaderMiddleware': 1100,
-    'os2datascanner.engine.scanners.middlewares.webscan_middleware.WebScanLastModifiedCheckMiddleware': 1200,
+    'scrapy.downloadermiddlewares.redirect.RedirectMiddleware':
+    None,
+    'os2datascanner.engine.scanners.middlewares.middlewares.OffsiteRedirectMiddleware':
+    600,
+    'os2datascanner.engine.scanners.middlewares.middlewares.CookieCollectorMiddleware':
+    700,
+    'os2datascanner.engine.scanners.middlewares.middlewares.OffsiteDownloaderMiddleware':
+    1000,
+    'os2datascanner.engine.scanners.middlewares.middlewares.ExclusionRuleDownloaderMiddleware':
+    1100,
+    'os2datascanner.engine.scanners.middlewares.webscan_middleware.WebScanLastModifiedCheckMiddleware':
+    1200,
 }
 
 LOG_LEVEL = 'DEBUG'
@@ -68,8 +77,6 @@ WEBSERVICE_ENABLED = False
 TELNETCONSOLE_ENABLED = True
 
 local_settings_file = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)),
-    'local_settings.py'
-)
+    os.path.dirname(os.path.abspath(__file__)), 'local_settings.py')
 if os.path.exists(local_settings_file):
     from .local_settings import *  # noqa

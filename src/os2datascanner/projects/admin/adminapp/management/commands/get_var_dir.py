@@ -4,7 +4,6 @@ from django.core.management.base import BaseCommand
 
 
 class Command(BaseCommand):
-
     """Print this installation's VAR directory."""
 
     help = "Print the path to the VAR directory"

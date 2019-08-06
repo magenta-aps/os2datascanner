@@ -13,13 +13,15 @@ import subprocess
 def guess_mime_type(t):
     return mimetypes.guess_type(t, strict=False)[0]
 
+
 def _get_cifs_security_descriptor(path):
     """Attempts to parse the output of the getcifsacl command, returning a
     dictionary (unless the REVISION and CONTROL fields of the output are both
     "0x0", or the program returns an error status, in which case None is
     returned)."""
     r = subprocess.run(["getcifsacl", path],
-            stdout=subprocess.PIPE, universal_newlines=True)
+                       stdout=subprocess.PIPE,
+                       universal_newlines=True)
     if r.returncode == 0:
         rv = {}
         for line in r.stdout.splitlines():
@@ -30,13 +32,14 @@ def _get_cifs_security_descriptor(path):
                 rv[k].append(v)
             else:
                 rv[k] = v
-        if not (_check_dictionary_field(rv, "REVISION", "0x0") and
-                _check_dictionary_field(rv, "CONTROL", "0x0")):
+        if not (_check_dictionary_field(rv, "REVISION", "0x0")
+                and _check_dictionary_field(rv, "CONTROL", "0x0")):
             return rv
         else:
             return None
     else:
         return None
+
 
 def _codepage_to_codec(cp):
     """Retrieves the Python text codec corresponding to the given Windows
@@ -61,6 +64,7 @@ def _codepage_to_codec(cp):
     except LookupError:
         return None
 
+
 def _get_ole_metadata(path):
     try:
         with open(path, "rb") as f:
@@ -84,6 +88,7 @@ def _get_ole_metadata(path):
     except FileNotFoundError:
         return None
 
+
 def _process_zip_resource(path, member, func):
     try:
         with ZipFile(path, "r") as z:
@@ -91,6 +96,7 @@ def _process_zip_resource(path, member, func):
                 return func(f)
     except (KeyError, BadZipFile, FileNotFoundError):
         return None
+
 
 def _get_pdf_document_info(path):
     try:
@@ -105,6 +111,7 @@ def _get_pdf_document_info(path):
     except FileNotFoundError:
         return None
 
+
 def _check_dictionary_field(d, k, value=None):
     """Many of the metadata extraction functions in this file return dictionary
     or dictionary-like objects on success and None on failure -- and, depending
@@ -116,19 +123,24 @@ def _check_dictionary_field(d, k, value=None):
     values at any point."""
     return d and k in d and d[k] is not None and (not value or value == d[k])
 
+
 def type_is_ole(mime):
     return mime in ("application/msword", "application/vnd.ms-excel",
-            "application/vnd.ms-powerpoint")
+                    "application/vnd.ms-powerpoint")
+
 
 def type_is_pdf(mime):
     return mime in ("application/pdf", "application/x-pdf",
-            "application/x-bzpdf", "application/x-gzpdf")
+                    "application/x-bzpdf", "application/x-gzpdf")
+
 
 def type_is_ooxml(mime):
     return mime.startswith("application/vnd.openxmlformats-officedocument.")
 
+
 def type_is_opendocument(mime):
     return mime.startswith("application/vnd.oasis.opendocument.")
+
 
 def guess_responsible_party(path):
     """Returns a dictionary of labelled speculations about the person
@@ -171,18 +183,24 @@ def guess_responsible_party(path):
         if type_is_opendocument(mime):
             f = _process_zip_resource(path, "meta.xml", parse)
             if f:
-                content = f.find("{urn:oasis:names:tc:opendocument:xmlns:office:1.0}meta")
+                content = f.find(
+                    "{urn:oasis:names:tc:opendocument:xmlns:office:1.0}meta")
                 if content:
-                    lm = content.find("{http://purl.org/dc/elements/1.1/}creator")
+                    lm = content.find(
+                        "{http://purl.org/dc/elements/1.1/}creator")
                     if lm is not None and lm.text:
                         speculations["od-modifier"] = lm.text.strip()
-                    c = content.find("{urn:oasis:names:tc:opendocument:xmlns:meta:1.0}initial-creator")
+                    c = content.find(
+                        "{urn:oasis:names:tc:opendocument:xmlns:meta:1.0}initial-creator"
+                    )
                     if c is not None and c.text:
                         speculations["od-creator"] = c.text.strip()
         elif type_is_ooxml(mime):
             f = _process_zip_resource(path, "docProps/core.xml", parse)
             if f:
-                lm = f.find("{http://schemas.openxmlformats.org/package/2006/metadata/core-properties}lastModifiedBy")
+                lm = f.find(
+                    "{http://schemas.openxmlformats.org/package/2006/metadata/core-properties}lastModifiedBy"
+                )
                 if lm is not None and lm.text:
                     speculations["ooxml-modifier"] = lm.text.strip()
                 c = f.find("{http://purl.org/dc/elements/1.1/}creator")

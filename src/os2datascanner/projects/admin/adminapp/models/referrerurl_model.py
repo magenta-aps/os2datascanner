@@ -4,7 +4,6 @@ from .version_model import Version
 
 
 class ReferrerUrl(Version):
-
     """A representation of a referrer URL."""
 
     class Meta:
@@ -22,8 +21,7 @@ class ReferrerUrl(Version):
     @property
     def broken_urls(self):
         result = self.os2datascanner_webversion_linked_urls.exclude(
-            status_code__isnull=True
-        ).order_by('location__url')
+            status_code__isnull=True).order_by('location__url')
 
         return result
         # .filter(status=None)

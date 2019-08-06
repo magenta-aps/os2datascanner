@@ -41,7 +41,6 @@ logger = structlog.get_logger()
 
 
 class Scan(models.Model):
-
     """An actual instance of the scanning process done by a scanner."""
 
     def __init__(self, *args, **kwargs):
@@ -64,33 +63,32 @@ class Scan(models.Model):
         return self.versions.values('location')
 
     # Begin setup copied from scanner
-    scanner = models.ForeignKey(Scanner,
-                                null=True, verbose_name='webscanner',
-                                related_name='webscans',
-                                on_delete=models.SET_NULL)
+    scanner = models.ForeignKey(
+        Scanner,
+        null=True,
+        verbose_name='webscanner',
+        related_name='webscans',
+        on_delete=models.SET_NULL)
 
     is_visible = models.BooleanField(default=True)
 
     do_ocr = models.BooleanField(default=False, verbose_name='Scan billeder')
 
-
     do_last_modified_check = models.BooleanField(
         default=True,
         verbose_name='Tjek dato for sidste ændring',
         help_text='Scan udelukkende filer der rapporteres som nyere end '
-                  'sidste scanning',
+        'sidste scanning',
     )
 
-    columns = models.CharField(validators=[validate_comma_separated_integer_list],
-                               max_length=128,
-                               null=True,
-                               blank=True
-                               )
+    columns = models.CharField(
+        validators=[validate_comma_separated_integer_list],
+        max_length=128,
+        null=True,
+        blank=True)
 
-    rules = models.ManyToManyField(Rule,
-                                   blank=True,
-                                   verbose_name='Regler',
-                                   related_name='scans')
+    rules = models.ManyToManyField(
+        Rule, blank=True, verbose_name='Regler', related_name='scans')
     recipients = models.ManyToManyField(UserProfile, blank=True)
 
     # Spreadsheet annotation and replacement parameters
@@ -104,18 +102,17 @@ class Scan(models.Model):
     # Replace CPRs?
     do_cpr_replace = models.BooleanField(default=False)
     # Text to replace CPRs with
-    cpr_replace_text = models.CharField(max_length=2048, null=True,
-                                        blank=True)
+    cpr_replace_text = models.CharField(max_length=2048, null=True, blank=True)
     # Replace names?
     do_name_replace = models.BooleanField(default=False)
     # Text to replace names with
-    name_replace_text = models.CharField(max_length=2048, null=True,
-                                         blank=True)
+    name_replace_text = models.CharField(
+        max_length=2048, null=True, blank=True)
     # Replace addresses?
     do_address_replace = models.BooleanField(default=False)
     # Text to replace addresses with
-    address_replace_text = models.CharField(max_length=2048, null=True,
-                                            blank=True)
+    address_replace_text = models.CharField(
+        max_length=2048, null=True, blank=True)
 
     # Scan status
     NEW = "NEW"
@@ -154,16 +151,13 @@ class Scan(models.Model):
         verbose_name='Sluttidspunkt',
     )
 
-    pause_non_ocr_conversions = models.BooleanField(default=False,
-                                                    verbose_name='Pause ' +
-                                                                 'non-OCR conversions')
+    pause_non_ocr_conversions = models.BooleanField(
+        default=False, verbose_name='Pause ' + 'non-OCR conversions')
 
     def get_number_of_failed_conversions(self):
         """The number conversions that has failed during this scan."""
         return ConversionQueueItem.objects.filter(
-            url__scan=self,
-            status=ConversionQueueItem.FAILED
-        ).count()
+            url__scan=self, status=ConversionQueueItem.FAILED).count()
 
     @cached_property
     def webscanner(self):
@@ -232,8 +226,8 @@ class Scan(models.Model):
         return os.path.join(self.scan_log_dir, 'occurrence_%s.log' % self.pk)
 
     # Reason for failure
-    reason = models.CharField(max_length=1024, blank=True, default="",
-                              verbose_name='Årsag')
+    reason = models.CharField(
+        max_length=1024, blank=True, default="", verbose_name='Årsag')
     pid = models.IntegerField(null=True, blank=True, verbose_name='Pid')
 
     @property
@@ -249,11 +243,8 @@ class Scan(models.Model):
     def __str__(self):
         """Return the name of the scan's scanner combined with a timestamp."""
         if self.creation_time:
-            ts = (
-                self.creation_time
-                .astimezone(dateutil.tz.tzlocal())
-                .replace(microsecond=0, tzinfo=None)
-            )
+            ts = (self.creation_time.astimezone(dateutil.tz.tzlocal()).replace(
+                microsecond=0, tzinfo=None))
             return "{} — {}".format(self.scanner, ts)
         else:
             return str(self.scanner)
@@ -298,10 +289,8 @@ class Scan(models.Model):
 
         inactive_scans = cls.objects.filter(
             models.Q(status__in=(Scan.DONE, Scan.FAILED)),
-            (
-                models.Q(end_time__gt=oldest_end_time) |
-                models.Q(end_time__isnull=True)
-            ),
+            (models.Q(end_time__gt=oldest_end_time)
+             | models.Q(end_time__isnull=True)),
         )
 
         logger.debug(
@@ -318,8 +307,7 @@ class Scan(models.Model):
     def check_running_scans(cls):
         with transaction.atomic():
             running_scans = cls.objects.filter(
-                status=cls.STARTED
-            ).select_for_update(nowait=True)
+                status=cls.STARTED).select_for_update(nowait=True)
 
             logger.debug(
                 "check_running_scans",
@@ -333,9 +321,7 @@ class Scan(models.Model):
                 try:
                     # Check if process is still running
                     os.kill(scan.pid, 0)
-                    logger.debug(
-                        "scan_ok", scan=scan.pk, scan_pid=scan.pid
-                    )
+                    logger.debug("scan_ok", scan=scan.pk, scan_pid=scan.pid)
                 except OSError:
                     logger.critical(
                         "scan_disappeared",
@@ -345,15 +331,12 @@ class Scan(models.Model):
                     )
 
                     scan.set_scan_status_failed(
-                        "FAILED: process {} disappeared".format(scan.pid)
-                    )
+                        "FAILED: process {} disappeared".format(scan.pid))
 
     def delete_all_pending_conversionqueue_items(self):
         # Delete all pending conversionqueue items
         pending_items = ConversionQueueItem.objects.filter(
-            url__scan=self,
-            status=ConversionQueueItem.NEW
-        )
+            url__scan=self, status=ConversionQueueItem.NEW)
 
         if pending_items.exists():
             self.logger.debug(
@@ -387,28 +370,29 @@ class Scan(models.Model):
         """
         ocr_items_by_scan = ConversionQueueItem.objects.filter(
             status=ConversionQueueItem.NEW,
-            type="ocr"
-        ).values("url__scan").annotate(total=Count("url__scan"))
+            type="ocr").values("url__scan").annotate(total=Count("url__scan"))
         for items in ocr_items_by_scan:
             scan = cls.objects.get(pk=items["url__scan"])
             num_ocr_items = items["total"]
             if (not scan.pause_non_ocr_conversions and
-                        num_ocr_items > settings.PAUSE_NON_OCR_ITEMS_THRESHOLD):
+                    num_ocr_items > settings.PAUSE_NON_OCR_ITEMS_THRESHOLD):
                 logger.info(
                     "Pausing non-OCR conversions for scan "
                     "because it has too many OCR items",
-                    scan_id=scan.pk, scan_status=scan.status,
+                    scan_id=scan.pk,
+                    scan_status=scan.status,
                     num_ocr_items=num_ocr_items,
                     threshold=settings.PAUSE_NON_OCR_ITEMS_THRESHOLD,
                 )
                 scan.pause_non_ocr_conversions = True
                 scan.save()
-            elif (scan.pause_non_ocr_conversions and
-                          num_ocr_items < settings.RESUME_NON_OCR_ITEMS_THRESHOLD):
+            elif (scan.pause_non_ocr_conversions
+                  and num_ocr_items < settings.RESUME_NON_OCR_ITEMS_THRESHOLD):
                 logger.info(
                     "Resuming non-OCR conversions for scan "
                     "as its OCR are under the threshold",
-                    scan_id=scan.pk, scan_status=scan.status,
+                    scan_id=scan.pk,
+                    scan_status=scan.status,
                     num_ocr_items=num_ocr_items,
                     threshold=settings.RESUME_NON_OCR_ITEMS_THRESHOLD,
                 )

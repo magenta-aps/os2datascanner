@@ -33,7 +33,6 @@ home_root_dir = os.path.join(lo_dir, "homedirs")
 
 
 class LibreOfficeProcessor(Processor):
-
     """Represents a Processor for LibreOffice documents.
 
     Allows setting of the "home" directory for the libreoffice program,
@@ -56,24 +55,23 @@ class LibreOfficeProcessor(Processor):
         return [
             "/usr/lib/libreoffice/program/soffice",
             "-env:UserInstallation=file://{0}".format(dummy_home),
-            "--{1}accept=pipe,name=cnv_{0};urp".format(
-                    self.instance_name, "" if accept else "un"),
+            "--{1}accept=pipe,name=cnv_{0};urp".format(self.instance_name,
+                                                       "" if accept else "un"),
             "--headless", "--invisible"
         ]
 
     def setup_queue_processing(self, pid, *args):
         """Setup the home directory as the first argument."""
-        super().setup_queue_processing(
-            pid, *args
-        )
+        super().setup_queue_processing(pid, *args)
         self.instance_name = args[0]
         self.instance = subprocess.Popen(self._make_args(accept=True))
         assert self.instance.poll() is None, \
             "couldn't create a LibreOffice process"
 
     def teardown_queue_processing(self):
-        self.logger.info('Tearing down libreoffice queue processor',
-                         instance_name=self.instance_name)
+        self.logger.info(
+            'Tearing down libreoffice queue processor',
+            instance_name=self.instance_name)
 
         try:
             if self.unoconv:
@@ -98,8 +96,8 @@ class LibreOfficeProcessor(Processor):
                 # Try to convince the existing instance to stop listening on
                 # the pipe (this subprocess will send that instruction and then
                 # stop immediately)...
-                terminator = subprocess.Popen(self._make_args(accept=False) +
-                        ['--terminate_after_init'])
+                terminator = subprocess.Popen(
+                    self._make_args(accept=False) + ['--terminate_after_init'])
                 try:
                     terminator.wait(10)
                 except subprocess.TimeoutExpired:
@@ -174,24 +172,20 @@ folder."""
             # TODO: Input type to filter mapping?
             output_file = os.path.join(
                 tmp_dir,
-                os.path.basename(item.file_path).split(".")[0] + ".csv"
-            )
+                os.path.basename(item.file_path).split(".")[0] + ".csv")
 
             unoconv_args = [
-                project_dir + "/bin/unoconv",
-                "--pipe", "cnv_{0}".format(self.instance_name), "--no-launch",
-                "--format", output_filter,
-                "-e", 'FilterOptions="59,34,0,1"',
-                "--output", output_file, "-vvv",
-                item.file_path
+                project_dir + "/bin/unoconv", "--pipe", "cnv_{0}".format(
+                    self.instance_name), "--no-launch", "--format",
+                output_filter, "-e", 'FilterOptions="59,34,0,1"', "--output",
+                output_file, "-vvv", item.file_path
             ]
         else:
             # HTML
             unoconv_args = [
-                project_dir + "/bin/unoconv",
-                "--pipe", "cnv_{0}".format(self.instance_name), "--no-launch",
-                "--format", output_filter,
-                "--output", tmp_dir + "/", "-vvv",
+                project_dir + "/bin/unoconv", "--pipe", "cnv_{0}".format(
+                    self.instance_name), "--no-launch", "--format",
+                output_filter, "--output", tmp_dir + "/", "-vvv",
                 item.file_path
             ]
 

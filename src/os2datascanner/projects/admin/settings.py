@@ -16,7 +16,6 @@ import structlog
 
 from django.utils.translation import gettext_lazy as _
 
-
 BASE_DIR = str(pathlib.Path(__file__).parent.parent.parent.parent.absolute())
 PROJECT_DIR = os.path.dirname(BASE_DIR)
 BUILD_DIR = os.path.join(PROJECT_DIR, 'build')
@@ -32,15 +31,16 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'APP_DIRS': True,
         'OPTIONS': {
-            'debug': DEBUG,
+            'debug':
+            DEBUG,
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'django_settings_export.settings_export',
-             ],
-         },
+            ],
+        },
     },
 ]
 
@@ -106,15 +106,14 @@ try:
     # if installed, add django_extensions for its many useful commands
     import django_extensions  # noqa
 
-    INSTALLED_APPS += (
-        'django_extensions',
-    )
+    INSTALLED_APPS += ('django_extensions', )
 except ImportError:
     pass
 
 XMLRPC_METHODS = (
     ('os2datascanner.projects.admin.adminapp.rpc.scan_urls', 'scan_urls'),
-    ('os2datascanner.projects.admin.adminapp.rpc.scan_documents', 'scan_documents'),
+    ('os2datascanner.projects.admin.adminapp.rpc.scan_documents',
+     'scan_documents'),
     ('os2datascanner.projects.admin.adminapp.rpc.get_status', 'get_status'),
     ('os2datascanner.projects.admin.adminapp.rpc.get_report', 'get_report'),
 )
@@ -133,7 +132,6 @@ ROOT_URLCONF = 'os2datascanner.projects.admin.urls'
 
 WSGI_APPLICATION = 'os2datascanner.projects.admin.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
@@ -147,20 +145,14 @@ DATABASES = {
     }
 }
 
-DATABASE_POOL_ARGS = {
-    'max_overflow': 10,
-    'pool_size': 5,
-    'recycle': 300
-}
+DATABASE_POOL_ARGS = {'max_overflow': 10, 'pool_size': 5, 'recycle': 300}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
 LANGUAGE_CODE = 'da-dk'
 
-LOCALE_PATHS = (
-    os.path.join(BASE_DIR, 'adminapp', 'locale'),
-)
+LOCALE_PATHS = (os.path.join(BASE_DIR, 'adminapp', 'locale'), )
 
 LANGUAGES = (
     ('da', _('Danish')),
@@ -176,7 +168,6 @@ USE_L10N = True
 USE_TZ = True
 
 USE_THOUSAND_SEPARATOR = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
@@ -254,7 +245,6 @@ structlog.configure(
     cache_logger_on_first_use=True,
 )
 
-
 # Logging
 LOGGING = {
     'version': 1,
@@ -272,8 +262,10 @@ LOGGING = {
             "processor": structlog.dev.ConsoleRenderer(),
         },
         "key_value": {
-            "()": "structlog.stdlib.ProcessorFormatter",
-            "processor": structlog.processors.KeyValueRenderer(key_order=[
+            "()":
+            "structlog.stdlib.ProcessorFormatter",
+            "processor":
+            structlog.processors.KeyValueRenderer(key_order=[
                 'timestamp',
                 'level',
                 'event',
@@ -281,10 +273,8 @@ LOGGING = {
             ]),
         },
         'verbose': {
-            'format': (
-                '%(levelname)s %(asctime)s %(module)s %(process)d '
-                '%(thread)d %(message)s'
-            ),
+            'format': ('%(levelname)s %(asctime)s %(module)s %(process)d '
+                       '%(thread)d %(message)s'),
         },
         'simple': {
             'format': '%(levelname)s %(message)s'
@@ -349,8 +339,6 @@ LOGGING = {
 }
 
 local_settings_file = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)),
-    'local_settings.py'
-)
+    os.path.dirname(os.path.abspath(__file__)), 'local_settings.py')
 if os.path.exists(local_settings_file):
     from .local_settings import *  # noqa

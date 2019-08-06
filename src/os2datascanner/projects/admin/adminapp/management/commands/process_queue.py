@@ -14,7 +14,6 @@
 #
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( http://www.os2web.dk/ )
-
 """Program which processes the queue of the given type.
 
 Pass extra arguments to the processor after the first argument.
@@ -36,6 +35,7 @@ from os2datascanner.engine.utils import prometheus_session
 
 def sigterm_handler(sig, frm):
     sys.exit(1)
+
 
 # process needs to listen on
 # signal.SIGTERM in order to tear down ressources.
@@ -64,11 +64,13 @@ class Command(BaseCommand):
 
         logger = structlog.get_logger()
 
-        with prometheus_session(str(os.getpid()),
+        with prometheus_session(
+                str(os.getpid()),
                 settings.PROJECT_DIR + "/var/prometheus",
                 processor_type=processor_type):
             if queued_processor is not None:
-                queued_processor.setup_queue_processing(os.getpid(), *extra_args)
+                queued_processor.setup_queue_processing(
+                    os.getpid(), *extra_args)
 
             logger.info('processor_ready', extra_args=extra_args)
             try:

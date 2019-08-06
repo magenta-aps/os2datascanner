@@ -13,7 +13,7 @@ def valid_path(path):
         return path
     else:
         raise argparse.ArgumentTypeError(
-                "'{0}': No such file or directory".format(path))
+            "'{0}': No such file or directory".format(path))
 
 
 class Command(BaseCommand):

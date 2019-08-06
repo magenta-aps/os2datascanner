@@ -52,21 +52,15 @@ class ReportList(RestrictedListView):
             try:
                 profile = user.profile
                 # TODO: Filter by group here if relevant.
-                if (
-                        profile.is_group_admin or not
-                        profile.organization.do_use_groups
-                ):
+                if (profile.is_group_admin
+                        or not profile.organization.do_use_groups):
                     reports = objects.filter(
-                        scanner__organization=profile.organization
-                    )
+                        scanner__organization=profile.organization)
                 else:
                     reports = objects.filter(
-                        scanner__group__in=profile.groups.all()
-                    )
+                        scanner__group__in=profile.groups.all())
             except UserProfile.DoesNotExist:
-                reports = objects.filter(
-                    scanner__organization=None
-                )
+                reports = objects.filter(scanner__organization=None)
         reports = reports.filter(is_visible=True)
         return reports.order_by('-start_time')
 
@@ -108,13 +102,11 @@ class ReportDetails(UpdateView, LoginRequiredMixin):
         this_scan = self.get_object()
 
         context = super().get_context_data(**kwargs)
-        all_matches = Match.objects.filter(
-            url__scan=this_scan
-        ).order_by('-sensitivity', 'url', 'matched_rule', 'matched_data')
+        all_matches = Match.objects.filter(url__scan=this_scan).order_by(
+            '-sensitivity', 'url', 'matched_rule', 'matched_data')
 
-        broken_urls = WebVersion.objects.filter(
-            scan=this_scan
-        ).exclude(status_code__isnull=True).order_by('location__url')
+        broken_urls = WebVersion.objects.filter(scan=this_scan).exclude(
+            status_code__isnull=True).order_by('location__url')
 
         referrer_urls = ReferrerUrl.objects.filter(scan=this_scan)
 
@@ -126,8 +118,7 @@ class ReportDetails(UpdateView, LoginRequiredMixin):
         context['all_matches'] = all_matches
         context['no_of_matches'] = all_matches.count()
         context['failed_conversions'] = (
-            this_scan.get_number_of_failed_conversions()
-        )
+            this_scan.get_number_of_failed_conversions())
         try:
             stats = Statistic.objects.get(scan=this_scan)
             context['files_scraped_count'] = stats.files_scraped_count
@@ -179,9 +170,8 @@ class ScanReportLog(ReportDetails):
         scan = self.get_object()
         response = HttpResponse(content_type="text/plain")
         log_file = "scan{0}_log.txt".format(scan.id)
-        response[
-            'Content-Disposition'
-        ] = 'attachment; filename={0}'.format(log_file)
+        response['Content-Disposition'] = 'attachment; filename={0}'.format(
+            log_file)
 
         with open(scan.scan_log_file, "r") as f:
             response.write(f.read())
@@ -200,24 +190,28 @@ def render_csv_report(scan, context):
     # CSV utilities
     # Print summary header
     yield writer.writerow([
-            'Starttidspunkt', 'Sluttidspunkt', 'Status',
-            'Totalt antal matches', 'Total antal broken links'])
+        'Starttidspunkt', 'Sluttidspunkt', 'Status', 'Totalt antal matches',
+        'Total antal broken links'
+    ])
     yield writer.writerow([
-            scan.start_time, scan.end_time, scan.get_status_display(),
-            context['no_of_matches'], context['no_of_broken_links']])
+        scan.start_time, scan.end_time,
+        scan.get_status_display(), context['no_of_matches'],
+        context['no_of_broken_links']
+    ])
 
     all_matches = context['all_matches']
     if all_matches:
         # Print match header
-        yield writer.writerow([
-                'URL', 'Regel', 'Match', 'Følsomhed', 'Kontekst'])
+        yield writer.writerow(
+            ['URL', 'Regel', 'Match', 'Følsomhed', 'Kontekst'])
 
         for match in all_matches:
             yield writer.writerow([
-                    match.url.url, match.get_matched_rule_display(),
-                    match.matched_data.replace('\n', '').replace('\r', ' '),
-                    match.get_sensitivity_display(),
-                    match.match_context])
+                match.url.url,
+                match.get_matched_rule_display(),
+                match.matched_data.replace('\n', '').replace('\r', ' '),
+                match.get_sensitivity_display(), match.match_context
+            ])
 
     broken_urls = context['broken_urls']
     if broken_urls:
@@ -225,8 +219,9 @@ def render_csv_report(scan, context):
         yield writer.writerow(['Referrers', 'URL', 'Status'])
         for url in broken_urls:
             for referrer in url.referrers.all():
-                yield writer.writerow([
-                        referrer.url, url.url, url.status_message])
+                yield writer.writerow(
+                    [referrer.url, url.url, url.status_message])
+
 
 class CSVReportDetails(ReportDetails):
     """Display full report in CSV format."""
@@ -235,10 +230,9 @@ class CSVReportDetails(ReportDetails):
         """Generate a CSV file and return it as the http response."""
         scan = self.get_object()
         response = StreamingHttpResponse(
-                render_csv_report(scan, context), content_type='text/csv')
+            render_csv_report(scan, context), content_type='text/csv')
         report_file = '{0}{1}.csv'.format(
-            scan.scanner.organization.name.replace(' ', '_'),
-            scan.id)
+            scan.scanner.organization.name.replace(' ', '_'), scan.id)
         response['Content-Disposition'] = (
-                'attachment; filename={0}'.format(report_file))
+            'attachment; filename={0}'.format(report_file))
         return response

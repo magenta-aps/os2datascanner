@@ -25,20 +25,24 @@ from model_utils.managers import InheritanceManager
 class Version(models.Model):
 
     objects = InheritanceManager()
-
     """A representation of an actual URL on a domain with its MIME type."""
 
-    location = models.ForeignKey('Location', null=False,
-                                 verbose_name='Location',
-                                 related_name='versions',
-                                 on_delete=models.CASCADE)
-    scan = models.ForeignKey('Scan', null=False, verbose_name='Scan',
-                             related_name='versions',
-                             on_delete=models.CASCADE)
+    location = models.ForeignKey(
+        'Location',
+        null=False,
+        verbose_name='Location',
+        related_name='versions',
+        on_delete=models.CASCADE)
+    scan = models.ForeignKey(
+        'Scan',
+        null=False,
+        verbose_name='Scan',
+        related_name='versions',
+        on_delete=models.CASCADE)
     metadata = JSONField(null=True, blank=True)
 
-    mime_type = models.CharField(max_length=256, verbose_name='Content type',
-                                 null=True)
+    mime_type = models.CharField(
+        max_length=256, verbose_name='Content type', null=True)
 
     def __str__(self):
         """Return the URL."""

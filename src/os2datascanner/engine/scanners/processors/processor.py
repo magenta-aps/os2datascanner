@@ -15,7 +15,6 @@
 # source municipalities ( http://www.os2web.dk/ )
 """Processors."""
 
-
 import time
 import os
 import mimetypes
@@ -35,7 +34,6 @@ from django.conf import settings
 
 from os2datascanner.utils.metadata import guess_responsible_party
 from os2datascanner.projects.admin.adminapp.models.conversionqueueitem_model import ConversionQueueItem
-
 
 logger = structlog.get_logger()
 
@@ -67,22 +65,21 @@ def get_image_dimensions(file_path):
     If there is a problem getting the information, returns None.
     """
     try:
-        dimensions = subprocess.check_output(["identify", "-format", "%wx%h",
-                                              file_path])
+        dimensions = subprocess.check_output(
+            ["identify", "-format", "%wx%h", file_path])
     except subprocess.CalledProcessError as e:
         logger.exception('image_identify_failed', exc_info=e)
 
         return None
-    return tuple(int(dim.strip()) for dim in
-                 dimensions.decode('utf-8').split("x")
-                 )
+    return tuple(
+        int(dim.strip()) for dim in dimensions.decode('utf-8').split("x"))
 
 
-METRIC_CONVERSIONS = Summary("os2datascanner_processor_conversions", "Object conversions")
+METRIC_CONVERSIONS = Summary("os2datascanner_processor_conversions",
+                             "Object conversions")
 
 
 class Processor(object):
-
     """Represents a Processor which can process spider and queue items.
 
     Provides methods to process queue items for the current processor type.
@@ -200,15 +197,14 @@ class Processor(object):
                 data = f.read()
             except UnicodeDecodeError:
                 url.scan.log_occurrence(
-                        "UTF-8 decoding failed for {0}. Will try and open "
-                        "it with encoding iso-8859-1.".format(file_path)
-                        )
-                f = codecs.open(file_path, "rb", encoding='iso-8859-1',
-                        errors='replace')
+                    "UTF-8 decoding failed for {0}. Will try and open "
+                    "it with encoding iso-8859-1.".format(file_path))
+                f = codecs.open(
+                    file_path, "rb", encoding='iso-8859-1', errors='replace')
                 data = f.read()
                 url.scan.log_occurrence(
-                    "Successfully red the file {0} using encoding iso-8859-1.".format(file_path)
-                )
+                    "Successfully red the file {0} using encoding iso-8859-1.".
+                    format(file_path))
             finally:
                 f.close()
 
@@ -217,8 +213,7 @@ class Processor(object):
             self.process(data, url)
         except Exception as e:
             url.scan.log_occurrence(
-                "process_file failed for url {0}: {1}".format(url.url, str(e))
-            )
+                "process_file failed for url {0}: {1}".format(url.url, str(e)))
 
             if settings.DEBUG:
                 url.scan.log_occurrence(repr(e))
@@ -264,12 +259,10 @@ class Processor(object):
                     tb = traceback.format_exc()
                     try:
                         item.url.scan.log_occurrence(
-                                lm.format(item.file, item.type, item.url.url)
-                                )
+                            lm.format(item.file, item.type, item.url.url))
                     except Exception:
                         item.url.scan.log_occurrence(
-                                lm2.format(item.type, item.url.url)
-                                )
+                            lm2.format(item.type, item.url.url))
 
                     # Try to find out if something went wrong
                     if settings.DEBUG:
@@ -298,16 +291,13 @@ class Processor(object):
             try:
                 with transaction.atomic():
                     new_items_queryset = ConversionQueueItem.objects.filter(
-                        type=self.item_type,
-                        status=ConversionQueueItem.NEW
-                    )
+                        type=self.item_type, status=ConversionQueueItem.NEW)
 
                     if self.item_type != "ocr":
                         # If this is not an OCR processor, include only scans
                         # where non-OCR conversions are not paused
                         new_items_queryset = new_items_queryset.filter(
-                            url__scan__pause_non_ocr_conversions=False
-                        )
+                            url__scan__pause_non_ocr_conversions=False)
 
                     # Get scans with pending items of the wanted type
                     scans = new_items_queryset.values('url__scan').distinct()
@@ -319,7 +309,7 @@ class Processor(object):
                     # from a random scan
                     result = new_items_queryset.filter(
                         url__scan=random_scan_pk).select_for_update(
-                        nowait=True)[0]
+                            nowait=True)[0]
 
                     # Change status of the found item
                     result.status = ConversionQueueItem.PROCESSING
@@ -381,10 +371,7 @@ class Processor(object):
                         mime_type)
 
                     # Disable OCR if requested
-                    if (
-                        processor_type == 'ocr' and
-                        not item.url.scan.do_ocr
-                    ):
+                    if (processor_type == 'ocr' and not item.url.scan.do_ocr):
                         processor_type = None
 
                     # Ignore and delete images which are smaller than
@@ -393,12 +380,10 @@ class Processor(object):
                         dimensions = get_image_dimensions(file_path)
                         if dimensions is not None:
                             (w, h) = dimensions
-                            if not (
-                                (w >= MIN_OCR_DIMENSION_BOTH and
-                                 h >= MIN_OCR_DIMENSION_BOTH) and
-                                (w >= MIN_OCR_DIMENSION_EITHER or
-                                 h >= MIN_OCR_DIMENSION_EITHER)
-                            ):
+                            if not ((w >= MIN_OCR_DIMENSION_BOTH
+                                     and h >= MIN_OCR_DIMENSION_BOTH) and
+                                    (w >= MIN_OCR_DIMENSION_EITHER
+                                     or h >= MIN_OCR_DIMENSION_EITHER)):
                                 ignored_ocr_count += 1
                                 processor_type = None
 
@@ -421,7 +406,8 @@ class Processor(object):
                     continue
         if ignored_ocr_count > 0:
             self.logger.info(
-                "ignore_images", count=ignored_ocr_count,
+                "ignore_images",
+                count=ignored_ocr_count,
                 MIN_OCR_DIMENSION_BOTH=MIN_OCR_DIMENSION_BOTH,
                 MIN_OCR_DIMENSION_EITHER=MIN_OCR_DIMENSION_EITHER,
             )
@@ -440,22 +426,17 @@ class Processor(object):
     mimetypes_to_processors = {
         'text': 'text',
         'image': 'ocr',
-
         'text/html': 'html',
         'text/xml': 'xml',
         'application/xhtml+xml': 'html',
         'application/xml': 'xml',
         'application/vnd.google-earth.kml+xml': 'html',
-
         'application/javascript': 'text',
         'application/json': 'text',
         'application/csv': 'csv',
         'text/csv': 'csv',
-
         'application/zip': 'zip',
-
         'application/pdf': 'pdf',
-
         'application/rtf': 'libreoffice',
         'application/msword': 'libreoffice',
         opendocument + '.chart': 'libreoffice',
@@ -482,7 +463,6 @@ class Processor(object):
         officedocument + '.wordprocessingml.template': 'libreoffice',
         'application/vnd.ms-excel': 'libreoffice',
         'application/vnd.ms-powerpoint': 'libreoffice',
-
         'application/vnd.lotus-1-2-3': 'libreoffice',
         'application/lotus123': 'libreoffice',
         'application/wk3': 'libreoffice'
@@ -496,6 +476,5 @@ class Processor(object):
         processor = cls.mimetypes_to_processors.get(mime_type, None)
         if processor is None:
             processor = cls.mimetypes_to_processors.get(
-                mime_type.split("/")[0], None
-            )
+                mime_type.split("/")[0], None)
         return processor

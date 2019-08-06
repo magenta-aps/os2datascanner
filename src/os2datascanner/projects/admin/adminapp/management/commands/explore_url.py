@@ -4,9 +4,9 @@ from django.core.management.base import BaseCommand
 
 from os2datascanner.engine2.demo import url_explorer
 from os2datascanner.engine2.model.core import (
-        Source,
-        SourceManager,
-        UnknownSchemeError,
+    Source,
+    SourceManager,
+    UnknownSchemeError,
 )
 
 
@@ -24,6 +24,6 @@ class Command(BaseCommand):
                 try:
                     s = Source.from_url(i)
                     url_explorer.print_source(
-                            sm, s, guess=guess, summarise=summarise)
+                        sm, s, guess=guess, summarise=summarise)
                 except UnknownSchemeError:
                     pass

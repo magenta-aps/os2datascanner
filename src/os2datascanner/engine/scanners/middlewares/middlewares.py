@@ -32,13 +32,10 @@ from django.db import transaction
 
 from os2datascanner.projects.admin.adminapp.models.urllastmodified_model import UrlLastModified
 
-
 logger = structlog.get_logger()
 
 
-
 class ExclusionRuleMiddleware(object):
-
     """A Spider Middleware which excludes certain URLs from being followed.
 
     If the spider has an exclusion_rules attribute, this is used to determine
@@ -65,7 +62,6 @@ class ExclusionRuleMiddleware(object):
 
 
 class NoSubdomainOffsiteMiddleware(OffsiteMiddleware):
-
     """Offsite middleware which doesn't allow subdomains of allowed_domains."""
 
     def get_host_regex(self, spider):
@@ -77,11 +73,9 @@ class NoSubdomainOffsiteMiddleware(OffsiteMiddleware):
 
 
 class CookieCollectorMiddleware(CookiesMiddleware):
-
     """Collect all cookies set while scanning."""
 
     def process_response(self, request, response, spider):
-
         """Collect cookie, store on scan object."""
 
         # First, extract cookies as needed - call superclass.
@@ -99,7 +93,6 @@ class CookieCollectorMiddleware(CookiesMiddleware):
 
 
 class OffsiteDownloaderMiddleware(object):
-
     """Offsite middleware which doesn't allow subdomains of allowed_domains."""
 
     @classmethod
@@ -115,8 +108,8 @@ class OffsiteDownloaderMiddleware(object):
             return None
         else:
             domain = urlparse_cached(request).hostname
-            logger.debug("Filtered offsite request",
-                          domain= domain, request=request)
+            logger.debug(
+                "Filtered offsite request", domain=domain, request=request)
             raise IgnoreRequest
 
     def should_follow(self, request, spider):
@@ -144,7 +137,6 @@ class OffsiteDownloaderMiddleware(object):
 
 
 class ExclusionRuleDownloaderMiddleware(object):
-
     """Exclusion rule downloader middleware."""
 
     def process_request(self, request, spider):
@@ -162,37 +154,35 @@ class ExclusionRuleDownloaderMiddleware(object):
 class OffsiteRedirectMiddleware(RedirectMiddleware,
                                 NoSubdomainOffsiteMiddleware,
                                 ExclusionRuleMiddleware):
-
     """Handle redirects, ensuring they are not offsite or excluded URLs."""
 
     def process_response(self, request, response, spider):
         """Process a spider response."""
         if not hasattr(self, 'host_regex'):
             self.host_regex = self.get_host_regex(spider)
-        result = RedirectMiddleware.process_response(
-            self, request, response, spider
-        )
+        result = RedirectMiddleware.process_response(self, request, response,
+                                                     spider)
         if isinstance(result, Request):
             # Check that the redirect request is not offsite
-            if NoSubdomainOffsiteMiddleware.should_follow(self, result,
-                                                          spider):
-                if ExclusionRuleMiddleware.should_follow(self, result,
-                                                         spider):
+            if NoSubdomainOffsiteMiddleware.should_follow(
+                    self, result, spider):
+                if ExclusionRuleMiddleware.should_follow(self, result, spider):
                     return result
                 else:
-                    logger.info("Excluding redirect due to exclusion rule",
-                                 url=result.url)
+                    logger.info(
+                        "Excluding redirect due to exclusion rule",
+                        url=result.url)
                     raise IgnoreRequest
             else:
-                logger.info("Excluding redirect due to no offsite domains",
-                            url=result.url)
+                logger.info(
+                    "Excluding redirect due to no offsite domains",
+                    url=result.url)
                 raise IgnoreRequest
         else:
             return result
 
 
 class LastModifiedLinkStorageMiddleware(object):
-
     """Spider middleware to store links on pages for Last-Modified check."""
 
     def process_spider_output(self, response, result, spider):
@@ -208,9 +198,7 @@ class LastModifiedLinkStorageMiddleware(object):
         source_url = canonicalize_url(response.request.url)
         try:
             url_last_modified = UrlLastModified.objects.get(
-                url=source_url,
-                scanner=self.get_scanner_object(spider)
-            )
+                url=source_url, scanner=self.get_scanner_object(spider))
         except UrlLastModified.DoesNotExist:
             # We never stored the URL for the original request: this
             # shouldn't happen.
@@ -226,10 +214,8 @@ class LastModifiedLinkStorageMiddleware(object):
             # The set of interesting urls extracted by scrapy
             wanted_link_urls = {
                 canonicalize_url(r.url)
-                for r in result
-                if isinstance(r, Request) and
-                not spider.is_offsite(r) and
-                not spider.is_excluded(r)
+                for r in result if isinstance(r, Request)
+                and not spider.is_offsite(r) and not spider.is_excluded(r)
             }
 
             extraneous_links = set()
@@ -264,8 +250,7 @@ class LastModifiedLinkStorageMiddleware(object):
                     UrlLastModified.objects.get_or_create(
                         url=link_url,
                         scanner=self.get_scanner_object(spider),
-                    )[0]
-                    for link_url in wanted_link_urls
+                    )[0] for link_url in wanted_link_urls
                 ]
 
                 url_last_modified.links.add(*wanted_links)
@@ -278,7 +263,6 @@ class LastModifiedLinkStorageMiddleware(object):
 
 
 class LastModifiedCheckMiddleware(object):
-
     """Check the Last-Modified header to filter responses.
 
     Only process a response if the content for the URL has been updated as

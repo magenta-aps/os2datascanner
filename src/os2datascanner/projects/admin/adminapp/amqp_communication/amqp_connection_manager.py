@@ -3,10 +3,7 @@ import pika
 
 from django.conf import settings
 
-_amqp_obj = {
-    "amqp_channels": None,
-    "connection": None
-}
+_amqp_obj = {"amqp_channels": None, "connection": None}
 
 
 def start_amqp(queue_name):
@@ -33,8 +30,8 @@ def _create_connection():
     Creates a amqp connection
     """
     if not _amqp_obj['connection']:
-        conn_params = pika.ConnectionParameters(settings.AMQP_HOST,
-                                                heartbeat=6000)
+        conn_params = pika.ConnectionParameters(
+            settings.AMQP_HOST, heartbeat=6000)
         _amqp_obj['connection'] = pika.BlockingConnection(conn_params)
 
 
@@ -44,9 +41,8 @@ def send_message(routing_key, body):
     :return: None if no channel available
     """
     if _amqp_obj['amqp_channel']:
-        _amqp_obj['amqp_channel'].basic_publish(exchange='',
-                                                routing_key=routing_key,
-                                                body=body)
+        _amqp_obj['amqp_channel'].basic_publish(
+            exchange='', routing_key=routing_key, body=body)
     else:
         return None
 
@@ -59,8 +55,7 @@ def set_callback(func, queue_name):
     :return: None if no channel available
     """
     if _amqp_obj['amqp_channel']:
-        _amqp_obj['amqp_channel'].basic_consume(func,
-                                                queue=queue_name)
+        _amqp_obj['amqp_channel'].basic_consume(func, queue=queue_name)
     else:
         return None
 

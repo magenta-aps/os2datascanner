@@ -49,13 +49,13 @@ def start_exchange_export(exchange_scanner):
     scanners = {}
 
     for i in range(0, settings.NUMBER_OF_EMAIL_THREADS):
-        scanners[i] = ExchangeServerExport(credentials,
-                                           user_queue,
-                                           done_queue,
-                                           export_dir + '/',
-                                           mail_ending,
-                                           start_date=
-                                           last_export_date)
+        scanners[i] = ExchangeServerExport(
+            credentials,
+            user_queue,
+            done_queue,
+            export_dir + '/',
+            mail_ending,
+            start_date=last_export_date)
         scanners[i].start()
         print('Started exchange export {}'.format(i))
         time.sleep(1)
@@ -82,6 +82,4 @@ if __name__ == '__main__':
         else:
             print(
                 'Exchange export is already in progress for exchange scanner '
-                '{}'.format(
-                    exchange_scanner.name)
-            )
+                '{}'.format(exchange_scanner.name))

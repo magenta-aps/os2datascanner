@@ -30,13 +30,17 @@ class RegexPattern(models.Model):
 
     class Meta:
         verbose_name = 'Pattern'
-        ordering = ('pk',)
+        ordering = ('pk', )
 
-    regex = models.ForeignKey(RegexRule, null=True, on_delete=models.CASCADE,
-                              related_name='patterns', verbose_name='Regex')
+    regex = models.ForeignKey(
+        RegexRule,
+        null=True,
+        on_delete=models.CASCADE,
+        related_name='patterns',
+        verbose_name='Regex')
 
-    pattern_string = models.CharField(max_length=1024, blank=False,
-                                      verbose_name='Udtryk')
+    pattern_string = models.CharField(
+        max_length=1024, blank=False, verbose_name='Udtryk')
 
     def __str__(self):
         """Return the pattern string."""

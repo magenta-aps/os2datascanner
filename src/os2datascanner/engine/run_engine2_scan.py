@@ -64,20 +64,23 @@ class StartEngine2Scan(StartScan, multiprocessing.Process):
                             interesting_count += 1
                             interesting.append(h)
                         if all_count % 1000 == 0:
-                            logger.info("exploration_status",
-                                    all_count=all_count,
-                                    interesting_count=interesting_count)
-                    self.logger.info("explored_source",
-                            all_count=all_count, all_size=all_size,
-                            interesting_count=interesting_count,
-                            interesting_size=interesting_size)
+                            logger.info(
+                                "exploration_status",
+                                all_count=all_count,
+                                interesting_count=interesting_count)
+                    self.logger.info(
+                        "explored_source",
+                        all_count=all_count,
+                        all_size=all_size,
+                        interesting_count=interesting_count,
+                        interesting_size=interesting_size)
                     self.scanner.set_statistics(
-                            supported_size=interesting_size,
-                            supported_count=interesting_count,
-                            relevant_size=all_size,
-                            relevant_count=all_count,
-                            relevant_unsupported_size=0,
-                            relevant_unsupported_count=0)
+                        supported_size=interesting_size,
+                        supported_count=interesting_count,
+                        relevant_size=all_size,
+                        relevant_count=all_count,
+                        relevant_unsupported_size=0,
+                        relevant_unsupported_count=0)
                 else:
                     # If not, then just return the generator directly
                     interesting = source.handles(sm)
@@ -87,32 +90,37 @@ class StartEngine2Scan(StartScan, multiprocessing.Process):
                     url = self.make_presentation_url(handle)
 
                     url_object = self.scanner.mint_url(
-                            url=url, mime_type=handle.guess_type())
+                        url=url, mime_type=handle.guess_type())
                     try:
                         with handle.follow(sm).make_stream() as s:
                             self.scanner.scan(s.read(), url_object)
-                        self.logger.info("fetched_item",
-                                path=handle.get_relative_path(), pos=idx + 1)
+                        self.logger.info(
+                            "fetched_item",
+                            path=handle.get_relative_path(),
+                            pos=idx + 1)
                     except ResourceUnavailableError:
                         if hasattr(handle, 'get_referrer_urls'):
-                            pass # XXX: actually build referrer URL structure
-                        self.logger.info("item_unavailable",
-                            path=handle.get_relative_path(), pos=idx + 1)
+                            pass  # XXX: actually build referrer URL structure
+                        self.logger.info(
+                            "item_unavailable",
+                            path=handle.get_relative_path(),
+                            pos=idx + 1)
                 self.logger.info("fetched_items")
 
             self.logger.info("awaiting_completion")
             from os2datascanner.projects.admin.adminapp.models.conversionqueueitem_model import ConversionQueueItem
             while True:
                 remaining_queue_items = ConversionQueueItem.objects.filter(
-                    status__in=[ConversionQueueItem.NEW,
-                                ConversionQueueItem.PROCESSING],
-                    url__scan=self.scanner.scan_object
-                ).count()
+                    status__in=[
+                        ConversionQueueItem.NEW, ConversionQueueItem.PROCESSING
+                    ],
+                    url__scan=self.scanner.scan_object).count()
                 if not remaining_queue_items:
                     break
                 else:
-                    self.logger.info("still_awaiting_completion",
-                            remaining=remaining_queue_items)
+                    self.logger.info(
+                        "still_awaiting_completion",
+                        remaining=remaining_queue_items)
                     sleep(60)
         finally:
             self.logger.info("finished")
@@ -122,12 +130,14 @@ class StartEngine2Scan(StartScan, multiprocessing.Process):
         variety = self.configuration['type']
         if variety == 'WebScanner':
             return urljoin(handle.get_source().to_url() + "/",
-                    handle.get_relative_path())
+                           handle.get_relative_path())
         elif variety == 'FileScanner':
-            return urljoin("file:" + quote(handle.get_source().get_unc()) + "/",
-                    quote(handle.get_relative_path()))
+            return urljoin(
+                "file:" + quote(handle.get_source().get_unc()) + "/",
+                quote(handle.get_relative_path()))
         else:
             raise Exception("Unknown variety {0}".format(variety))
+
 
 def _make_scanner(configuration):
     variety = configuration['type']
@@ -142,6 +152,7 @@ def _make_scanner(configuration):
 
     scanner.ensure_started()
     return scanner
+
 
 def _make_source(configuration, scanner):
     variety = configuration['type']

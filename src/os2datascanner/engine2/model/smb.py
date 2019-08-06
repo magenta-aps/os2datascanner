@@ -8,6 +8,7 @@ from pathlib import Path
 from tempfile import mkdtemp
 from subprocess import check_call
 
+
 class SMBSource(Source):
     def __init__(self, unc, user=None, password=None, domain=None):
         self._unc = unc
@@ -23,8 +24,8 @@ class SMBSource(Source):
         if self._user:
             optarg.append('user=' + self._user)
         if self._password:
-            optarg.append(
-                    'password=' + (self._password if not display else "****"))
+            optarg.append('password=' +
+                          (self._password if not display else "****"))
         else:
             optarg.append('guest')
         if self._domain:
@@ -61,10 +62,13 @@ class SMBSource(Source):
                     yield SMBHandle(self, str(f.relative_to(pathlib_mntdir)))
 
     def to_url(self):
-        return make_smb_url(
-                "smb", self._unc, self._user, self._domain, self._password)
+        return make_smb_url("smb", self._unc, self._user, self._domain,
+                            self._password)
 
-    netloc_regex = compile(r"^(((?P<domain>\w+);)?(?P<username>\w+)(:(?P<password>\w+))?@)?(?P<unc>[\w.]+)$")
+    netloc_regex = compile(
+        r"^(((?P<domain>\w+);)?(?P<username>\w+)(:(?P<password>\w+))?@)?(?P<unc>[\w.]+)$"
+    )
+
     @staticmethod
     @Source.url_handler("smb")
     def from_url(url):
@@ -72,14 +76,16 @@ class SMBSource(Source):
         match = SMBSource.netloc_regex.match(netloc)
         if match:
             return SMBSource("//" + match.group("unc") + unquote(path),
-                match.group("username"), match.group("password"),
-                match.group("domain"))
+                             match.group("username"), match.group("password"),
+                             match.group("domain"))
         else:
             return None
+
 
 class SMBHandle(Handle):
     def follow(self, sm):
         return FilesystemResource(self, sm)
+
 
 # Third form from https://www.iana.org/assignments/uri-schemes/prov/smb
 def make_smb_url(schema, unc, user, domain, password):

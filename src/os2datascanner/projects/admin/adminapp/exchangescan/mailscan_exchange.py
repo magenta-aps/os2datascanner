@@ -39,6 +39,7 @@ logger.error('Program start')
 
 class ExportError(Exception):
     """ Exception to indicate that export failed for unspecified reasons """
+
     def __init__(self, *args, **kwargs):
         logger.error('Export Exception')
         Exception.__init__(self, *args, **kwargs)
@@ -46,11 +47,17 @@ class ExportError(Exception):
 
 class ExchangeMailboxScan(object):
     """ Library to export a users mailbox from Exchange to a filesystem """
-    def __init__(self, credentials, user, export_path, mail_ending,
-                 start_date=None, amqp_info=None):
+
+    def __init__(self,
+                 credentials,
+                 user,
+                 export_path,
+                 mail_ending,
+                 start_date=None,
+                 amqp_info=None):
         logger.info('Start New MailboxScan: {}'.format(user))
-        exchange_credentials = ServiceAccount(username=credentials[0],
-                                              password=credentials[1])
+        exchange_credentials = ServiceAccount(
+            username=credentials[0], password=credentials[1])
         username = user + mail_ending
         self.start_date = start_date
         if self.start_date is None:
@@ -67,10 +74,11 @@ class ExchangeMailboxScan(object):
         self.update_amqp()
 
         try:
-            self.account = Account(primary_smtp_address=username,
-                                   credentials=exchange_credentials,
-                                   autodiscover=True,
-                                   access_type=IMPERSONATION)
+            self.account = Account(
+                primary_smtp_address=username,
+                credentials=exchange_credentials,
+                autodiscover=True,
+                access_type=IMPERSONATION)
             self.account.root.refresh()
             logger.info('{}: Init complete'.format(username))
         except ErrorNonExistentMailbox:
@@ -83,14 +91,14 @@ class ExchangeMailboxScan(object):
         total_count = 0
         if self.account:
             if False:  # TODO: should be if self.start_date
-                start_dt = UTC.localize(EWSDateTime(self.start_date.year,
-                                                    self.start_date.month,
-                                                    self.start_date.day, 0, 0))
+                start_dt = UTC.localize(
+                    EWSDateTime(self.start_date.year, self.start_date.month,
+                                self.start_date.day, 0, 0))
                 end_dt = UTC.localize(EWSDateTime(2100, 1, 1, 0, 0))
                 for folder in self.account.root.walk():
                     items = folder.all()
-                    items = items.filter(datetime_received__range=(start_dt,
-                                                                   end_dt))
+                    items = items.filter(
+                        datetime_received__range=(start_dt, end_dt))
                     total_count += items.count()
             else:
                 for folder in self.account.root.walk():
@@ -109,10 +117,9 @@ class ExchangeMailboxScan(object):
             ending = '.html'
         else:
             ending = '.txt'
-            
-        name = ('body_' + str(item.datetime_created) + '_' +
-                str(random.random()) + '_' +
-                subject.replace('/', '_')[-60:] + ending)
+
+        name = ('body_' + str(item.datetime_created) + '_' + str(
+            random.random()) + '_' + subject.replace('/', '_')[-60:] + ending)
         path = self.current_path.joinpath(name)
         msg_body = str(item.body)
         with path.open('w') as f:
@@ -150,15 +157,15 @@ class ExchangeMailboxScan(object):
                 continue
             if isinstance(attachment, FileAttachment):
                 i = i + 1
-                name = (str(item.datetime_created) + '_' +
-                        str(random.random()) + '_' +
-                        attachment.name.replace('/', '_')[-60:])
+                name = (str(item.datetime_created) + '_' + str(random.random())
+                        + '_' + attachment.name.replace('/', '_')[-60:])
                 path = self.current_path.joinpath(name)
                 try:
                     with path.open('wb') as f:
                         f.write(attachment.content)
                 except TypeError:
-                    logger.error('Type Error: {}'.format(self.current_path))  # Happens for empty attachments
+                    logger.error('Type Error: {}'.format(
+                        self.current_path))  # Happens for empty attachments
                 except ErrorCannotOpenFileAttachment:
                     # Not sure when this happens
                     msg = 'ErrorCannotOpenFileAttachment {}'
@@ -167,9 +174,9 @@ class ExchangeMailboxScan(object):
                 i = i + 1
                 try:
                     # Pick last 60 chars of name to prevens too-long filenames
-                    name = (str(item.datetime_created) + '_' +
-                            str(random.random()) + '_' +
-                            attachment.name.replace('/', '_')[-60:])
+                    name = (
+                        str(item.datetime_created) + '_' + str(random.random())
+                        + '_' + attachment.name.replace('/', '_')[-60:])
                     path = self.current_path.joinpath(name + '.txt')
                     with path.open('w') as f:
                         f.write(name)
@@ -181,8 +188,8 @@ class ExchangeMailboxScan(object):
                     msg = 'AttributeError {}'
                     logger.error(msg.format(self.current_path))
             else:
-                raise(Exception('Unknown attachment'))
-        assert(i == len(item.attachments))
+                raise (Exception('Unknown attachment'))
+        assert (i == len(item.attachments))
         return len(item.attachments)
 
     def list_non_empty_folders(self):
@@ -194,11 +201,9 @@ class ExchangeMailboxScan(object):
             for folder in self.account.search_folders.walk():
                 search_folders.append(folder)
             for folder in self.account.root.walk():
-                if ((folder.total_count > 0) and
-                    (folder not in search_folders) and
-                    (not isinstance(folder, AllItems)) and
-                    (not isinstance(folder, FreebusyData))
-                ):
+                if ((folder.total_count > 0) and (folder not in search_folders)
+                        and (not isinstance(folder, AllItems))
+                        and (not isinstance(folder, FreebusyData))):
                     folder_list.append(folder)
         return folder_list
 
@@ -217,22 +222,23 @@ class ExchangeMailboxScan(object):
             if end_dt is None:
                 end_dt = EWSDate(2100, 1, 1)
             items = folder.all()
-            start_dt = UTC.localize(EWSDateTime(start_dt.year, start_dt.month,
-                                                start_dt.day, 0, 0))
-            end_dt = UTC.localize(EWSDateTime(end_dt.year, end_dt.month,
-                                              end_dt.day, 0, 0))
+            start_dt = UTC.localize(
+                EWSDateTime(start_dt.year, start_dt.month, start_dt.day, 0, 0))
+            end_dt = UTC.localize(
+                EWSDateTime(end_dt.year, end_dt.month, end_dt.day, 0, 0))
             items = items.filter(datetime_received__range=(start_dt, end_dt))
             for chunk in chunkify(items, 10):
                 for item in chunk:
                     self.actual_exported_mails += 1
-                    logger.error(str(item.datetime_created) + ':' + str(item.subject))
+                    logger.error(
+                        str(item.datetime_created) + ':' + str(item.subject))
                     skip_list = self.export_item_body(item)
                     attachments += self.export_attachments(item, skip_list)
             self.update_amqp(only_mails=True)
         except ErrorMimeContentConversionFailed:
             msg = '{}: ErrorMimeContentConversionFailed, giving up sub-folder'
             msg += ' Attachment value: {}'
-            logger.warning(msg.format(self.export_path, attachments))                    
+            logger.warning(msg.format(self.export_path, attachments))
         except ErrorInternalServerError:
             # Possibly happens on p7m files?
             msg = '{}: ErrorInternalServerError, giving up sub-folder'
@@ -262,8 +268,7 @@ class ExchangeMailboxScan(object):
         :return: Number of exported attachments
         """
         logger.debug('Export {} from {} to {}'.format(self.current_path,
-                                                      start_dt,
-                                                      end_dt))
+                                                      start_dt, end_dt))
         subset_attach = -1
         attempts = 0
         while subset_attach < 0 and attempts < 5:
@@ -300,8 +305,8 @@ class ExchangeMailboxScan(object):
         while end_dt < (EWSDate.today() + timedelta(days=10)):
             msg = 'Export folder, currently from {} to {}'
             logger.debug(msg.format(start_dt, end_dt))
-            attachments += self._attempt_export(folder, start_dt=start_dt,
-                                                end_dt=end_dt)
+            attachments += self._attempt_export(
+                folder, start_dt=start_dt, end_dt=end_dt)
             start_dt = end_dt
             end_dt = start_dt + timedelta(days=10)
         # Finally, export everything later than today (hopefully nothing)
@@ -318,7 +323,10 @@ class ExchangeMailboxScan(object):
             logger.error('Rename error from {}'.format(self.current_path))
         return attachments
 
-    def update_amqp(self, folder=None, total_scanned=None, total_count=None,
+    def update_amqp(self,
+                    folder=None,
+                    total_scanned=None,
+                    total_count=None,
                     only_mails=False):
         if self.amqp_info[0]:  # AMQP enabled
             if not only_mails:
@@ -333,9 +341,8 @@ class ExchangeMailboxScan(object):
             amqp_data = pickle.dumps(self.amqp_data)
             logger.info('{} AMQP-data: {}'.format(self.amqp_info[1],
                                                   self.amqp_data))
-            self.amqp_info[0].basic_publish(exchange='',
-                                            routing_key=self.amqp_info[1],
-                                            body=amqp_data)
+            self.amqp_info[0].basic_publish(
+                exchange='', routing_key=self.amqp_info[1], body=amqp_data)
 
     def check_mailbox(self, total_count=None):
         """ Run an export of the mailbox
@@ -353,25 +360,30 @@ class ExchangeMailboxScan(object):
         for folder in folders:
             self.update_amqp(folder, total_scanned, total_count)
             info_string = '{}: Exporting: {} ({} items)'
-            logger.info(info_string.format(self.export_path,
-                                           folder,
-                                           folder.total_count))
+            logger.info(
+                info_string.format(self.export_path, folder,
+                                   folder.total_count))
             attachments += self.export_folder(folder)
             total_scanned += folder.total_count
-            logger.info("Exported {}: {} / {}".format(self.export_path,
-                                                      total_scanned,
-                                                      total_count))
+            logger.info("Exported {}: {} / {}".format(
+                self.export_path, total_scanned, total_count))
             self.update_amqp(folder, total_scanned, total_count)
         return self.actual_exported_mails
-
 
 
 class ExchangeServerScan(multiprocessing.Process):
     """ Helper class to allow parallel processing of export
     This classes inherits from multiprocessing and helps to
     run a number of exporters in parallel """
-    def __init__(self, credentials, user_queue, done_queue, export_path,
-                 mail_ending, start_date=None, amqp=False):
+
+    def __init__(self,
+                 credentials,
+                 user_queue,
+                 done_queue,
+                 export_path,
+                 mail_ending,
+                 start_date=None,
+                 amqp=False):
         multiprocessing.Process.__init__(self)
         self.credentials = credentials
         self.user_queue = user_queue
@@ -383,15 +395,15 @@ class ExchangeServerScan(multiprocessing.Process):
         self.export_path = export_path
         self.amqp = amqp
         self.amqp_channel = None
-        self.exported_users = 0 # Number of exported users in this process
-        self.exported_mails = 0 # Number of exported mails in this process
+        self.exported_users = 0  # Number of exported users in this process
+        self.exported_mails = 0  # Number of exported mails in this process
 
     def start_amqp(self):
         if self.amqp:
             from django.conf import settings
 
-            conn_params = pika.ConnectionParameters(settings.AMQP_HOST,
-                                                    heartbeat=6000)
+            conn_params = pika.ConnectionParameters(
+                settings.AMQP_HOST, heartbeat=6000)
             connection = pika.BlockingConnection(conn_params)
             self.amqp_channel = connection.channel()
             self.amqp_channel.queue_declare(queue=str(self.pid))
@@ -407,14 +419,12 @@ class ExchangeServerScan(multiprocessing.Process):
                     amqp_data['exported_users'] = self.exported_users
                     amqp_data['total_mails'] = self.exported_mails
                     amqp_info = (self.amqp_channel, str(self.pid), amqp_data)
-                    self.scanner = ExchangeMailboxScan(self.credentials,
-                                                       self.user_name,
-                                                       self.export_path,
-                                                       self.mail_ending,
-                                                       self.start_date,
-                                                       amqp_info)
-                    self.scanner.amqp_data['exported_users'] = self.exported_users
-                except NameError:   # No start_time given
+                    self.scanner = ExchangeMailboxScan(
+                        self.credentials, self.user_name, self.export_path,
+                        self.mail_ending, self.start_date, amqp_info)
+                    self.scanner.amqp_data[
+                        'exported_users'] = self.exported_users
+                except NameError:  # No start_time given
                     # TODO: When do we end here??!?!?
                     msg = '{} ended up in name error'.format(self.user_name)
                     logger.fatal(msg)
@@ -479,10 +489,14 @@ if __name__ == '__main__':
     stats = Stats(user_queue, log_data=True)
 
     for i in range(0, number_of_threads):
-        scanner = ExchangeServerScan(credentials, user_queue, done_queue,
-                                     settings.export_path,
-                                     settings.mail_ending, start_date,
-                                     amqp=amqp)
+        scanner = ExchangeServerScan(
+            credentials,
+            user_queue,
+            done_queue,
+            settings.export_path,
+            settings.mail_ending,
+            start_date,
+            amqp=amqp)
         scanner.start()
         time.sleep(0.25)
         stats.add_scanner(scanner.pid)
@@ -502,7 +516,6 @@ if __name__ == '__main__':
         # One child is the stat module, all others are workers
         amqp_data['children'] = len(multiprocessing.active_children()) - 1
         amqp_body = pickle.dumps(amqp_data)
-        amqp_channel.basic_publish(exchange='',
-                                   routing_key='global',
-                                   body=amqp_body)
+        amqp_channel.basic_publish(
+            exchange='', routing_key='global', body=amqp_body)
         time.sleep(5)

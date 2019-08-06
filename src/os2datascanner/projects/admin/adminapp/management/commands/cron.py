@@ -14,7 +14,6 @@
 #
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( http://www.os2web.dk/ )
-
 """Program meant to be run once a minute by cron.
 
 Starts spiders scheduled to run during the current minute.
@@ -23,7 +22,6 @@ Starts spiders scheduled to run during the current minute.
 import datetime
 
 from django.core.management.base import BaseCommand
-
 
 from ...models.scannerjobs.scanner_model import Scanner
 
@@ -35,19 +33,18 @@ def strip_seconds(d):
 
 current_qhr = strip_seconds(datetime.datetime.now())
 current_qhr = current_qhr.replace(
-    minute=current_qhr.minute - current_qhr.minute % 15
-)
+    minute=current_qhr.minute - current_qhr.minute % 15)
 
-next_qhr = current_qhr + datetime.timedelta(
-    minutes=15, microseconds=-1
-)
+next_qhr = current_qhr + datetime.timedelta(minutes=15, microseconds=-1)
+
 
 class Command(BaseCommand):
     help = __doc__
 
     def handle(self, *args, **kwargs):
         # Loop through all scanners
-        for scanner in Scanner.objects.exclude(schedule="").select_subclasses():
+        for scanner in Scanner.objects.exclude(
+                schedule="").select_subclasses():
             # Skip scanners that should not start now
             start_time = scanner.get_start_time()
             if start_time < current_qhr.time() or start_time > next_qhr.time():
@@ -66,16 +63,17 @@ class Command(BaseCommand):
             # order for the recurrence rule check to work
             for i in range(len(schedule.rdates)):
                 rdate = schedule.rdates[i]
-                schedule.rdates[i] = rdate.replace(hour=start_time.hour,
-                                                   minute=start_time.minute)
+                schedule.rdates[i] = rdate.replace(
+                    hour=start_time.hour, minute=start_time.minute)
 
             # Check if it's time to run the scanner
             if not schedule.between(
-                current_qhr, next_qhr,
-                # Generate recurrences starting from current quarter 2014/01/01
-                dtstart=datetime.datetime(
-                    2014, 1, 1, current_qhr.hour, current_qhr.minute), inc=True
-            ):
+                    current_qhr,
+                    next_qhr,
+                    # Generate recurrences starting from current quarter 2014/01/01
+                    dtstart=datetime.datetime(2014, 1, 1, current_qhr.hour,
+                                              current_qhr.minute),
+                    inc=True):
                 continue
 
             print("Running scanner %s" % scanner)

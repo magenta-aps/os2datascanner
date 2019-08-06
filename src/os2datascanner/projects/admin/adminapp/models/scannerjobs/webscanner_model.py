@@ -23,25 +23,18 @@ from .scanner_model import Scanner
 
 
 class WebScanner(Scanner):
-
     """Web scanner for scanning websites."""
 
     linkable = True
 
-    do_link_check = models.BooleanField(default=False,
-                                        verbose_name='Tjek links')
+    do_link_check = models.BooleanField(
+        default=False, verbose_name='Tjek links')
     do_external_link_check = models.BooleanField(
-        default=False,
-        verbose_name='Eksterne links'
-    )
+        default=False, verbose_name='Eksterne links')
     do_last_modified_check_head_request = models.BooleanField(
-        default=True,
-        verbose_name='Brug HTTP HEAD-forespørgsler'
-    )
+        default=True, verbose_name='Brug HTTP HEAD-forespørgsler')
     do_collect_cookies = models.BooleanField(
-        default=False,
-        verbose_name='Saml cookies'
-    )
+        default=False, verbose_name='Saml cookies')
 
     ROBOTSTXT = 0
     WEBSCANFILE = 1
@@ -53,22 +46,20 @@ class WebScanner(Scanner):
         (METAFIELD, 'Meta-felt'),
     )
 
-    validation_method = models.IntegerField(choices=validation_method_choices,
-                                            default=ROBOTSTXT,
-                                            verbose_name='Valideringsmetode')
+    validation_method = models.IntegerField(
+        choices=validation_method_choices,
+        default=ROBOTSTXT,
+        verbose_name='Valideringsmetode')
 
-    sitemap = models.FileField(upload_to='sitemaps',
-                               blank=True,
-                               verbose_name='Sitemap Fil')
+    sitemap = models.FileField(
+        upload_to='sitemaps', blank=True, verbose_name='Sitemap Fil')
 
-    sitemap_url = models.CharField(max_length=2048,
-                                   blank=True,
-                                   default="",
-                                   verbose_name='Sitemap URL')
+    sitemap_url = models.CharField(
+        max_length=2048, blank=True, default="", verbose_name='Sitemap URL')
 
-    download_sitemap = models.BooleanField(default=True,
-                                           verbose_name='Hent Sitemap fra '
-                                                        'serveren')
+    download_sitemap = models.BooleanField(
+        default=True, verbose_name='Hent Sitemap fra '
+        'serveren')
 
     @property
     def display_name(self):
@@ -79,8 +70,8 @@ class WebScanner(Scanner):
     def root_url(self):
         """Return the root url of the domain."""
         url = self.url.replace('*.', '')
-        if (not self.url.startswith('http://') and not
-        self.url.startswith('https://')):
+        if (not self.url.startswith('http://')
+                and not self.url.startswith('https://')):
             return 'http://%s/' % url
         else:
             return url

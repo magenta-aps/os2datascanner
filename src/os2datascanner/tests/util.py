@@ -6,26 +6,18 @@ from os2datascanner.projects.admin.adminapp.models.scans.webscan_model import We
 
 
 class CreateOrganization(object):
-
     def create_organization(self):
         return Organization.objects.create(
             name='Magenta',
             contact_email='info@magenta.dk',
-            contact_phone='39393939'
-        )
+            contact_phone='39393939')
 
 
 class CreateWebScan(object):
-
     def create_webscan(self):
-        return WebScan.objects.create(
-            status=Scan.DONE
-        )
+        return WebScan.objects.create(status=Scan.DONE)
 
 
 class CreateScan(object):
-
     def create_filescan(self):
-        return Scan.objects.create(
-            status=Scan.DONE
-        )
+        return Scan.objects.create(status=Scan.DONE)

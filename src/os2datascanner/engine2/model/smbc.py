@@ -11,7 +11,6 @@ from hashlib import md5
 from datetime import datetime
 from contextlib import contextmanager
 
-
 logger = structlog.get_logger()
 
 
@@ -27,7 +26,7 @@ class SMBCSource(Source):
 
     def __str__(self):
         return "SMBCSource({0}, {1}, ****, {2})".format(
-                self._unc, self._user, self._domain)
+            self._unc, self._user, self._domain)
 
     def _open(self, sm):
         context = smbc.Context()
@@ -39,11 +38,12 @@ class SMBCSource(Source):
 
     def handles(self, sm):
         url, context = sm.open(self)
+
         def handle_dirent(parents, entity):
             here = parents + [entity]
             path = '/'.join([h.name for h in here])
-            if entity.smbc_type == smbc.DIR and not (
-                    entity.name == "." or entity.name == ".."):
+            if entity.smbc_type == smbc.DIR and not (entity.name == "."
+                                                     or entity.name == ".."):
                 try:
                     obj = context.opendir(url + "/" + path)
                     for dent in obj.getdents():
@@ -61,14 +61,14 @@ class SMBCSource(Source):
             raise ResourceUnavailableError(*exc.args)
 
     def to_url(self):
-        return make_smb_url(
-                "smbc", self._unc, self._user, self._domain, self._password)
+        return make_smb_url("smbc", self._unc, self._user, self._domain,
+                            self._password)
 
     # For our own purposes, we need to be able to make a "smb://" URL to give
     # to smbc
     def _to_url(self):
-        return make_smb_url(
-                "smb", self._unc, self._user, self._domain, self._password)
+        return make_smb_url("smb", self._unc, self._user, self._domain,
+                            self._password)
 
     @staticmethod
     @Source.url_handler("smbc")
@@ -77,14 +77,16 @@ class SMBCSource(Source):
         match = SMBSource.netloc_regex.match(netloc)
         if match:
             return SMBCSource("//" + match.group("unc") + unquote(path),
-                match.group("username"), match.group("password"),
-                match.group("domain"))
+                              match.group("username"), match.group("password"),
+                              match.group("domain"))
         else:
             return None
+
 
 class SMBCHandle(Handle):
     def follow(self, sm):
         return SMBCResource(self, sm)
+
 
 class SMBCResource(FileResource):
     def __init__(self, handle, sm):

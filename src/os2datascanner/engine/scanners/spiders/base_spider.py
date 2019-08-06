@@ -21,7 +21,6 @@ from scrapy.utils.httpobj import urlparse_cached
 
 
 class BaseScannerSpider(Spider):
-
     """A base spider which is setup to filter offsite domains/excluded URLs."""
 
     name = 'base_scanner'

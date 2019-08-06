@@ -30,7 +30,10 @@ Processor.register_processor(ZipProcessor.item_type, ZipProcessor)
 Processor.register_processor(OCRProcessor.item_type, OCRProcessor)
 Processor.register_processor(PDFProcessor.item_type, PDFProcessor)
 Processor.register_processor(CSVProcessor.item_type, CSVProcessor)
-Processor.register_processor(LibreOfficeProcessor.item_type, LibreOfficeProcessor)
+Processor.register_processor(LibreOfficeProcessor.item_type,
+                             LibreOfficeProcessor)
 Processor.register_processor(XmlProcessor.item_type, XmlProcessor)
 
-__all__ = ["html", "libreoffice", "pdf", "ocr", "zip", "text", "csv_processor", "xml"]
+__all__ = [
+    "html", "libreoffice", "pdf", "ocr", "zip", "text", "csv_processor", "xml"
+]

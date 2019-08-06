@@ -12,9 +12,11 @@ from contextlib import contextmanager
 MAX_REQUESTS_PER_SECOND = 10
 SLEEP_TIME = 1 / MAX_REQUESTS_PER_SECOND
 
+
 def simplify_mime_type(mime):
     r = mime.split(';', maxsplit=1)
     return r[0]
+
 
 class WebSource(Source):
     def __init__(self, url):
@@ -51,9 +53,11 @@ class WebSource(Source):
                         if el.tag != 'a':
                             continue
                         new_url = urljoin(here, li)
-                        new_scheme, new_netloc, new_path, new_query, _ = urlsplit(new_url)
+                        new_scheme, new_netloc, new_path, new_query, _ = urlsplit(
+                            new_url)
                         if new_scheme == scheme and new_netloc == netloc:
-                            new_url = urlunsplit((new_scheme, new_netloc, new_path, new_query, None))
+                            new_url = urlunsplit((new_scheme, new_netloc,
+                                                  new_path, new_query, None))
                             referrer_map.setdefault(new_url, set()).add(here)
                             if new_url not in visited:
                                 visited.add(new_url)
@@ -72,7 +76,9 @@ class WebSource(Source):
     def from_url(url):
         return WebSource(url)
 
+
 SecureWebSource = WebSource
+
 
 class WebHandle(Handle):
     eq_properties = Handle.BASE_PROPERTIES
@@ -89,6 +95,7 @@ class WebHandle(Handle):
 
     def follow(self, sm):
         return WebResource(self, sm)
+
 
 class WebResource(FileResource):
     def __init__(self, handle, sm):
@@ -131,7 +138,8 @@ class WebResource(FileResource):
         # At least for now, strip off any extra parameters the media type might
         # specify
         return self.get_header().get("Content-Type",
-                "application/octet-stream").split(";", maxsplit=1)[0]
+                                     "application/octet-stream").split(
+                                         ";", maxsplit=1)[0]
 
     @contextmanager
     def make_path(self):
@@ -148,8 +156,8 @@ class WebResource(FileResource):
     def make_stream(self):
         response = self._open_source().get(self._make_url())
         if response.status_code != 200:
-            raise ResourceUnavailableError(
-                    self.get_handle(), response.status_code)
+            raise ResourceUnavailableError(self.get_handle(),
+                                           response.status_code)
         else:
             with BytesIO(response.content) as s:
                 yield s

@@ -14,7 +14,6 @@
 #
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( http://www.os2web.dk/ )
-
 """Unit tests for the scanner."""
 
 # Include the Django app
@@ -49,7 +48,6 @@ from os2datascanner.engine.scanners.processors import pdf, libreoffice, html, zi
 from os2datascanner.projects.admin.adminapp.models.version_model import Version
 from os2datascanner.projects.admin.adminapp.models.location_model import Location
 
-
 from os2datascanner.projects.admin.adminapp.models.conversionqueueitem_model import ConversionQueueItem
 
 from os2datascanner.projects.admin.adminapp.models.scans.scan_model import Scan
@@ -63,10 +61,10 @@ from os2datascanner.projects.admin.adminapp.models.organization_model import Org
 
 
 class AnalysisScanTest(django.test.TestCase):
-
     @staticmethod
     def get_folder_path():
-        dir_path = os.path.dirname(os.path.realpath(__file__)) + '/scanner/scanner'
+        dir_path = os.path.dirname(
+            os.path.realpath(__file__)) + '/scanner/scanner'
         print('Directory Path:' + dir_path)
         return dir_path
 
@@ -81,7 +79,9 @@ class FileExtractorTest(django.test.TestCase):
             os.mkdir(filepath2)
 
             spider = FileSpider(
-                FileScanner({"id": create_filescan().pk}),
+                FileScanner({
+                    "id": create_filescan().pk
+                }),
                 None,
             )
             filemap = spider.file_extractor('file://' + temp_dir)
@@ -91,19 +91,21 @@ class FileExtractorTest(django.test.TestCase):
             encoded_file_path1 = filemap[0].encode('utf-8')
             encoded_file_path2 = filemap[1].encode('utf-8')
 
-            self.assertEqual(filepath1, encoded_file_path1.decode('utf-8').replace('file://', ''))
-            self.assertEqual(filepath2, encoded_file_path2.decode('utf-8').replace('file://', ''))
+            self.assertEqual(
+                filepath1,
+                encoded_file_path1.decode('utf-8').replace('file://', ''))
+            self.assertEqual(
+                filepath2,
+                encoded_file_path2.decode('utf-8').replace('file://', ''))
 
 
 class ExternalLinkCheckerTest(django.test.TestCase):
-
     """Test the external link checker."""
 
     def test_checker(self):
         """Test the link checker."""
         # Google should be OK
-        self.assertIsNone(linkchecker.check_url(
-            "http://www.google.com/"))
+        self.assertIsNone(linkchecker.check_url("http://www.google.com/"))
 
         # Test 404 error
         res = linkchecker.check_url(
@@ -113,12 +115,11 @@ class ExternalLinkCheckerTest(django.test.TestCase):
         self.assertEqual(res["status_code"], 404)
 
         # Random domain is not OK
-        self.assertIsNotNone(linkchecker.check_url(
-            "http://asdfasdfasdf324afddsfasdf/"))
+        self.assertIsNotNone(
+            linkchecker.check_url("http://asdfasdfasdf324afddsfasdf/"))
 
 
 class NameTest(django.test.TestCase):
-
     """Test the name rule."""
 
     def test_matching(self):
@@ -134,8 +135,10 @@ class NameTest(django.test.TestCase):
         # whitelist = """
         # Jim Smiths
         # """
-        valid_names = ['Jens Jensen', 'Jim Smith Jones',
-                       'Lars L. Larsen', 'Lars Lars Lars Larsen']
+        valid_names = [
+            'Jens Jensen', 'Jim Smith Jones', 'Lars L. Larsen',
+            'Lars Lars Lars Larsen'
+        ]
         invalid_names = ['sdfsdsad Asdfsddsfasd']
         name_rule = name.NameRule('The Name Rule', Sensitivity.HIGH,
                                   NameRule.DATABASE_DST_2014)
@@ -147,16 +150,15 @@ class NameTest(django.test.TestCase):
 
         for valid_name in valid_names:
             with self.subTest(valid_name):
-                self.assertIn(valid_name, matches,
-                              valid_name + " is valid")
+                self.assertIn(valid_name, matches, valid_name + " is valid")
         for invalid_name in invalid_names:
             with self.subTest(invalid_name):
-                self.assertFalse(any(m == invalid_name for m in matches),
-                                 invalid_name + " is valid")
+                self.assertFalse(
+                    any(m == invalid_name for m in matches),
+                    invalid_name + " is valid")
 
 
 class CPRTest(django.test.TestCase):
-
     """Test the CPR rule."""
 
     def check_matches(self, matches, valid_matches, invalid_matches):
@@ -182,12 +184,14 @@ class CPRTest(django.test.TestCase):
             080135-5102 # in the future
             21 10 62 - 3308
             """
-        valid_cprs = ['2110625629', '2006359917', '2006385322', '2110625629',
-                      '0801355102', '2110623308']
+        valid_cprs = [
+            '2110625629', '2006359917', '2006385322', '2110625629',
+            '0801355102', '2110623308'
+        ]
         invalid_cprs = ['4110625629', '2113625629', '9110625629']
 
-        matches = cpr.match_cprs(text, Sensitivity.LOW, mask_digits=False,
-                                 ignore_irrelevant=False)
+        matches = cpr.match_cprs(
+            text, Sensitivity.LOW, mask_digits=False, ignore_irrelevant=False)
         self.check_matches(matches, valid_cprs, invalid_cprs)
 
     def test_matching_ignore_irrelevant(self):
@@ -201,8 +205,8 @@ class CPRTest(django.test.TestCase):
         valid_cprs = ['2110620155']
         invalid_cprs = ['2110625629', '2006385322', '0801355102']
 
-        matches = cpr.match_cprs(text, Sensitivity.HIGH, mask_digits=False,
-                                 ignore_irrelevant=True)
+        matches = cpr.match_cprs(
+            text, Sensitivity.HIGH, mask_digits=False, ignore_irrelevant=True)
         self.check_matches(matches, valid_cprs, invalid_cprs)
 
     def test_modulus11_check(self):
@@ -220,13 +224,23 @@ class CPRTest(django.test.TestCase):
         Compare our list of exception dates to the official list from the CPR
         Office.
         """
+
         def parsedate(s: str) -> datetime.date:
             """
             Quick-and-dirty parser for strings such as "1. januar 1991"
             """
             danish_months = (
-                "januar", "februar", "marts", "april", "maj", "juni",
-                "juli", "august", "september", "oktober", "november",
+                "januar",
+                "februar",
+                "marts",
+                "april",
+                "maj",
+                "juni",
+                "juli",
+                "august",
+                "september",
+                "oktober",
+                "november",
                 "december",
             )
 
@@ -234,14 +248,10 @@ class CPRTest(django.test.TestCase):
 
             return datetime.date(
                 int(year),
-                danish_months.index(month) + 1,
-                int(day)
-            )
+                danish_months.index(month) + 1, int(day))
 
-        r = requests.get(
-            "https://cpr.dk/cpr-systemet/"
-            "personnumre-uden-kontrolciffer-modulus-11-kontrol/"
-        )
+        r = requests.get("https://cpr.dk/cpr-systemet/"
+                         "personnumre-uden-kontrolciffer-modulus-11-kontrol/")
 
         r.raise_for_status()
 
@@ -257,7 +267,6 @@ class CPRTest(django.test.TestCase):
 
 
 class PDF2HTMLTest(django.test.TestCase):
-
     def create_ressources(self, filename):
         src = str(data_dir / 'pdf' / filename)
         dst = str(data_dir / 'tmp' / filename)
@@ -270,13 +279,15 @@ class PDF2HTMLTest(django.test.TestCase):
                 scanner=create_filescanner(),
             ),
         )
-        item = ConversionQueueItem(pk=0,
-                                   url=version,
-                                   file=dst,
-                                   type=pdf.PDFProcessor,
-                                   status=ConversionQueueItem.NEW)
+        item = ConversionQueueItem(
+            pk=0,
+            url=version,
+            file=dst,
+            type=pdf.PDFProcessor,
+            status=ConversionQueueItem.NEW)
 
-        with tempfile.TemporaryDirectory(dir=str(data_dir / 'tmp')) as temp_dir:
+        with tempfile.TemporaryDirectory(
+                dir=str(data_dir / 'tmp')) as temp_dir:
             result = pdf.PDFProcessor.convert(self, item, temp_dir)
 
         return result
@@ -305,8 +316,9 @@ class PDF2HTMLTest(django.test.TestCase):
         self.assertEqual(result, True)
 
 
-@unittest.skipUnless(os.path.isfile("/usr/lib/libreoffice/program/soffice"),
-                     "LibreOffice is unavailable")
+@unittest.skipUnless(
+    os.path.isfile("/usr/lib/libreoffice/program/soffice"),
+    "LibreOffice is unavailable")
 class LibreOfficeTest(django.test.TestCase):
 
     libreoffice_processor = None
@@ -336,12 +348,14 @@ class LibreOfficeTest(django.test.TestCase):
             ),
         )
 
-        item = ConversionQueueItem(url=version,
-                                   file=dst,
-                                   type=libreoffice.LibreOfficeProcessor,
-                                   status=ConversionQueueItem.NEW)
+        item = ConversionQueueItem(
+            url=version,
+            file=dst,
+            type=libreoffice.LibreOfficeProcessor,
+            status=ConversionQueueItem.NEW)
 
-        with tempfile.TemporaryDirectory(dir=str(data_dir / 'tmp')) as temp_dir:
+        with tempfile.TemporaryDirectory(
+                dir=str(data_dir / 'tmp')) as temp_dir:
             result = self.libreoffice_processor.convert(item, temp_dir)
 
         return result
@@ -361,7 +375,6 @@ class LibreOfficeTest(django.test.TestCase):
 
 
 class HTMLTest(django.test.TestCase):
-
     def create_ressources(self, filename):
         src = str(data_dir / 'html' / filename)
         dst = str(data_dir / 'tmp' / filename)
@@ -375,9 +388,11 @@ class HTMLTest(django.test.TestCase):
                 scanner=create_filescanner(),
             ),
         )
-        item = ConversionQueueItem(url=version, file=dst,
-                                   type=html.HTMLProcessor,
-                                   status=ConversionQueueItem.NEW)
+        item = ConversionQueueItem(
+            url=version,
+            file=dst,
+            type=html.HTMLProcessor,
+            status=ConversionQueueItem.NEW)
 
         return item
 
@@ -396,7 +411,6 @@ class HTMLTest(django.test.TestCase):
 
 
 class ZIPTest(django.test.TestCase):
-
     def create_ressources(self, filename):
         src = str(data_dir / 'zip' / filename)
         dst = str(data_dir / 'tmp' / filename)
@@ -409,13 +423,15 @@ class ZIPTest(django.test.TestCase):
                 scanner=create_filescanner(),
             ),
         )
-        item = ConversionQueueItem(pk=0,
-                                   url=version,
-                                   file=dst,
-                                   type=zip.ZipProcessor,
-                                   status=ConversionQueueItem.NEW)
+        item = ConversionQueueItem(
+            pk=0,
+            url=version,
+            file=dst,
+            type=zip.ZipProcessor,
+            status=ConversionQueueItem.NEW)
 
-        with tempfile.TemporaryDirectory(dir=str(data_dir / 'tmp')) as temp_dir:
+        with tempfile.TemporaryDirectory(
+                dir=str(data_dir / 'tmp')) as temp_dir:
             zip_processor = zip.ZipProcessor()
             result = zip_processor.convert(item, temp_dir)
 
@@ -440,10 +456,7 @@ class ZIPTest(django.test.TestCase):
 
 
 def create_webscan():
-    return WebScan.objects.create(
-        status=Scan.NEW,
-        scanner=create_webscanner()
-    )
+    return WebScan.objects.create(status=Scan.NEW, scanner=create_webscanner())
 
 
 def create_webscanner():
@@ -457,7 +470,7 @@ def create_webscanner():
 def create_filescan():
     scanner = create_filescanner()
     assert scanner.url
-    return Scan.objects.create(status=Scan.NEW,scanner=scanner)
+    return Scan.objects.create(status=Scan.NEW, scanner=scanner)
 
 
 def create_filescanner():
@@ -468,16 +481,14 @@ def create_filescanner():
         url=r'\\example.com\test',
         defaults=dict(organization=create_organization()),
         mountpath=str(test_dir),
-        alias='T'
-    )[0]
+        alias='T')[0]
 
 
 def create_organization():
     return Organization.objects.get_or_create(
         name='Magenta',
         contact_email='info@magenta.dk',
-        contact_phone='39393939'
-    )[0]
+        contact_phone='39393939')[0]
 
 
 class RegexRuleIsAllMatchTest(django.test.TestCase):
@@ -485,10 +496,11 @@ class RegexRuleIsAllMatchTest(django.test.TestCase):
     organization = None
 
     def create_regexrule(self, name, description, sensitivity):
-        rule = RegexRule(name=name,
-                         organization=create_organization(),
-                         description=description,
-                         sensitivity=sensitivity)
+        rule = RegexRule(
+            name=name,
+            organization=create_organization(),
+            description=description,
+            sensitivity=sensitivity)
         return rule
 
     def create_scanner_regexrule(self, pattern_objects, rule):
@@ -520,9 +532,9 @@ class RegexRuleIsAllMatchTest(django.test.TestCase):
         kevin brisket ribeye 2110625629 jowl short l
         tail Danni Als alcatra boudin filet mignon shankle 
         """
-        rule = self.create_regexrule('cpr_name_something_rule',
-                                     'Finds cpr, name and the word Something.',
-                                     Sensitivity.LOW)
+        rule = self.create_regexrule(
+            'cpr_name_something_rule',
+            'Finds cpr, name and the word Something.', Sensitivity.LOW)
 
         pattern_objects = PatternMockObjects()
         regex_pattern1 = PatternMockObject()
@@ -544,9 +556,9 @@ class RegexRuleIsAllMatchTest(django.test.TestCase):
         kevin brisket ribeye 2110625629 jowl short l
         tail Danni Als alcatra boudin filet mignon shankle 
         """
-        rule = self.create_regexrule('cpr_name_something_rule',
-                                     'Finds cpr, name and the word something.',
-                                     Sensitivity.LOW)
+        rule = self.create_regexrule(
+            'cpr_name_something_rule',
+            'Finds cpr, name and the word something.', Sensitivity.LOW)
 
         pattern_objects = PatternMockObjects()
         regex_pattern1 = PatternMockObject()
@@ -609,4 +621,4 @@ class PatternMockObject(object):
                      '*(?:\s+[a-z][a-z\-]+){0,2}\s+[A-Z]([a-z]+|\.)'
 
     def all(self):
-        return[self]
+        return [self]

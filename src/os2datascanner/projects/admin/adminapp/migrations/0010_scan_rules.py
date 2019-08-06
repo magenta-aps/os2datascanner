@@ -23,11 +23,19 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='scan',
             name='rules',
-            field=models.ManyToManyField(blank=True, related_name='scans', to='os2datascanner.Rule', verbose_name='Regler'),
+            field=models.ManyToManyField(
+                blank=True,
+                related_name='scans',
+                to='os2datascanner.Rule',
+                verbose_name='Regler'),
         ),
         migrations.AddField(
             model_name='scanner',
             name='rules',
-            field=models.ManyToManyField(blank=True, related_name='scanners', to='os2datascanner.Rule', verbose_name='Regler'),
+            field=models.ManyToManyField(
+                blank=True,
+                related_name='scanners',
+                to='os2datascanner.Rule',
+                verbose_name='Regler'),
         ),
     ]

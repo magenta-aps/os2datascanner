@@ -13,7 +13,6 @@
 #
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( http://www.os2web.dk/ )
-
 """Start up and manage queue processors to ensure they stay running.
 
 Starts up multiple instances of each processor.
@@ -82,32 +81,22 @@ def stop_process(p):
         del process_map[pid]
     # Set any ongoing queue-items for this process id to failed
     ongoing_items = ConversionQueueItem.objects.filter(
-        status=ConversionQueueItem.PROCESSING,
-        process_id=pid
-    )
+        status=ConversionQueueItem.PROCESSING, process_id=pid)
     # Remove the temp directories for the failed queue items
     for item in ongoing_items:
         # Log to occurrence log
         try:
             item.url.scan.log_occurrence(
                 "QUEUE STOPPING: type <{0}>, URL: {1}".format(
-                    item.type,
-                    item.url.url
-                )
-            )
+                    item.type, item.url.url))
         except Exception:
-            item.url.scan.log_occurrence(
-                "QUEUE STOPPING: url <{0}>".format(
-                    item.url.url,
-                )
-            )
+            item.url.scan.log_occurrence("QUEUE STOPPING: url <{0}>".format(
+                item.url.url, ))
 
         # Clean up.
         item.delete_tmp_dir()
 
-    ongoing_items.update(
-        status=ConversionQueueItem.FAILED
-    )
+    ongoing_items.update(status=ConversionQueueItem.FAILED)
 
     # Close logfile and remove it
     if 'log_fh' in p:
@@ -119,9 +108,7 @@ def stop_process(p):
 def start_process(p):
     """Start the process."""
     if 'process_handle' in p:
-        raise BaseException(
-            "Program %s is already running" % p['name']
-        )
+        raise BaseException("Program %s is already running" % p['name'])
 
     logger.debug("Starting process", **p)
 
@@ -129,10 +116,7 @@ def start_process(p):
     log_fh = open(log_file, 'a')
 
     process_handle = subprocess.Popen(
-        p['program_args'],
-        stdout=log_fh,
-        stderr=log_fh
-    )
+        p['program_args'], stdout=log_fh, stderr=log_fh)
 
     pid = p['pid'] = process_handle.pid
 
@@ -188,8 +172,7 @@ def restart_stuck_processors():
     stuck_processes = ConversionQueueItem.objects.filter(
         status=ConversionQueueItem.PROCESSING,
         process_start_time__lt=(
-            timezone.localtime(timezone.now()) - processing_timeout
-        ),
+            timezone.localtime(timezone.now()) - processing_timeout),
     )
     for p in stuck_processes:
         pid = p.process_id
@@ -202,16 +185,10 @@ def restart_stuck_processors():
             try:
                 p.url.scan.log_occurrence(
                     "PROCESS STUCK: type <{0}>, URL: {1}".format(
-                        p.type,
-                        p.url.url
-                    )
-                )
+                        p.type, p.url.url))
             except Exception:
-                p.url.scan.log_occurrence(
-                    "PROCESS STUCK: url <{0}>".format(
-                        p.url.url,
-                    )
-                )
+                p.url.scan.log_occurrence("PROCESS STUCK: url <{0}>".format(
+                    p.url.url, ))
             # Clean up failed conversion temp dir
             if os.access(p.tmp_dir, os.W_OK):
                 shutil.rmtree(p.tmp_dir, True)

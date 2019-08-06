@@ -30,19 +30,18 @@ from .scanner_model import Scanner
 # Get an instance of a logger
 logger = structlog.get_logger()
 
-class FileScanner(Scanner):
 
+class FileScanner(Scanner):
     """File scanner for scanning network drives and folders"""
 
-
-    mountpath = models.CharField(max_length=2048, verbose_name='Folder sti', null=True)
-    alias = models.CharField(max_length=64, verbose_name='Drevbogstav', null=True)
+    mountpath = models.CharField(
+        max_length=2048, verbose_name='Folder sti', null=True)
+    alias = models.CharField(
+        max_length=64, verbose_name='Drevbogstav', null=True)
 
     # Run error messages
-    MOUNT_FAILED = (
-            "Scanneren kunne ikke startes," +
-            " fordi netværksdrev ikke kunne monteres"
-    )
+    MOUNT_FAILED = ("Scanneren kunne ikke startes," +
+                    " fordi netværksdrev ikke kunne monteres")
 
     @property
     def root_url(self):
@@ -93,15 +92,17 @@ class FileScanner(Scanner):
                     return False
 
         if self.is_mounted:
-            logger.info('mount_skipped', mountpath=self.mountpath, url=self.url)
+            logger.info(
+                'mount_skipped', mountpath=self.mountpath, url=self.url)
             return True
 
         # Make only one scanner able to scan mounted file directory.
         # Scrapy locks the files while reading, so it is not possible to have two scan jobs
         # running at the same time on the same mount point.
 
-        command = ['sudo', 'mount', '-t', 'cifs',
-                   self.root_url, self.mountpath, '-o']
+        command = [
+            'sudo', 'mount', '-t', 'cifs', self.root_url, self.mountpath, '-o'
+        ]
 
         optarg = 'iocharset=utf8'
         if settings.PRODUCTION_MODE:
@@ -119,8 +120,11 @@ class FileScanner(Scanner):
         response = call(command)
 
         if response:
-            logger.error('mount_failed', response=response,
-                         mountpath=self.mountpath, url=self.url)
+            logger.error(
+                'mount_failed',
+                response=response,
+                mountpath=self.mountpath,
+                url=self.url)
             return False
 
         logger.info('mount_complete', mountpath=self.mountpath, url=self.url)
@@ -133,9 +137,11 @@ class FileScanner(Scanner):
             call(['sudo', 'umount', '-l', self.mountpath])
             if self.is_mounted:
                 call(['sudo', 'umount', '-f', self.mountpath])
-            logger.info('unmount_complete', mountpath=self.mountpath, url=self.url)
+            logger.info(
+                'unmount_complete', mountpath=self.mountpath, url=self.url)
         else:
-            logger.info('unmount_skipped', mountpath=self.mountpath, url=self.url)
+            logger.info(
+                'unmount_skipped', mountpath=self.mountpath, url=self.url)
 
     def __str__(self):
         """Return the URL for the scanner."""
@@ -148,20 +154,17 @@ class FileScanner(Scanner):
         return super().run(type, blocking, user)
 
     def path_for(self, path):
-        root_url = (
-            self.url if self.url.startswith('file:')
-            else PureWindowsPath(self.url).as_uri()
-        )
+        root_url = (self.url if self.url.startswith('file:') else
+                    PureWindowsPath(self.url).as_uri())
 
         if path.startswith(root_url):
             return str(
-                PureWindowsPath(self.alias + ':\\') / path[len(root_url):]
-            )
+                PureWindowsPath(self.alias + ':\\') / path[len(root_url):])
 
         return path
 
     def get_type(self):
-            return 'file'
+        return 'file'
 
     def get_absolute_url(self):
         """Get the absolute URL for scanners."""

@@ -24,29 +24,33 @@ from .scannerjobs.webscanner_model import WebScanner
 
 
 class Summary(models.Model):
-
     """The necessary configuration for summary reports."""
 
-    name = models.CharField(max_length=256, unique=True, null=False,
-                            verbose_name='Navn')
-    description = models.TextField(verbose_name='Beskrivelse', null=True,
-                                   blank=True)
-    schedule = RecurrenceField(max_length=1024,
-                               verbose_name='Planlagt afvikling')
-    last_run = models.DateTimeField(blank=True, null=True,
-                                    verbose_name='Sidste kørsel')
-    recipients = models.ManyToManyField(UserProfile, blank=True,
-                                        verbose_name="Modtagere")
-    scanners = models.ManyToManyField(WebScanner, blank=True,
-                                      verbose_name="Scannere")
-    organization = models.ForeignKey(Organization, null=False,
-                                     verbose_name='Organisation',
-                                     on_delete=models.PROTECT)
-    group = models.ForeignKey(Group, null=True, blank=True,
-                              verbose_name='Gruppe',
-                              on_delete=models.SET_NULL)
-    do_email_recipients = models.BooleanField(default=False,
-                                              verbose_name="Udsend mails")
+    name = models.CharField(
+        max_length=256, unique=True, null=False, verbose_name='Navn')
+    description = models.TextField(
+        verbose_name='Beskrivelse', null=True, blank=True)
+    schedule = RecurrenceField(
+        max_length=1024, verbose_name='Planlagt afvikling')
+    last_run = models.DateTimeField(
+        blank=True, null=True, verbose_name='Sidste kørsel')
+    recipients = models.ManyToManyField(
+        UserProfile, blank=True, verbose_name="Modtagere")
+    scanners = models.ManyToManyField(
+        WebScanner, blank=True, verbose_name="Scannere")
+    organization = models.ForeignKey(
+        Organization,
+        null=False,
+        verbose_name='Organisation',
+        on_delete=models.PROTECT)
+    group = models.ForeignKey(
+        Group,
+        null=True,
+        blank=True,
+        verbose_name='Gruppe',
+        on_delete=models.SET_NULL)
+    do_email_recipients = models.BooleanField(
+        default=False, verbose_name="Udsend mails")
 
     def __str__(self):
         """Return the name as a text representation of this summary object."""
@@ -58,4 +62,6 @@ class Summary(models.Model):
         return self.name
 
     class Meta:
-        ordering = ['name', ]
+        ordering = [
+            'name',
+        ]

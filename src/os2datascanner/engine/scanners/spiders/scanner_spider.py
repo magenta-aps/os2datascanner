@@ -35,7 +35,6 @@ logger = structlog.get_logger()
 
 
 class ScannerSpider(BaseScannerSpider):
-
     """A spider which uses a scanner to scan all data it comes across."""
 
     name = 'scanner'
@@ -89,12 +88,11 @@ class ScannerSpider(BaseScannerSpider):
 
         # Save the URL item to the database
         if (Processor.mimetype_to_processor_type(mime_type) == 'ocr'
-            and not self.scanner.do_ocr):
+                and not self.scanner.do_ocr):
             # Ignore this URL
             return
 
-        url_object = self.url_save(mime_type,
-                                   response.request.url)
+        url_object = self.url_save(mime_type, response.request.url)
 
         data = response.body
 
@@ -128,19 +126,15 @@ class ScannerSpider(BaseScannerSpider):
                     encoding = chardet.detect(response.body).get('encoding')
                     if encoding is not None:
                         data = response.body.decode(encoding)
-                        logging.warning(
-                            (
-                                "Error decoding response as %s. " +
-                                "Detected the encoding as %s.") %
-                            (response.encoding, encoding)
-                        )
+                        logging.warning(("Error decoding response as %s. " +
+                                         "Detected the encoding as %s.") %
+                                        (response.encoding, encoding))
                     else:
                         mime_type = self.magic.from_buffer(response.body)
                         data = response.body
                         logging.warning(("Error decoding response as %s. " +
-                                 "Detected the mime " +
-                                 "type as %s.") % (response.encoding,
-                                                   mime_type))
+                                         "Detected the mime " + "type as %s.")
+                                        % (response.encoding, mime_type))
                 except UnicodeDecodeError:
                     # Could not decode with the detected encoding, so assume
                     # the file is binary and try to guess the mimetype from
@@ -149,9 +143,7 @@ class ScannerSpider(BaseScannerSpider):
                     data = response.body
                     logging.error(
                         ("Error decoding response as %s. Detected the "
-                         "mime type as %s.") % (response.encoding,
-                                                mime_type)
-                    )
+                         "mime type as %s.") % (response.encoding, mime_type))
 
         else:
             data = response.body

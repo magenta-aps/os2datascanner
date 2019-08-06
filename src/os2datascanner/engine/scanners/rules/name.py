@@ -13,7 +13,6 @@
 #
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( http://www.os2web.dk/ )
-
 """Rules for name scanning."""
 
 import regex
@@ -30,9 +29,8 @@ _whitespace = "[^\\S\\n\\r]+"
 _simple_name = "\\p{Uppercase}(\\p{L}+|\\.?)"
 _name = "{0}(-{0})?".format(_simple_name)
 full_name_regex = regex.compile(
-    "\\b(?P<first>" + _name + ")" +
-    "(?P<middle>(" + _whitespace + _name + "){0,3})" +
-    "(?P<last>" + _whitespace + _name + "){1}\\b", regex.UNICODE)
+    "\\b(?P<first>" + _name + ")" + "(?P<middle>(" + _whitespace + _name +
+    "){0,3})" + "(?P<last>" + _whitespace + _name + "){1}\\b", regex.UNICODE)
 
 
 def match_full_name(text):
@@ -61,15 +59,11 @@ def load_whitelist(whitelist):
 
     Returns a set of the names in all upper-case characters
     """
-    return set(
-        [
-            line.upper().strip() for line in whitelist.splitlines()
-        ] if whitelist else []
-    )
+    return set([line.upper().strip()
+                for line in whitelist.splitlines()] if whitelist else [])
 
 
 class NameRule(Rule):
-
     """Represents a rule which scans for Full Names in text.
 
     The rule loads a list of names from first and last name files and matches
@@ -77,8 +71,12 @@ class NameRule(Rule):
     Matches against full, capitalized, names with up to 2 middle names.
     """
 
-    def __init__(self, name, sensitivity, database,
-            whitelist=None, blacklist=None):
+    def __init__(self,
+                 name,
+                 sensitivity,
+                 database,
+                 whitelist=None,
+                 blacklist=None):
         """Initialize the rule with optional whitelist and blacklist.
 
         The whitelist should contains a multi-line string, with one name per
@@ -88,8 +86,9 @@ class NameRule(Rule):
 
         if database == DjangoModel.DATABASE_DST_2014:
             last_name_file = 'efternavne_2014.txt'
-            first_name_files = ['fornavne_2014_-_kvinder.txt',
-                                'fornavne_2014_-_mænd.txt']
+            first_name_files = [
+                'fornavne_2014_-_kvinder.txt', 'fornavne_2014_-_mænd.txt'
+            ]
         else:
             raise Exception("Unrecognised database")
 
@@ -113,8 +112,7 @@ class NameRule(Rule):
         # Determine if a name matches one of the lists
         def match(n, list):
             return n.upper() in self.blacklist or (
-                n.upper() in list and not n.upper() in self.whitelist
-            )
+                n.upper() in list and not n.upper() in self.whitelist)
 
         # First, check for whole names, i.e. at least Firstname + Lastname
         names = match_full_name(text)
@@ -130,16 +128,14 @@ class NameRule(Rule):
             first_match = match(first_name, self.first_names)
             last_match = match(last_name, self.last_names)
             middle_match = any(
-                [match(n, self.all_names) for n in middle_names]
-            )
+                [match(n, self.all_names) for n in middle_names])
             # But what if the name is Word Firstname Lastname?
             while middle_match and not first_match:
                 old_name = first_name
                 first_name = middle_names.pop(0)
                 first_match = match(first_name, self.first_names)
                 middle_match = any(
-                    [match(n, self.all_names) for n in middle_names]
-                )
+                    [match(n, self.all_names) for n in middle_names])
                 matched_text = matched_text.lstrip(old_name)
                 matched_text = matched_text.lstrip()
             # Or Firstname Lastname Word?
@@ -148,15 +144,13 @@ class NameRule(Rule):
                 last_name = middle_names.pop()
                 last_match = match(last_name, self.last_names)
                 middle_match = any(
-                    [match(n, self.all_names) for n in middle_names]
-                )
+                    [match(n, self.all_names) for n in middle_names])
                 matched_text = matched_text.rstrip(old_name)
                 matched_text = matched_text.rstrip()
 
             if middle_names:
-                full_name = "%s %s %s" % (
-                    first_name, " ".join(middle_names), last_name
-                )
+                full_name = "%s %s %s" % (first_name, " ".join(middle_names),
+                                          last_name)
             else:
                 full_name = "%s %s" % (first_name, last_name)
 
@@ -186,9 +180,9 @@ class NameRule(Rule):
             unmatched_text = unmatched_text.replace(matched_text, "", 1)
 
             matches.add(
-                MatchItem(matched_data=matched_text,
-                          sensitivity=self._clamp_sensitivity(sensitivity))
-            )
+                MatchItem(
+                    matched_data=matched_text,
+                    sensitivity=self._clamp_sensitivity(sensitivity)))
         # Full name match done. Now check if there's any standalone names in
         # the remaining, i.e. so far unmatched string.
         name_regex = regex.compile(_name)
@@ -202,7 +196,7 @@ class NameRule(Rule):
                 else:
                     sensitivity = Sensitivity.LOW
                 matches.add(
-                    MatchItem(matched_data=matched,
-                              sensitivity=self._clamp_sensitivity(sensitivity))
-                )
+                    MatchItem(
+                        matched_data=matched,
+                        sensitivity=self._clamp_sensitivity(sensitivity)))
         return matches

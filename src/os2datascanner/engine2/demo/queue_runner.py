@@ -15,6 +15,7 @@ queue = []
 
 done = "__SENTINEL__FINISHED__"
 
+
 def put(queue, what, renderer=str):
     me = current_process().name
     seconds = 0
@@ -27,6 +28,7 @@ def put(queue, what, renderer=str):
             seconds += 1
             print("{0} write-spinning for {1} seconds...".format(me, seconds))
 
+
 def take(queue, renderer=str):
     me = current_process().name
     seconds = 0
@@ -38,6 +40,7 @@ def take(queue, renderer=str):
         except Empty:
             seconds += 1
             print("{0} read-spinning for {1} seconds...".format(me, seconds))
+
 
 def generate(start, urls, sources):
     count = 0
@@ -53,7 +56,8 @@ def generate(start, urls, sources):
         now = (datetime.now() - start).total_seconds()
         per_sec = float(count) / now
         print(("generate signing off after finding {0} sources in {1} " +
-                "seconds ({2} sources/sec)").format(count, now, per_sec))
+               "seconds ({2} sources/sec)").format(count, now, per_sec))
+
 
 def explore(start, sm, sources, handles):
     count = 0
@@ -83,12 +87,14 @@ def explore(start, sm, sources, handles):
         now = (datetime.now() - start).total_seconds()
         per_sec = float(count) / now
         print(("explore signing off after finding {0} handles (out of {3}) " +
-                "in {1} seconds ({2} handles/sec)").format(
-                    count, now, per_sec, total))
+               "in {1} seconds ({2} handles/sec)").format(
+                   count, now, per_sec, total))
         put(handles, done)
+
 
 def print_handle_name(tpl):
     return "<text from {0}>".format(tpl[0])
+
 
 def process(start, parent, handles, texts, peers):
     with peers.get_lock():
@@ -113,7 +119,7 @@ def process(start, parent, handles, texts, peers):
                         text = None
                     if text:
                         print("{0}: finished {1}, got some text".format(
-                                me, handle))
+                            me, handle))
                         put(texts, ((handle, text)), print_handle_name)
                         count += 1
                     else:
@@ -130,7 +136,8 @@ def process(start, parent, handles, texts, peers):
                 put(texts, done)
             else:
                 print("{0} was not the last processor, {1} remain".format(
-                        me, peers.value))
+                    me, peers.value))
+
 
 def display(start, texts):
     count = 0
@@ -148,13 +155,12 @@ def display(start, texts):
         now = (datetime.now() - start).total_seconds()
         per_sec = float(count) / now
         print(("display signing off after printing {0} texts in {1} " +
-                "seconds ({2} texts/sec)").format(count, now, per_sec))
+               "seconds ({2} texts/sec)").format(count, now, per_sec))
+
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-            "urls",
-            metavar="URL", nargs='+')
+    parser.add_argument("urls", metavar="URL", nargs='+')
 
     args = parser.parse_args()
     with Manager() as manager:
@@ -173,11 +179,22 @@ def main():
 
             start = datetime.now()
             processor_handles = [
-                Process(target=process, name="processor{0}".format(i),
-                        args=(start, sm.share(), handles, texts, processor_c,))
-                for i in range(0, 3)]
+                Process(
+                    target=process,
+                    name="processor{0}".format(i),
+                    args=(
+                        start,
+                        sm.share(),
+                        handles,
+                        texts,
+                        processor_c,
+                    )) for i in range(0, 3)
+            ]
             display_handle = Process(
-                    target=display, name="display", args=(start, texts,))
+                target=display, name="display", args=(
+                    start,
+                    texts,
+                ))
 
             try:
                 display_handle.start()
@@ -194,15 +211,17 @@ def main():
                 [wait_on(h) for h in processor_handles]
                 wait_on(display_handle)
                 duration = (datetime.now() - start).total_seconds()
-                print("Everything finished after {0} seconds.".format(duration))
+                print(
+                    "Everything finished after {0} seconds.".format(duration))
             except BaseException:
                 print("Uncaught exception: joining all children to shut " +
-                        "down context manager cleanly.")
+                      "down context manager cleanly.")
                 [wait_on(h) for h in processor_handles]
                 wait_on(display_handle)
                 duration = (datetime.now() - start).total_seconds()
                 print("Unclean shutdown after {0} seconds.".format(duration))
                 raise
+
 
 if __name__ == '__main__':
     main()

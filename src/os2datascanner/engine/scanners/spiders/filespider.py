@@ -16,10 +16,16 @@ class FileSpider(ScannerSpider):
     name = 'filescanner'
     magic = magic.Magic(mime=True)
     custom_settings = {
-        'DOWNLOADER_MIDDLEWARES': {'os2datascanner.engine.scanners.middlewares.middlewares.ExclusionRuleDownloaderMiddleware': 1100,
-                                   'os2datascanner.engine.scanners.middlewares.filescan_middleware.FileScanLastModifiedCheckMiddleware': 1200
-                                   },
-        'SPIDER_MIDDLEWARES': {'os2datascanner.engine.scanners.middlewares.middlewares.ExclusionRuleMiddleware': 1000}
+        'DOWNLOADER_MIDDLEWARES': {
+            'os2datascanner.engine.scanners.middlewares.middlewares.ExclusionRuleDownloaderMiddleware':
+            1100,
+            'os2datascanner.engine.scanners.middlewares.filescan_middleware.FileScanLastModifiedCheckMiddleware':
+            1200
+        },
+        'SPIDER_MIDDLEWARES': {
+            'os2datascanner.engine.scanners.middlewares.middlewares.ExclusionRuleMiddleware':
+            1000
+        }
     }
 
     def setup_spider(self):
@@ -38,8 +44,8 @@ class FileSpider(ScannerSpider):
             try:
                 requests.extend(self.append_file_request(url))
             except Exception as exc:
-                self.logger.exception('adding request failed',
-                                      url=url, exc_info=exc)
+                self.logger.exception(
+                    'adding request failed', url=url, exc_info=exc)
 
         return requests
 
@@ -60,11 +66,17 @@ class FileSpider(ScannerSpider):
             codecs, stringdata = get_codec_and_string(file)
             stringdata = stringdata.replace('#', '%23').replace('?', '%3F')
             try:
-                requests.append(Request(stringdata, callback=self.scan,
-                                        errback=self.handle_error))
+                requests.append(
+                    Request(
+                        stringdata,
+                        callback=self.scan,
+                        errback=self.handle_error))
             except UnicodeEncodeError as uee:
-                self.logger.exception('UnicodeEncodeError in append_file_request',
-                                      url=url, exc_info=uee, file=file)
+                self.logger.exception(
+                    'UnicodeEncodeError in append_file_request',
+                    url=url,
+                    exc_info=uee,
+                    file=file)
 
         return requests
 
@@ -82,13 +94,12 @@ class FileSpider(ScannerSpider):
         relevant_file_size = 0
 
         files.update_stats()
-        self.scanner.set_statistics(
-            files.stats['supported_file_count'],
-            files.stats['supported_file_size'],
-            files.stats['relevant_file_count'],
-            files.stats['relevant_file_size'],
-            files.stats['relevant_unsupported_count'],
-            files.stats['relevant_unsupported_size'])
+        self.scanner.set_statistics(files.stats['supported_file_count'],
+                                    files.stats['supported_file_size'],
+                                    files.stats['relevant_file_count'],
+                                    files.stats['relevant_file_size'],
+                                    files.stats['relevant_unsupported_count'],
+                                    files.stats['relevant_unsupported_size'])
         summaries = files.summarize_file_types()
         for k, v in summaries["super"].items():
             self.scanner.add_type_statistics(k, v["count"], sum(v["sizedist"]))
@@ -97,7 +108,8 @@ class FileSpider(ScannerSpider):
                 group_name = v["supergroup"] + "/" + k
             else:
                 group_name = k
-            self.scanner.add_type_statistics(group_name, v["count"], sum(v["sizedist"]))
+            self.scanner.add_type_statistics(group_name, v["count"],
+                                             sum(v["sizedist"]))
 
         self.logger.debug('Starting folder analysis...')
         for path, info in files.nodes.items():
@@ -105,9 +117,10 @@ class FileSpider(ScannerSpider):
                 relevant_files += 1
                 relevant_file_size += info['size']
                 filemap.append(as_file_uri(path))
-        self.logger.info('Folder analysis',
-                         relevant_files=relevant_files,
-                         relevant_file_size=relevant_file_size)
+        self.logger.info(
+            'Folder analysis',
+            relevant_files=relevant_files,
+            relevant_file_size=relevant_file_size)
         return filemap
 
     def handle_error(self, failure):
@@ -127,18 +140,17 @@ class FileSpider(ScannerSpider):
             # If file is a directory loop through files within
             if isinstance(failure.value, IOError) \
                     and failure.value.errno == errno.EISDIR:
-                self.logger.debug('file_spider_error',
-                                  exc_info=failure.value,
-                                  file=failure.value.filename)
+                self.logger.debug(
+                    'file_spider_error',
+                    exc_info=failure.value,
+                    file=failure.value.filename)
 
                 return self.append_file_request(
-                    as_file_uri(failure.value.filename),
-                )
+                    as_file_uri(failure.value.filename), )
             elif isinstance(failure.value, IOError):
                 status_message = str(failure.value.errno)
 
-        self.logger.debug('file_spider_error',
-                          exc_info=failure.value,
-                          failure=failure)
+        self.logger.debug(
+            'file_spider_error', exc_info=failure.value, failure=failure)
 
         self.broken_url_save(status_code, status_message, url)

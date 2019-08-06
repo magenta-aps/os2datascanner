@@ -10,7 +10,6 @@
 #
 # OS2Webscanner was developed by Magenta in collaboration with OS2 the
 # Danish community of open source municipalities (http://www.os2web.dk/).
-
 """ Web service functions, to be invoked over XML-RPC."""
 
 import csv
@@ -87,8 +86,10 @@ def scan_documents(username, password, data, params={}):
         with open(full_path, "wb") as f:
             f.write(binary.data)
         return full_path
+
     documents = map(writefile, data)
-    scan = do_scan(user, map(as_file_uri, documents), params, add_domains=False)
+    scan = do_scan(
+        user, map(as_file_uri, documents), params, add_domains=False)
     # map(os.remove, documents)
 
     url = scan.get_absolute_url()
@@ -124,9 +125,8 @@ def get_status(username, password, report_url):
         raise RuntimeError("Report not found")
 
     count = Match.objects.filter(scan=scan).count()
-    result = (
-        scan.status_text, scan.start_time or '', scan.end_time or '', count
-    )
+    result = (scan.status_text, scan.start_time or '', scan.end_time or '',
+              count)
     return result
 
 
@@ -159,30 +159,35 @@ def get_report(username, password, report_url):
     writer = csv.writer(output)
 
     all_matches = Match.objects.filter(scan=scan).order_by(
-        '-sensitivity', 'url', 'matched_rule', 'matched_data'
-    )
+        '-sensitivity', 'url', 'matched_rule', 'matched_data')
 
     # CSV utilities
     def e(fields):
         return [f.encode('utf-8') for f in fields]
 
     # Print summary header
-    writer.writerow(e(['Starttidspunkt', 'Sluttidspunkt', 'Status',
-                    'Totalt antal matches']))
+    writer.writerow(
+        e([
+            'Starttidspunkt', 'Sluttidspunkt', 'Status', 'Totalt antal matches'
+        ]))
     # Print summary
     writer.writerow(
-        e([str(scan.start_time),
-           str(scan.end_time), scan.get_status_display(),
-           str(len(all_matches))])
-    )
+        e([
+            str(scan.start_time),
+            str(scan.end_time),
+            scan.get_status_display(),
+            str(len(all_matches))
+        ]))
     # Print match header
     writer.writerow(e(['URL', 'Regel', 'Match', 'Følsomhed']))
     for match in all_matches:
         writer.writerow(
-            e([match.url.url,
-               match.get_matched_rule_display(),
-               match.matched_data.replace('\n', '').replace('\r', ' '),
-               match.get_sensitivity_display()]))
+            e([
+                match.url.url,
+                match.get_matched_rule_display(),
+                match.matched_data.replace('\n', '').replace('\r', ' '),
+                match.get_sensitivity_display()
+            ]))
     return output.getvalue()
 
 
@@ -229,8 +234,10 @@ def do_scan_documents(user, data, params={}):
         with open(full_path, "wb") as f:
             f.write(binary_decoder.data)
         return full_path
+
     documents = list(map(writefile, data))
-    scan = do_scan(user, list(map(as_file_uri, documents)), params, blocking=True)
+    scan = do_scan(
+        user, list(map(as_file_uri, documents)), params, blocking=True)
     # map(os.remove, documents)
     if not isinstance(scan, Scan):
         raise RuntimeError("Unable to perform scan - check user has" +

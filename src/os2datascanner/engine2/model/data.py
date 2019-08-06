@@ -7,6 +7,7 @@ from hashlib import md5
 from tempfile import NamedTemporaryFile
 from contextlib import contextmanager
 
+
 class DataSource(Source):
     def __init__(self, content, mime="application/octet-stream"):
         self._content = content
@@ -25,7 +26,9 @@ class DataSource(Source):
         pass
 
     def to_url(self):
-        return "data:{0};base64,{1}".format(self._mime, b64encode(self._content).decode(encoding='ascii'))
+        return "data:{0};base64,{1}".format(
+            self._mime,
+            b64encode(self._content).decode(encoding='ascii'))
 
     @staticmethod
     @Source.url_handler("data")
@@ -35,12 +38,14 @@ class DataSource(Source):
         _, content = rest.split(',', maxsplit=1)
         return DataSource(b64decode(content), mime)
 
+
 class DataHandle(Handle):
     def guess_type(self):
         return self.get_source()._mime
 
     def follow(self, sm):
         return DataResource(self, sm)
+
 
 class DataResource(FileResource):
     def __init__(self, handle, sm):

@@ -94,20 +94,16 @@ class RestrictedListView(ListView, LoginRequiredMixin):
                 if profile.organization.do_use_groups:
                     if profile.is_group_admin or self.model == Group:
                         return self.model.objects.filter(
-                            organization=profile.organization
-                        )
+                            organization=profile.organization)
                     else:
                         groups = profile.groups.all()
                         qs = self.model.objects.filter(
-                            organization=profile.organization
-                        ).filter(
-                            Q(group__in=groups) | Q(group__isnull=True)
-                        )
+                            organization=profile.organization).filter(
+                                Q(group__in=groups) | Q(group__isnull=True))
                         return qs
                 else:
                     return self.model.objects.filter(
-                        organization=profile.organization
-                    )
+                        organization=profile.organization)
 
             except UserProfile.DoesNotExist:
                 return self.model.objects.filter(organization=None)
@@ -136,13 +132,12 @@ class OrganizationList(RestrictedListView):
             def top_level(d):
                 return '.'.join(d.strip('/').split('.')[-2:])
 
-            tlds = set([top_level(d.url) for d in
-                        org.scanners.all()])
+            tlds = set([top_level(d.url) for d in org.scanners.all()])
 
             for tld in tlds:
                 sub_domains = [
-                    d.url for d in org.scanners.all() if top_level(d.url) ==
-                                                         tld
+                    d.url for d in org.scanners.all()
+                    if top_level(d.url) == tld
                 ]
                 tld_list.append({'tld': tld, 'domains': sub_domains})
 
@@ -169,6 +164,7 @@ class RuleList(RestrictedListView):
 
 # Create/Update/Delete Views.
 
+
 class RestrictedCreateView(CreateView, LoginRequiredMixin):
     """Base class for create views that are limited by user organization."""
 
@@ -180,10 +176,8 @@ class RestrictedCreateView(CreateView, LoginRequiredMixin):
         if user.is_superuser:
             fields.append('organization')
         elif user.profile.organization.do_use_groups:
-            if (
-                user.profile.is_group_admin or
-                len(user.profile.groups.all()) > 1
-            ):
+            if (user.profile.is_group_admin
+                    or len(user.profile.groups.all()) > 1):
                 fields.append('group')
 
         return fields
@@ -199,13 +193,9 @@ class RestrictedCreateView(CreateView, LoginRequiredMixin):
 
         if 'group' in fields:
             if user.profile.is_group_admin:
-                queryset = (
-                    user.profile.organization.groups.all()
-                )
+                queryset = (user.profile.organization.groups.all())
             else:
-                form.fields['group'].queryset = (
-                    user.profile.groups.all()
-                )
+                form.fields['group'].queryset = (user.profile.groups.all())
             form.fields['group'].queryset = queryset
         return form
 
@@ -218,11 +208,9 @@ class RestrictedCreateView(CreateView, LoginRequiredMixin):
                 raise PermissionDenied
             self.object = form.save(commit=False)
             self.object.organization = user_profile.organization
-            if (
-                    user_profile.organization.do_use_groups and not
-            user_profile.is_group_admin and
-                    len(user_profile.groups.all())
-            ):
+            if (user_profile.organization.do_use_groups
+                    and not user_profile.is_group_admin
+                    and len(user_profile.groups.all())):
                 self.object.group = user_profile.groups.all()[0]
 
         return super().form_valid(form)
@@ -242,11 +230,8 @@ class OrgRestrictedMixin(ModelFormMixin, LoginRequiredMixin):
         if user.is_superuser:
             fields.append('organization')
         if organization.do_use_groups:
-            if (
-                    user.is_superuser or
-                    user.profile.is_group_admin or
-                    len(user.profile.groups.all()) > 1
-            ):
+            if (user.is_superuser or user.profile.is_group_admin
+                    or len(user.profile.groups.all()) > 1):
                 do_add_group = True
         if do_add_group and self.model != Group:
             fields.append('group')
@@ -264,12 +249,9 @@ class OrgRestrictedMixin(ModelFormMixin, LoginRequiredMixin):
         if 'group' in fields:
             if user.is_superuser or user.profile.is_group_admin:
                 form.fields['group'].queryset = (
-                    self.object.organization.groups.all()
-                )
+                    self.object.organization.groups.all())
             else:
-                form.fields['group'].queryset = (
-                    user.profile.groups.all()
-                )
+                form.fields['group'].queryset = (user.profile.groups.all())
         return form
 
     def get_queryset(self):
@@ -286,13 +268,10 @@ class OrgRestrictedMixin(ModelFormMixin, LoginRequiredMixin):
                 organization = None
                 groups = []
 
-            if (
-                    user_profile.organization.do_use_groups and not
-            user_profile.is_group_admin
-            ):
+            if (user_profile.organization.do_use_groups
+                    and not user_profile.is_group_admin):
                 queryset = queryset.filter(
-                    Q(group__in=groups) | Q(group__isnull=True)
-                )
+                    Q(group__in=groups) | Q(group__isnull=True))
             else:
                 queryset = queryset.filter(organization=organization)
         return queryset
@@ -302,10 +281,8 @@ class RestrictedUpdateView(UpdateView, OrgRestrictedMixin):
     """Base class for updateviews restricted by organiztion."""
 
 
-
 class RestrictedDetailView(DetailView, OrgRestrictedMixin):
     """Base class for detailviews restricted by organiztion."""
-
 
 
 class RestrictedDeleteView(DeleteView, OrgRestrictedMixin):
@@ -406,10 +383,7 @@ class DialogSuccess(TemplateView):
         'reports/summaries': Summary,
     }
 
-    reload_map = {
-        'rules/cpr': 'rules',
-        'rules/regex': 'rules'
-    }
+    reload_map = {'rules/cpr': 'rules', 'rules/regex': 'rules'}
 
     def get_context_data(self, **kwargs):
         """Setup context for the template."""
@@ -438,34 +412,28 @@ class SystemStatusView(TemplateView, SuperUserRequiredMixin):
         """Setup context for the template."""
         context = super().get_context_data(**kwargs)
         all = ConversionQueueItem.objects.filter(
-            status=ConversionQueueItem.NEW
-        )
+            status=ConversionQueueItem.NEW)
         total = all.count()
         totals_by_type = all.values('type').annotate(
-            total=Count('type')
-        ).order_by('-total')
+            total=Count('type')).order_by('-total')
         totals_by_scan = all.values('url__scan__pk').annotate(
-            total=Count('url__scan__pk')
-        ).order_by('-total')
-        totals_by_scan_and_type = all.values('url__scan__pk', 'type').annotate(
-            total=Count('type')
-        ).order_by('-total')
+            total=Count('url__scan__pk')).order_by('-total')
+        totals_by_scan_and_type = all.values(
+            'url__scan__pk',
+            'type').annotate(total=Count('type')).order_by('-total')
 
         for item in totals_by_scan:
             item['scan'] = Scan.objects.get(pk=item['url__scan__pk'])
             by_type = []
             for x in totals_by_scan_and_type:
                 if x['url__scan__pk'] == item['url__scan__pk']:
-                    by_type.append({
-                        'total': x['total'],
-                        'type': x['type']
-                    })
+                    by_type.append({'total': x['total'], 'type': x['type']})
             item['by_type'] = by_type
 
         def assign_percentages(grouped_totals, total):
             for item in grouped_totals:
-                item['percentage'] = "%.1f" % (float(item['total']) /
-                                               total * 100.)
+                item['percentage'] = "%.1f" % (
+                    float(item['total']) / total * 100.)
 
         assign_percentages(totals_by_type, total)
         assign_percentages(totals_by_scan, total)
@@ -487,8 +455,9 @@ class SummaryCreate(RestrictedCreateView):
     """Create new summary."""
 
     model = Summary
-    fields = ['name', 'description', 'schedule', 'last_run', 'recipients',
-              'scanners']
+    fields = [
+        'name', 'description', 'schedule', 'last_run', 'recipients', 'scanners'
+    ]
 
     def get_form(self, form_class=None):
         """Set up fields and return form."""
@@ -514,8 +483,10 @@ class SummaryUpdate(RestrictedUpdateView):
     """Edit summary."""
 
     model = Summary
-    fields = ['name', 'description', 'schedule', 'last_run', 'recipients',
-              'scanners', 'do_email_recipients']
+    fields = [
+        'name', 'description', 'schedule', 'last_run', 'recipients',
+        'scanners', 'do_email_recipients'
+    ]
 
     def get_form(self, form_class=None):
         """Get the form for the view.
@@ -602,29 +573,24 @@ def file_upload(request):
             params['do_cpr_scan'] = form.cleaned_data['do_cpr_scan']
             params['do_cpr_replace'] = form.cleaned_data['do_replace_cpr']
             params['cpr_replace_text'] = form.cleaned_data[
-                'cpr_replacement_text'
-            ]
+                'cpr_replacement_text']
             params['do_name_scan'] = form.cleaned_data['do_name_scan']
             params['do_name_replace'] = form.cleaned_data['do_replace_name']
             params['name_replace_text'] = form.cleaned_data[
-                'name_replacement_text'
-            ]
+                'name_replacement_text']
             params['do_address_scan'] = form.cleaned_data['do_address_scan']
             params['do_address_replace'] = form.cleaned_data[
-                'do_replace_address'
-            ]
+                'do_replace_address']
             params['do_ocr'] = form.cleaned_data['do_ocr']
             params['address_replace_text'] = form.cleaned_data[
-                'address_replacement_text'
-            ]
+                'address_replacement_text']
             params['output_spreadsheet_file'] = (extension != 'pdf')
 
             def to_int(L):
                 return str(ord(L) - ord('A') + 1) if L else ''
 
             params['columns'] = ','.join(
-                map(to_int, form.cleaned_data['column_list'].split(','))
-            )
+                map(to_int, form.cleaned_data['column_list'].split(',')))
 
             path = upload_file.temporary_file_path()
             rpcdir = settings.RPC_TMP_PREFIX
@@ -638,12 +604,11 @@ def file_upload(request):
                     raise
             # Now create temporary dir, fill with files
             dirname = tempfile.mkdtemp(dir=rpcdir)
-            file_path = os.path.join(dirname,
-                                     upload_file.name).encode('utf-8')
+            file_path = os.path.join(dirname, upload_file.name).encode('utf-8')
             copyfile(path, file_path)
             file_url = as_file_uri(file_path)
-            scan = do_scan(request.user, [file_url], params, blocking=True,
-                           visible=True)
+            scan = do_scan(
+                request.user, [file_url], params, blocking=True, visible=True)
             scan.scanner.is_visible = False
             scan.scanner.save()
 
@@ -656,11 +621,10 @@ def file_upload(request):
                 return HttpResponseRedirect('/report/{0}/'.format(scan.pk))
             response = HttpResponse(content_type='text/csv')
             report_file = '{0}{1}.csv'.format(
-                scan.scanner.organization.name.replace(' ', '_'),
-                scan.id)
+                scan.scanner.organization.name.replace(' ', '_'), scan.id)
             response[
-                'Content-Disposition'
-            ] = 'attachment; filename={0}'.format(report_file)
+                'Content-Disposition'] = 'attachment; filename={0}'.format(
+                    report_file)
             csv_file = open(scan.scan_output_file, "rb")
 
             # Load CSV file, write it back to the client
@@ -674,7 +638,5 @@ def file_upload(request):
         # Request.method == 'GET'
         form = FileUploadForm()
 
-    return render_to_response(
-        'os2datascanner/file_upload.html',
-        {'form': form}
-    )
+    return render_to_response('os2datascanner/file_upload.html',
+                              {'form': form})

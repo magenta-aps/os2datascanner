@@ -7,6 +7,7 @@ from pathlib import Path
 from datetime import datetime
 from contextlib import contextmanager
 
+
 class FilesystemSource(Source):
     def __init__(self, path):
         if not os.path.isabs(path):
@@ -19,7 +20,7 @@ class FilesystemSource(Source):
             for f in d.iterdir():
                 if f.is_file():
                     yield FilesystemHandle(self,
-                            str(f.relative_to(pathlib_path)))
+                                           str(f.relative_to(pathlib_path)))
 
     def __str__(self):
         return "FilesystemSource({0})".format(self._path)
@@ -40,15 +41,17 @@ class FilesystemSource(Source):
         assert not netloc
         return FilesystemSource(unquote(path) if path else None)
 
+
 class FilesystemHandle(Handle):
     def follow(self, sm):
         return FilesystemResource(self, sm)
 
+
 class FilesystemResource(FileResource):
     def __init__(self, handle, sm):
         super().__init__(handle, sm)
-        self._full_path = os.path.join(
-                self._open_source(), self.get_handle().get_relative_path())
+        self._full_path = os.path.join(self._open_source(),
+                                       self.get_handle().get_relative_path())
         self._hash = None
         self._stat = None
 

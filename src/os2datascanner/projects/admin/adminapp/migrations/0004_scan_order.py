@@ -14,6 +14,9 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='scan',
-            options={'ordering': ['-creation_time'], 'verbose_name': 'Report'},
+            options={
+                'ordering': ['-creation_time'],
+                'verbose_name': 'Report'
+            },
         ),
     ]

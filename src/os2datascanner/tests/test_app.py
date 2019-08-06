@@ -28,8 +28,8 @@ from os2datascanner.projects.admin.adminapp.validate import validate_domain
 
 
 class ScannerTest(TestCase):
-
     """Test running a scan and domain validation."""
+
     # TODO: Capture the interaction so these tests can work without an
     # Internet connection! !!!
 
@@ -58,19 +58,22 @@ class ScannerTest(TestCase):
             self.assertTrue(validate_domain(domain))"""
 
         for validation_method in all_methods:
-            domain = WebScanner(url="http://www.google.com/",
-                            validation_method=validation_method,
-                            organization=self.google,
-                            pk=2)
+            domain = WebScanner(
+                url="http://www.google.com/",
+                validation_method=validation_method,
+                organization=self.google,
+                pk=2)
             domain.save()
             self.assertFalse(validate_domain(domain))
 
     def test_run_scan(self):
         """Test running a scan."""
-        scanner = WebScanner(url="http://www.magenta.dk/",
-                            organization=self.magenta,
-                            validation_method=WebScanner.ROBOTSTXT,
-                            validation_status=1, schedule="")
+        scanner = WebScanner(
+            url="http://www.magenta.dk/",
+            organization=self.magenta,
+            validation_method=WebScanner.ROBOTSTXT,
+            validation_status=1,
+            schedule="")
         scanner.save()
 
         scan = scanner.run('kaflaflibob')
@@ -85,6 +88,7 @@ class ScannerTest(TestCase):
 # TODO: Make it pep8 version 1.7 compatible
 def pep8_test(filepath):
     """Run a pep8 test on the filepath."""
+
     def do_test(self):
         # print "PATH:", filepath
         # arglist = ['--exclude=lib,migrations', filepath]
@@ -102,4 +106,3 @@ def pep8_test(filepath):
         self.assertEqual(len(output), 0)
 
     return do_test
-

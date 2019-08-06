@@ -69,22 +69,19 @@ def handle_exit(pid, returncode, scan_id):
 
     if returncode == 0:
         logger.info(
-            "scan_done", scan_id=scan_id, scan_pid=pid, status=returncode
-        )
+            "scan_done", scan_id=scan_id, scan_pid=pid, status=returncode)
 
         # should we call scan.set_scan_status_done() here?
 
     else:
         logger.critical(
-            "scan_failed", scan_id=scan_id, scan_pid=pid, status=returncode
-        )
+            "scan_failed", scan_id=scan_id, scan_pid=pid, status=returncode)
 
         try:
             scan = Scan.objects.get(pk=scan_id)
 
             scan.set_scan_status_failed(
-                "Scanner process exited with status {}".format(returncode)
-            )
+                "Scanner process exited with status {}".format(returncode))
 
         except Exception:
             logger.exception("handle_exit_failed")
@@ -121,9 +118,8 @@ async def process_message(message):
 
         scanjob.start()
 
-        asyncio.get_child_watcher().add_child_handler(
-            scanjob.pid, handle_exit, body["id"]
-        )
+        asyncio.get_child_watcher().add_child_handler(scanjob.pid, handle_exit,
+                                                      body["id"])
 
         logger.info("scan_started", **body, child_id=scanjob.pid)
 

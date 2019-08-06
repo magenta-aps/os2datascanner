@@ -55,26 +55,31 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='addressrule',
             name='blacklist',
-            field=models.TextField(blank=True, default='', verbose_name='Sortlistede adresser'),
+            field=models.TextField(
+                blank=True, default='', verbose_name='Sortlistede adresser'),
         ),
         migrations.AddField(
             model_name='addressrule',
             name='whitelist',
-            field=models.TextField(blank=True, default='', verbose_name='Godkendte adresser'),
+            field=models.TextField(
+                blank=True, default='', verbose_name='Godkendte adresser'),
         ),
         migrations.AddField(
             model_name='cprrule',
             name='whitelist',
-            field=models.TextField(blank=True, default='', verbose_name='Godkendte CPR-numre'),
+            field=models.TextField(
+                blank=True, default='', verbose_name='Godkendte CPR-numre'),
         ),
         migrations.AddField(
             model_name='namerule',
             name='blacklist',
-            field=models.TextField(blank=True, default='', verbose_name='Sortlistede navne'),
+            field=models.TextField(
+                blank=True, default='', verbose_name='Sortlistede navne'),
         ),
         migrations.AddField(
             model_name='namerule',
             name='whitelist',
-            field=models.TextField(blank=True, default='', verbose_name='Godkendte navne'),
+            field=models.TextField(
+                blank=True, default='', verbose_name='Godkendte navne'),
         ),
     ]

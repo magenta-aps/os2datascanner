@@ -21,19 +21,25 @@ from ..sensitivity_level import Sensitivity
 
 
 class Rule(models.Model):
-    name = models.CharField(max_length=256, unique=True, null=False,
-                            verbose_name='Navn')
-    organization = models.ForeignKey(Organization, null=False,
-                                     verbose_name='Organisation',
-                                     on_delete=models.PROTECT)
-    group = models.ForeignKey(Group, null=True, blank=True,
-                              verbose_name='Gruppe',
-                              on_delete=models.SET_NULL)
+    name = models.CharField(
+        max_length=256, unique=True, null=False, verbose_name='Navn')
+    organization = models.ForeignKey(
+        Organization,
+        null=False,
+        verbose_name='Organisation',
+        on_delete=models.PROTECT)
+    group = models.ForeignKey(
+        Group,
+        null=True,
+        blank=True,
+        verbose_name='Gruppe',
+        on_delete=models.SET_NULL)
 
     description = models.TextField(verbose_name='Beskrivelse')
-    sensitivity = models.IntegerField(choices=Sensitivity.choices,
-                                      default=Sensitivity.HIGH,
-                                      verbose_name='Følsomhed')
+    sensitivity = models.IntegerField(
+        choices=Sensitivity.choices,
+        default=Sensitivity.HIGH,
+        verbose_name='Følsomhed')
 
     @property
     def display_name(self):
@@ -47,4 +53,3 @@ class Rule(models.Model):
     def __str__(self):
         """Return the name of the rule."""
         return self.name
-

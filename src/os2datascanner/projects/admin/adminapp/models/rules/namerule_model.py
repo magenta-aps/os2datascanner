@@ -18,7 +18,6 @@
 
 from django.db import models
 
-
 from .rule_model import Rule
 
 
@@ -26,17 +25,15 @@ class NameRule(Rule):
     DATABASE_DST_2014 = 0
 
     database_choices = (
-        (DATABASE_DST_2014, u'Danmarks Statistiks liste over navne pr. 1. januar 2014'),
-    )
+        (DATABASE_DST_2014,
+         u'Danmarks Statistiks liste over navne pr. 1. januar 2014'), )
 
     database = models.IntegerField(
-            choices=database_choices,
-            default=DATABASE_DST_2014,
-            verbose_name="Navnedatabase")
+        choices=database_choices,
+        default=DATABASE_DST_2014,
+        verbose_name="Navnedatabase")
 
-    whitelist = models.TextField(blank=True,
-                                 default="",
-                                 verbose_name='Godkendte navne')
-    blacklist = models.TextField(blank=True,
-                                 default="",
-                                 verbose_name='Sortlistede navne')
+    whitelist = models.TextField(
+        blank=True, default="", verbose_name='Godkendte navne')
+    blacklist = models.TextField(
+        blank=True, default="", verbose_name='Sortlistede navne')

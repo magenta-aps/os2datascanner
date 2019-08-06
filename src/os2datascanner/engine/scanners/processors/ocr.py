@@ -15,7 +15,6 @@
 # source municipalities ( http://www.os2web.dk/ )
 """OCR Processors."""
 
-
 import os
 import subprocess
 
@@ -24,7 +23,6 @@ from .text import TextProcessor
 
 
 class OCRProcessor(Processor):
-
     """A processor which uses tesseract OCR to process an image."""
 
     item_type = "ocr"
@@ -43,8 +41,7 @@ class OCRProcessor(Processor):
         txt_file = os.path.join(tmp_dir, "file")
         self.logger.info("Starting OCR", path=item.file_path)
         return_code = subprocess.call([
-            "tesseract", item.file_path, txt_file,
-            "-psm", "1", "-l", "dan+eng"
+            "tesseract", item.file_path, txt_file, "-psm", "1", "-l", "dan+eng"
         ])
         if return_code:
             self.logger.warning("OCR failed", file=item.file_path)
@@ -52,7 +49,8 @@ class OCRProcessor(Processor):
 
         txt_file += ".txt"
 
-        self.logger.info("OCR succeeded", file=item.file_path, txt_file=txt_file)
+        self.logger.info(
+            "OCR succeeded", file=item.file_path, txt_file=txt_file)
 
         self.text_processor.process_file(txt_file, item.url, item.page_no)
         if os.path.exists(txt_file):

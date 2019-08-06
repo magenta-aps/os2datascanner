@@ -26,8 +26,8 @@ import json
 from xml.parsers.expat import ExpatError
 from .html import HTMLProcessor
 
-class XmlProcessor(HTMLProcessor):
 
+class XmlProcessor(HTMLProcessor):
     """Processor for XMLdocuments.
 
     When processing, converts document to json one line including all attributes
@@ -48,7 +48,6 @@ class XmlProcessor(HTMLProcessor):
             os.remove(item.file_path)
         return result
 
-
     def process(self, data, url_object):
         """Process XML data.
 
@@ -61,7 +60,7 @@ class XmlProcessor(HTMLProcessor):
             data = json.dumps(xmltodict.parse(data))
             return self.text_processor.process(data, url_object)
         except ExpatError:
-            return super().process(data,url_object)
+            return super().process(data, url_object)
 
 
 Processor.register_processor(XmlProcessor.item_type, XmlProcessor)

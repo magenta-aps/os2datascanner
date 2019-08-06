@@ -13,7 +13,6 @@
 #
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( http://www.os2web.dk/ )
-
 """Utility methods for the OS2Webscanner project."""
 
 import os
@@ -44,14 +43,16 @@ def notify_user(scan):
 
     t = loader.get_template(template)
 
-    to_addresses = [p.user.email for p in scan.scanner.recipients.all() if
-                    p.user.email]
+    to_addresses = [
+        p.user.email for p in scan.scanner.recipients.all() if p.user.email
+    ]
     if not to_addresses:
-        to_addresses = [settings.ADMIN_EMAIL, ]
+        to_addresses = [
+            settings.ADMIN_EMAIL,
+        ]
     matches = Match.objects.filter(url__scan=scan).count()
-    matches += WebVersion.objects.filter(
-        scan=scan
-    ).exclude(status_code__isnull=True).count()
+    matches += WebVersion.objects.filter(scan=scan).exclude(
+        status_code__isnull=True).count()
     critical = scan.no_of_critical_matches
 
     scan_status = ''
@@ -68,8 +69,12 @@ def notify_user(scan):
 
     subject = "Scanning afsluttet: {0}".format(scan_status)
 
-    c = {'scan': scan, 'domain': settings.SITE_URL,
-         'matches': matches, 'critical': critical}
+    c = {
+        'scan': scan,
+        'domain': settings.SITE_URL,
+        'matches': matches,
+        'critical': critical
+    }
 
     if scan.scanner.organization.do_notify_all_scans or critical > 0:
         try:
@@ -91,11 +96,13 @@ def capitalize_first(s):
 
 def get_supported_rpc_params():
     """Return a list of supported Scanner parameters for the RPC interface."""
-    return ["do_cpr_scan", "do_cpr_modulus11",
-            "do_cpr_ignore_irrelevant", "do_ocr", "do_name_scan",
-            "output_spreadsheet_file", "do_cpr_replace", "cpr_replace_text",
-            "do_name_replace", "name_replace_text", "do_address_scan",
-            "do_address_replace", "address_replace_text", "columns"]
+    return [
+        "do_cpr_scan", "do_cpr_modulus11", "do_cpr_ignore_irrelevant",
+        "do_ocr", "do_name_scan", "output_spreadsheet_file", "do_cpr_replace",
+        "cpr_replace_text", "do_name_replace", "name_replace_text",
+        "do_address_scan", "do_address_replace", "address_replace_text",
+        "columns"
+    ]
 
 
 def do_scan(user, urls, params={}, blocking=False, visible=False):
@@ -156,39 +163,42 @@ def scans_for_summary_report(summary, from_date=None, to_date=None):
         scanner__in=summary.scanners.all(),
         scanner__organization=summary.organization,
         start_time__gte=from_date,
-        start_time__lt=to_date
-    ).order_by('id')
+        start_time__lt=to_date).order_by('id')
 
     return relevant_scans, from_date, to_date
 
 
-def send_summary_report(summary, from_date=None, to_date=None,
+def send_summary_report(summary,
+                        from_date=None,
+                        to_date=None,
                         extra_email=None):
     """Send the actual summary report by email."""
     relevant_scans, from_date, to_date = scans_for_summary_report(
-        summary,
-        from_date,
-        to_date
-    )
+        summary, from_date, to_date)
 
     url = settings.SITE_URL
 
-    c = Context({'scans': relevant_scans,
-                 'from_date': from_date,
-                 'to_date': to_date,
-                 'summary': summary,
-                 'site_url': url})
+    c = Context({
+        'scans': relevant_scans,
+        'from_date': from_date,
+        'to_date': to_date,
+        'summary': summary,
+        'site_url': url
+    })
     template = 'os2datascanner/email/summary_report.html'
 
     t = loader.get_template(template)
 
     subject = "Opsummering fra webscanneren: {0}".format(summary.name)
-    to_addresses = [p.user.email for p in summary.recipients.all() if
-                    p.user.email]
+    to_addresses = [
+        p.user.email for p in summary.recipients.all() if p.user.email
+    ]
     if not to_addresses:
         # TODO: In the end, of course, when no email addresses are found no
         # mail should be sent. This is just for debugging.
-        to_addresses = ['ann@magenta.dk', ]
+        to_addresses = [
+            'ann@magenta.dk',
+        ]
 
     if extra_email:
         to_addresses.append(extra_email)
@@ -225,10 +235,8 @@ def dispatch_pending_summaries():
 
 def get_failing_urls(scan_id, target_directory):
     """Retrieve the physical document that caused conversion errors."""
-    source_file = os.path.join(
-            settings.VAR_DIR,
-            "logs/scans/occurrence_{0}.log".format(scan_id)
-            )
+    source_file = os.path.join(settings.VAR_DIR,
+                               "logs/scans/occurrence_{0}.log".format(scan_id))
     with open(source_file, "r") as f:
         lines = f.readlines()
 
@@ -236,10 +244,8 @@ def get_failing_urls(scan_id, target_directory):
 
     for u in set(urls):
         f = requests.get(u, stream=True)
-        target = os.path.join(
-                target_directory,
-                u.split('/')[-1].split('#')[0].split('?')[0]
-                )
+        target = os.path.join(target_directory,
+                              u.split('/')[-1].split('#')[0].split('?')[0])
         with open(target, 'wb') as local_file:
             shutil.copyfileobj(f.raw, local_file)
 
@@ -248,7 +254,7 @@ def get_codec_and_string(bytestring, encoding="utf-8"):
     """ Get actual encoding and stringdata from bytestring
         use UnicodeDammit if this  doesn't work
         https://www.crummy.com/software/BeautifulSoup/bs4/doc/#unicode-dammit
-    """ 
+    """
     try:
         stringdata = bytestring.decode(encoding)
     except AttributeError:
@@ -266,9 +272,9 @@ def get_codec_and_string(bytestring, encoding="utf-8"):
 
 def secure_save(object):
     try:
-       object.save()
+        object.save()
     except IntegrityError as ie:
-       logging.error('Error Happened: {}'.format(ie))
+        logging.error('Error Happened: {}'.format(ie))
 
 
 def domain_form_manipulate(form):

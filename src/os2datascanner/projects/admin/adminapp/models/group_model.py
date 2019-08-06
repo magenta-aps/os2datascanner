@@ -9,14 +9,14 @@ class Group(models.Model):
     name = models.CharField(max_length=256, unique=True, verbose_name='Navn')
     contact_email = models.CharField(max_length=256, verbose_name='Email')
     contact_phone = models.CharField(max_length=256, verbose_name='Telefon')
-    user_profiles = models.ManyToManyField(UserProfile, blank=True,
-                                           verbose_name='Brugere',
-                                           related_name='groups')
-    organization = models.ForeignKey(Organization,
-                                     null=False,
-                                     related_name='groups',
-                                     verbose_name='Organisation',
-                                     on_delete=models.PROTECT)
+    user_profiles = models.ManyToManyField(
+        UserProfile, blank=True, verbose_name='Brugere', related_name='groups')
+    organization = models.ForeignKey(
+        Organization,
+        null=False,
+        related_name='groups',
+        verbose_name='Organisation',
+        on_delete=models.PROTECT)
 
     def __str__(self):
         """Return the name of the group."""

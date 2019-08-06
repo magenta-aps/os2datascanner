@@ -8,7 +8,6 @@ from .version_model import Version
 
 
 class ConversionQueueItem(models.Model):
-
     """Represents an item in the conversion queue."""
     url = models.ForeignKey(
         Version,
@@ -34,13 +33,15 @@ class ConversionQueueItem(models.Model):
 
     status = StatusField(max_length=10, default=NEW, verbose_name='Status')
 
-    process_id = models.IntegerField(blank=True, null=True,
-                                     verbose_name='Proces id')
+    process_id = models.IntegerField(
+        blank=True, null=True, verbose_name='Proces id')
 
     process_start_time = MonitorField(
-        monitor='status', when=[PROCESSING],
-        blank=True, null=True, verbose_name='Proces starttidspunkt'
-    )
+        monitor='status',
+        when=[PROCESSING],
+        blank=True,
+        null=True,
+        verbose_name='Proces starttidspunkt')
 
     @property
     def file_path(self):
@@ -50,10 +51,8 @@ class ConversionQueueItem(models.Model):
     @property
     def tmp_dir(self):
         """The path to the temporary dir associated with this queue item."""
-        return os.path.join(
-            self.url.scan.scan_dir,
-            'queue_item_%d' % (self.pk)
-        )
+        return os.path.join(self.url.scan.scan_dir,
+                            'queue_item_%d' % (self.pk))
 
     def delete_tmp_dir(self):
         """Delete the item's temp dir if it is writable."""

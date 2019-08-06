@@ -15,7 +15,8 @@ class ScannerTest(django.test.TestCase):
         # create organisations
         self.magenta_org = Organization(name="Magenta", pk=1)
         self.magenta_org.save()
-        self.theydontwantyouto_org = Organization(name="TheyDontWantYouTo", pk=2)
+        self.theydontwantyouto_org = Organization(
+            name="TheyDontWantYouTo", pk=2)
         self.theydontwantyouto_org.save()
         # create scanners
         self.magenta_scanner = WebScanner(
@@ -49,10 +50,16 @@ class ScannerTest(django.test.TestCase):
         self.reg6.save()
 
         # Create rule sets
-        self.tr_set1 = RegexRule(name='MagentaTestRule1', sensitivity=Sensitivity.OK, organization=self.magenta_org,
-                                 pk=1)
-        self.tr_set2 = RegexRule(name='TheyDontWantYouToKnow', sensitivity=Sensitivity.OK,
-                                 organization=self.theydontwantyouto_org, pk=2)
+        self.tr_set1 = RegexRule(
+            name='MagentaTestRule1',
+            sensitivity=Sensitivity.OK,
+            organization=self.magenta_org,
+            pk=1)
+        self.tr_set2 = RegexRule(
+            name='TheyDontWantYouToKnow',
+            sensitivity=Sensitivity.OK,
+            organization=self.theydontwantyouto_org,
+            pk=2)
         self.tr_set1.save()
         self.tr_set2.save()
         self.tr_set1.patterns.add(self.reg1)

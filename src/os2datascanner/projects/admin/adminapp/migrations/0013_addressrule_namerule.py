@@ -16,17 +16,45 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='AddressRule',
             fields=[
-                ('rule_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='os2datascanner.Rule')),
-                ('database', models.IntegerField(choices=[(0, 'Post Danmarks liste over gadenavne pr. ca. 1. januar 2015')], default=0, verbose_name='Gadenavnedatabase')),
+                ('rule_ptr',
+                 models.OneToOneField(
+                     auto_created=True,
+                     on_delete=django.db.models.deletion.CASCADE,
+                     parent_link=True,
+                     primary_key=True,
+                     serialize=False,
+                     to='os2datascanner.Rule')),
+                ('database',
+                 models.IntegerField(
+                     choices=
+                     [(0,
+                       'Post Danmarks liste over gadenavne pr. ca. 1. januar 2015'
+                       )],
+                     default=0,
+                     verbose_name='Gadenavnedatabase')),
             ],
-            bases=('os2datascanner.rule',),
+            bases=('os2datascanner.rule', ),
         ),
         migrations.CreateModel(
             name='NameRule',
             fields=[
-                ('rule_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='os2datascanner.Rule')),
-                ('database', models.IntegerField(choices=[(0, 'Danmarks Statistiks liste over navne pr. 1. januar 2014')], default=0, verbose_name='Navnedatabase')),
+                ('rule_ptr',
+                 models.OneToOneField(
+                     auto_created=True,
+                     on_delete=django.db.models.deletion.CASCADE,
+                     parent_link=True,
+                     primary_key=True,
+                     serialize=False,
+                     to='os2datascanner.Rule')),
+                ('database',
+                 models.IntegerField(
+                     choices=
+                     [(0,
+                       'Danmarks Statistiks liste over navne pr. 1. januar 2014'
+                       )],
+                     default=0,
+                     verbose_name='Navnedatabase')),
             ],
-            bases=('os2datascanner.rule',),
+            bases=('os2datascanner.rule', ),
         ),
     ]

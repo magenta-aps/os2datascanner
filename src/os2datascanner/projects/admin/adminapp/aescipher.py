@@ -62,7 +62,8 @@ def generate_key():
     else:
         key = Random.new().read(key_bytes)
         key_file_handling(key, 'ab', file_name, True)
-        backup_file_name = settings.VAR_DIR + '/' + key_file_name + str(datetime.date.today())
+        backup_file_name = settings.VAR_DIR + '/' + key_file_name + str(
+            datetime.date.today())
         key_file_handling(key, 'ab', backup_file_name, True)
         try:
             message = EmailMessage('CRITICAL!',
@@ -70,7 +71,9 @@ def generate_key():
                                    settings.ADMIN_EMAIL)
             message.send()
         except Exception as ex:
-            logger.error('Error occured while sending email, regarding master key being generated.'.format(ex))
+            logger.error(
+                'Error occured while sending email, regarding master key being generated.'
+                .format(ex))
 
     return key
 
@@ -86,11 +89,14 @@ def key_file_handling(data, command, filename, create):
         elif command == 'ab':
             file.write(data)
     except (OSError, IOError) as ex:
-        logger.error('An error occured while trying to {0} {1} file. {2}'.format(command, filename, ex))
+        logger.error(
+            'An error occured while trying to {0} {1} file. {2}'.format(
+                command, filename, ex))
     finally:
         if file is not None:
             file.close()
     return data
+
 
 """
     # Nominal way to generate a fresh key. This calls the system's random number

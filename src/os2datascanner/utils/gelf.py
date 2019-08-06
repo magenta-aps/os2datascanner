@@ -46,14 +46,11 @@ class GELFFormatter(logging.Formatter):
             "version": "1.1",
             "timestamp": record.created,
             "host": socket.gethostname(),
-
             "level": self.get_syslog_level(record.levelno),
             "severity": record.levelname,
-
             "file": record.pathname,
             "line": record.lineno,
             "function": record.funcName,
-
             "process": record.process,
             "process_name": record.processName,
             "thread": record.thread,
@@ -83,8 +80,7 @@ class GELFFormatter(logging.Formatter):
             # someone using e.g. `pid` or `file` presumably knows what
             # they're doing
             gelf.update(
-                ("_" + k, v) for k, v in record.msg.items() if k != "event"
-            )
+                ("_" + k, v) for k, v in record.msg.items() if k != "event")
 
         # fall back to repr() to handle anything
         return json.dumps(gelf, default=repr)
@@ -97,14 +93,14 @@ class GraylogAMQPHandler(logging.Handler):
     "Log to Graylog via AMQP; only works with the GELF formatter"
 
     def __init__(
-        self,
-        host="localhost",
-        port=5672,
-        vhost="/",
-        exchange="log-messages",
-        routing_key="#",
-        user="guest",
-        password="guest",
+            self,
+            host="localhost",
+            port=5672,
+            vhost="/",
+            exchange="log-messages",
+            routing_key="#",
+            user="guest",
+            password="guest",
     ):
         super().__init__()
 
@@ -236,15 +232,13 @@ class GraylogDatagramHandler(logging.handlers.DatagramHandler):
 
         count = 0
         message_id = hash(
-            str(datetime.datetime.now().microsecond) + socket.gethostname()
-        )
+            str(datetime.datetime.now().microsecond) + socket.gethostname())
 
         for i, offset in enumerate(range(0, len(data), chunk_size)):
-            header = struct.pack(
-                "!ccqBB", b"\x1e", b"\x0f", message_id, count, total_chunks
-            )
+            header = struct.pack("!ccqBB", b"\x1e", b"\x0f", message_id, count,
+                                 total_chunks)
 
-            yield header + data[offset : offset + chunk_size]
+            yield header + data[offset:offset + chunk_size]
 
     def emit(self, record):
         try:

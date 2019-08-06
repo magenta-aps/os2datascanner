@@ -20,16 +20,24 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='version',
             name='mime_type',
-            field=models.CharField(max_length=256, null=True, verbose_name='Content type'),
+            field=models.CharField(
+                max_length=256, null=True, verbose_name='Content type'),
         ),
         migrations.AlterField(
             model_name='conversionqueueitem',
             name='url',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='os2datascanner.Version', verbose_name='URL'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to='os2datascanner.Version',
+                verbose_name='URL'),
         ),
         migrations.AlterField(
             model_name='match',
             name='url',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='matches', to='os2datascanner.Version', verbose_name='URL'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='matches',
+                to='os2datascanner.Version',
+                verbose_name='URL'),
         ),
     ]

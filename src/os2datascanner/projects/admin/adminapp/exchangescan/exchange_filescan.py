@@ -20,8 +20,8 @@ from .settings import NUMBER_OF_EMAIL_THREADS
 from ..models.scans.scan_model import Scan
 from ..models.scannerjobs.scanner_model import Scanner
 
-class ExchangeFilescanner(multiprocessing.Process):
 
+class ExchangeFilescanner(multiprocessing.Process):
     def __init__(self, scan_id):
         multiprocessing.Process.__init__(self)
         print('Program started')
@@ -29,24 +29,19 @@ class ExchangeFilescanner(multiprocessing.Process):
 
         scan_object = Scan.objects.get(pk=self.scan_id)
         valid_domains = scan_object.domains.filter(
-            validation_status=Scanner.VALID
-        )
-
+            validation_status=Scanner.VALID)
         """Making scan dir if it does not exists"""
         if not os.path.exists(scan_object.scan_dir):
             print('Creating scan dir {}'.format(scan_object.scan_dir))
             os.makedirs(scan_object.scan_dir)
 
         scan_dir = scan_object.scan_dir + '/'
-
         """Handling last scannings date"""
         last_scannings_date = None
         if scan_object.do_last_modified_check:
             last_scannings_date = scan_object.exchangescan.last_scannings_date
             if last_scannings_date:
-                last_scannings_date = EWSDate.from_date(
-                    last_scannings_date)
-
+                last_scannings_date = EWSDate.from_date(last_scannings_date)
         """Foreach domain x number of mail processors are started."""
         for domain in valid_domains:
             credentials = (domain.authentication.username,
@@ -59,13 +54,13 @@ class ExchangeFilescanner(multiprocessing.Process):
 
             scanners = {}
             for i in range(0, NUMBER_OF_EMAIL_THREADS):
-                scanners[i] = ExchangeServerScan(credentials,
-                                                 self.user_queue,
-                                                 self.done_queue,
-                                                 scan_dir,
-                                                 mail_ending,
-                                                 start_date=
-                                                 last_scannings_date)
+                scanners[i] = ExchangeServerScan(
+                    credentials,
+                    self.user_queue,
+                    self.done_queue,
+                    scan_dir,
+                    mail_ending,
+                    start_date=last_scannings_date)
                 scanners[i].start()
                 print('Started scanner {}'.format(i))
                 time.sleep(1)
@@ -77,7 +72,6 @@ class ExchangeFilescanner(multiprocessing.Process):
         """
         Starts an exchange mail server scan.
         """
-
         """
         As long as mail scanners are running file scanners will be started 
         when there is something in the shared queue.
@@ -118,10 +112,12 @@ class ExchangeFilescanner(multiprocessing.Process):
         scanner_dir = os.path.join(settings.PROJECT_DIR, "scrapy-webscanner")
         log_file = open(scan_object.scan_log_file, "a")
         try:
-            process = subprocess.Popen([os.path.join(scanner_dir, 'run.sh'),
-                                        str(self.scan_id)], cwd=scanner_dir,
-                                       stderr=log_file,
-                                       stdout=log_file)
+            process = subprocess.Popen(
+                [os.path.join(scanner_dir, 'run.sh'),
+                 str(self.scan_id)],
+                cwd=scanner_dir,
+                stderr=log_file,
+                stdout=log_file)
             process.communicate()
         except Exception as e:
             print(e)
@@ -148,8 +144,7 @@ class ExchangeFilescanner(multiprocessing.Process):
             scan_object = Scan.objects.get_subclass(pk=self.scan_id)
         except ObjectDoesNotExist:
             print('Scan object with id {} does not exists.'.format(
-                self.scan_id)
-            )
+                self.scan_id))
         return scan_object
 
     def mark_scan_job_as_done(self, is_done):
@@ -163,8 +158,10 @@ class ExchangeFilescanner(multiprocessing.Process):
             scan_object.mark_scan_as_done = is_done
             scan_object.save()
         except Exception as ex:
-            print('Error occured while storing path to scan: {}'.format(is_done))
+            print(
+                'Error occured while storing path to scan: {}'.format(is_done))
             print(ex)
         return scan_object
+
 
 # TODO: læg user elementer i en python list og tjek tilsidst eller løbende at alle users er scannet.

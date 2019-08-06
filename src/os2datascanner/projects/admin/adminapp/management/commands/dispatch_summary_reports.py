@@ -6,7 +6,6 @@ from ...utils import dispatch_pending_summaries
 
 
 class Command(BaseCommand):
-
     """Send out pending summary reports."""
 
     help = "Send out pending summary reports"

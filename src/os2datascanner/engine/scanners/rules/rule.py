@@ -27,6 +27,7 @@ class Rule:
         return min(sensitivity_value, self.sensitivity)
 
     """Represents a rule which can be executed on text and returns matches."""
+
     def execute(self, text):
         """Execute the rule on the given text.
 

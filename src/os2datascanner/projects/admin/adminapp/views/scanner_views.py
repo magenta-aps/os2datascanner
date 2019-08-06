@@ -34,11 +34,8 @@ class ScannerBase():
         form.fields['schedule'].required = False
 
         # Exclude recipients with no email address
-        form.fields[
-            'recipients'
-        ].queryset = form.fields[
-            'recipients'
-        ].queryset.exclude(user__email="")
+        form.fields['recipients'].queryset = form.fields[
+            'recipients'].queryset.exclude(user__email="")
 
         return form
 
@@ -86,14 +83,13 @@ class ScannerCreate(ScannerBase, RestrictedCreateView):
         for field_name in ['rules', 'recipients']:
             queryset = form.fields[field_name].queryset
             queryset = queryset.filter(organization=organization)
-            if (self.request.user.profile.is_group_admin or
-                            field_name == 'recipients'):
+            if (self.request.user.profile.is_group_admin
+                    or field_name == 'recipients'):
                 # Already filtered by organization, nothing more to do.
                 pass
             else:
                 queryset = queryset.filter(
-                    Q(group__in=groups) | Q(group__isnull=True)
-                )
+                    Q(group__in=groups) | Q(group__isnull=True))
             form.fields[field_name].queryset = queryset
 
     def form_valid(self, form):
@@ -101,7 +97,6 @@ class ScannerCreate(ScannerBase, RestrictedCreateView):
             user_profile = self.request.user.profile
             self.object = form.save(commit=False)
             self.object.organization = user_profile.organization
-
         """Makes sure authentication info gets stored in db."""
         filedomain = form.save(commit=False)
         authentication = Authentication()
@@ -162,13 +157,11 @@ class ScannerUpdate(ScannerBase, RestrictedUpdateView):
                 if field_name == 'recipients':
                     if scanner.group:
                         queryset = queryset.filter(
-                            Q(groups__in=scanner.group) |
-                            Q(groups__isnull=True)
-                        )
+                            Q(groups__in=scanner.group)
+                            | Q(groups__isnull=True))
                 else:
                     queryset = queryset.filter(
-                        Q(group=scanner.group) | Q(group__isnull=True)
-                    )
+                        Q(group=scanner.group) | Q(group__isnull=True))
             form.fields[field_name].queryset = queryset
 
 
@@ -207,7 +200,6 @@ class ScannerAskRun(RestrictedDetailView):
 
 
 class ScannerRun(RestrictedDetailView):
-
     """Base class for view that handles starting of a scanner run."""
 
     template_name = 'os2datascanner/scanner_run.html'
@@ -219,8 +211,7 @@ class ScannerRun(RestrictedDetailView):
     def get(self, request, *args, **kwargs):
         """Handle a get request to the view."""
         self.object = self.get_object()
-        result = self.object.run(type(self.object).__name__,
-                                 user=request.user)
+        result = self.object.run(type(self.object).__name__, user=request.user)
 
         context = self.get_context_data(object=self.object)
         context['success'] = isinstance(result, Scan)
@@ -231,6 +222,3 @@ class ScannerRun(RestrictedDetailView):
             context['scan'] = result
 
         return self.render_to_response(context)
-
-
-

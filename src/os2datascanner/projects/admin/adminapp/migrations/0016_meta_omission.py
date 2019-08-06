@@ -10,6 +10,9 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='regexpattern',
-            options={'ordering': ('pk',), 'verbose_name': 'Pattern'},
+            options={
+                'ordering': ('pk', ),
+                'verbose_name': 'Pattern'
+            },
         )
     ]

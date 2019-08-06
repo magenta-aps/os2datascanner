@@ -1,5 +1,6 @@
 from .core import Source
 
+
 class DummySource(Source):
     def __init__(self, *handles):
         self._handles = handles

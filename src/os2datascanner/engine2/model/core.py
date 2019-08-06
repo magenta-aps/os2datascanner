@@ -5,6 +5,7 @@ from mimetypes import guess_type
 
 from .utilities import _TypPropEq
 
+
 class Source(ABC, _TypPropEq):
     """A Source represents the root of a hierarchy to be explored. It
     constructs Handles, which represent the position of an object in the
@@ -50,16 +51,18 @@ class Source(ABC, _TypPropEq):
         on a Handle yielded by this function will be this Source."""
 
     __url_handlers = {}
+
     @staticmethod
     def url_handler(*schemes):
         def _url_handler(func):
             for scheme in schemes:
                 if scheme in Source.__url_handlers:
                     raise ValueError(
-                            "BUG: can't register two handlers" +
-                            " for the same URL scheme!", scheme)
+                        "BUG: can't register two handlers" +
+                        " for the same URL scheme!", scheme)
                 Source.__url_handlers[scheme] = func
             return func
+
         return _url_handler
 
     @staticmethod
@@ -79,16 +82,18 @@ class Source(ABC, _TypPropEq):
     # that Source.from_url(Source.to_url(src)) == src.
 
     __mime_handlers = {}
+
     @staticmethod
     def mime_handler(*mimes):
         def _mime_handler(func):
             for mime in mimes:
                 if mime in Source.__mime_handlers:
                     raise ValueError(
-                            "BUG: can't register two handlers" +
-                            " for the same MIME type!", mime)
+                        "BUG: can't register two handlers" +
+                        " for the same MIME type!", mime)
                 Source.__mime_handlers[mime] = func
             return func
+
         return _mime_handler
 
     @staticmethod
@@ -113,12 +118,14 @@ class Source(ABC, _TypPropEq):
         returns None."""
         return None
 
+
 class UnknownSchemeError(LookupError):
     """When Source.from_url does not know how to handle a given URL, either
     because no Source subclass is registered as a handler for its scheme or
     because the URL is not valid, an UnknownSchemeError will be raised.
     Its only associated value is a string identifying the scheme, if one was
     present in the URL."""
+
 
 class SourceManager:
     """A SourceManager is responsible for tracking all of the state associated
@@ -138,6 +145,7 @@ class SourceManager:
     As SourceManagers track (potentially process-specific) state, they are not
     usefully serialisable. See, however, the SourceManager.share function and
     the ShareableCookie class below."""
+
     def __init__(self, parent=None):
         """Initialises this SourceManager.
 
@@ -170,9 +178,8 @@ class SourceManager:
         @try_open is True, the Source will be opened in this SourceManager if
         necessary."""
         if self._ro and try_open:
-            raise TypeError(
-                    "BUG: open(try_open=True) called on" +
-                    " a read-only SourceManager!")
+            raise TypeError("BUG: open(try_open=True) called on" +
+                            " a read-only SourceManager!")
         rv = None
         if source not in self._opened:
             cookie = None
@@ -193,7 +200,7 @@ class SourceManager:
     def __enter__(self):
         if self._ro:
             raise TypeError(
-                    "BUG: __enter__ called on a read-only SourceManager!")
+                "BUG: __enter__ called on a read-only SourceManager!")
         return self
 
     def __exit__(self, exc_type, exc_value, backtrace):
@@ -208,6 +215,7 @@ class SourceManager:
         finally:
             self._order = []
             self._opened = {}
+
 
 class ShareableCookie:
     """A Source's cookie represents the fact that it has been opened somehow.
@@ -224,14 +232,17 @@ class ShareableCookie:
     the outside world -- the value contained in this cookie, rather than the
     cookie itself, will be returned from SourceManager.open and passed to
     Source._close."""
+
     def __init__(self, value):
         self.value = value
 
     def get(self):
         return self.value
 
+
 EMPTY_COOKIE = ShareableCookie(None)
 """A contentless (and therefore trivially shareable) cookie."""
+
 
 class Handle(ABC, _TypPropEq):
     """A Handle is a reference to a leaf node in a hierarchy maintained by a
@@ -245,6 +256,7 @@ class Handle(ABC, _TypPropEq):
 
     Handles are serialisable and persistent, and two different Handles with the
     same type and properties compare equal."""
+
     def __init__(self, source, relpath):
         self._source = source
         self._relpath = relpath
@@ -271,18 +283,22 @@ class Handle(ABC, _TypPropEq):
 
     def __str__(self):
         return "{0}({1}, {2})".format(
-                type(self).__name__, self._source, self._relpath)
+            type(self).__name__, self._source, self._relpath)
 
     @abstractmethod
     def follow(self, sm):
         """Follows this Handle using the state in the StateManager @sm,
         returning a concrete Resource."""
 
-    BASE_PROPERTIES = ('_source', '_relpath',)
+    BASE_PROPERTIES = (
+        '_source',
+        '_relpath',
+    )
     """The properties defined by Handle. (If a subclass defines other
     properties, but wants those properties to be ignored when comparing
     objects, it should set the 'eq_properties' class attribute to this
     value.)"""
+
 
 class Resource(ABC):
     """A Resource is a concrete embodiment of an object: it's the thing a
@@ -294,6 +310,7 @@ class Resource(ABC):
 
     Resources are short-lived -- they should only be used when you actually
     need to get to content. As such, they are not serialisable."""
+
     def __init__(self, handle, sm):
         self._handle = handle
         self._sm = sm
@@ -307,6 +324,7 @@ class Resource(ABC):
         Resource's Handle in the associated StateManager."""
         return self._sm.open(self.get_handle().get_source())
 
+
 class ResourceUnavailableError(Exception):
     """When a function that tries to access a Resource's data or metadata
     fails, a ResourceUnavailableError will be raised. The first associated
@@ -317,13 +335,15 @@ class ResourceUnavailableError(Exception):
         hand, args = self.args[0], self.args[1:]
         if args:
             return "ResourceUnavailableError({0}, {1})".format(
-                    hand, ", ".join([str(arg) for arg in args]))
+                hand, ", ".join([str(arg) for arg in args]))
         else:
             return "ResourceUnavailableError({0})".format(hand)
+
 
 class FileResource(Resource):
     """A FileResource is a Resource that can, when necessary, be viewed as a
     file."""
+
     def get_hash(self):
         """Returns a hash for this FileResource's content. (No particular hash
         algorithm is defined for this, but all FileResources generated by a

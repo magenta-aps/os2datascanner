@@ -6,6 +6,7 @@ from .scanner import Scanner
 from django.conf import settings
 from os2datascanner.projects.admin.adminapp.models.statistic_model import Statistic, TypeStatistics
 
+
 class FileScanner(Scanner):
     def get_domain_url(self):
         """Return a list of valid domain urls."""
@@ -24,10 +25,9 @@ class FileScanner(Scanner):
             assert settings.USE_ENGINE2
             return super().get_location_for(url)
 
-    def set_statistics(self,
-            supported_count, supported_size,
-            relevant_count, relevant_size,
-            relevant_unsupported_count, relevant_unsupported_size):
+    def set_statistics(self, supported_count, supported_size, relevant_count,
+                       relevant_size, relevant_unsupported_count,
+                       relevant_unsupported_size):
         stats = Statistic.objects.get_or_create(scan=self.scan_object)[0]
         stats.supported_count = supported_count
         stats.supported_size = supported_size

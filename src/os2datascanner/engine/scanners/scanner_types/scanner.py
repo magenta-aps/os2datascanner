@@ -13,7 +13,6 @@
 #
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( http://www.os2web.dk/ )
-
 """Contains a WebScanner."""
 
 import structlog
@@ -109,9 +108,7 @@ scan ID."""
                         sensitivity=rule.sensitivity,
                         database=rule.namerule.database,
                         whitelist=rule.namerule.whitelist,
-                        blacklist=rule.namerule.blacklist
-                    )
-                )
+                        blacklist=rule.namerule.blacklist))
             elif hasattr(rule, "addressrule"):
                 rules.append(
                     AddressRule(
@@ -119,22 +116,21 @@ scan ID."""
                         sensitivity=rule.sensitivity,
                         database=rule.addressrule.database,
                         whitelist=rule.addressrule.whitelist,
-                        blacklist=rule.addressrule.blacklist
-                    )
-                )
+                        blacklist=rule.addressrule.blacklist))
             elif hasattr(rule, "regexrule"):
                 rules.append(
                     RegexRule(
-                        name=rule.name, sensitivity=rule.sensitivity,
-                        pattern_strings=rule.regexrule.patterns.all()
-                    )
-                )
+                        name=rule.name,
+                        sensitivity=rule.sensitivity,
+                        pattern_strings=rule.regexrule.patterns.all()))
             elif hasattr(rule, "cprrule"):
                 rules.append(
-                    CPRRule(name=rule.name, sensitivity=rule.sensitivity,
-                            ignore_irrelevant=rule.cprrule.ignore_irrelevant,
-                            do_modulus11=rule.cprrule.do_modulus11,
-                            whitelist=rule.cprrule.whitelist))
+                    CPRRule(
+                        name=rule.name,
+                        sensitivity=rule.sensitivity,
+                        ignore_irrelevant=rule.cprrule.ignore_irrelevant,
+                        do_modulus11=rule.cprrule.do_modulus11,
+                        whitelist=rule.cprrule.whitelist))
         return rules
 
     def get_exclusion_rules(self):
@@ -151,8 +147,7 @@ scan ID."""
         was queued to be processed.
         """
         processor_type = Processor.mimetype_to_processor_type(
-            url_object.mime_type
-        )
+            url_object.mime_type)
         processor = Processor.processor_by_type(processor_type)
         if processor is not None:
             self.logger.info(

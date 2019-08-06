@@ -11,6 +11,7 @@ from hashlib import md5
 from functools import partial
 from contextlib import contextmanager
 
+
 class FilteredSource(Source):
     def __init__(self, handle, constructor):
         self._handle = handle
@@ -29,25 +30,30 @@ class FilteredSource(Source):
     def _close(self, cookie):
         pass
 
+
 @Source.mime_handler("application/gzip")
 def _gzip(handle):
     # Both BZ2File and LZMAFile accept either a file name or a file object as
     # their first parameter, but GzipFile requires that we specify the fileobj
     # positional parameter instead
     return FilteredSource(handle,
-            lambda stream: GzipFile(fileobj=stream, mode='r'))
+                          lambda stream: GzipFile(fileobj=stream, mode='r'))
+
 
 @Source.mime_handler("application/x-bzip2")
 def _bz2(handle):
     return FilteredSource(handle, partial(BZ2File, mode='r'))
 
+
 @Source.mime_handler("application/x-xz")
 def _lzma(handle):
     return FilteredSource(handle, partial(LZMAFile, mode='r'))
 
+
 class FilteredHandle(Handle):
     def follow(self, sm):
         return FilteredResource(self, sm)
+
 
 class FilteredResource(FileResource):
     def __init__(self, handle, sm):

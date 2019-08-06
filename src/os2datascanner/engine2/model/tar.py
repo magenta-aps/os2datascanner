@@ -7,6 +7,7 @@ from tarfile import open as open_tar
 from datetime import datetime
 from contextlib import contextmanager
 
+
 @Source.mime_handler("application/x-tar")
 class TarSource(Source):
     def __init__(self, handle):
@@ -31,9 +32,11 @@ class TarSource(Source):
         r.__exit__(None, None, None)
         tarfile.close()
 
+
 class TarHandle(Handle):
     def follow(self, sm):
         return TarResource(self, sm)
+
 
 class TarResource(FileResource):
     def __init__(self, handle, sm):
@@ -43,7 +46,7 @@ class TarResource(FileResource):
     def get_info(self):
         if not self._info:
             self._info = self._open_source()[1].getmember(
-                    self.get_handle().get_relative_path())
+                self.get_handle().get_relative_path())
         return self._info
 
     def get_hash(self):
@@ -69,6 +72,5 @@ class TarResource(FileResource):
     @contextmanager
     def make_stream(self):
         with self._open_source()[1].extractfile(
-                 self.get_handle().get_relative_path()) as s:
+                self.get_handle().get_relative_path()) as s:
             yield s
-

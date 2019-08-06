@@ -22,7 +22,6 @@ from .processor import Processor
 
 
 class TextProcessor(Processor):
-
     """Processes plain text."""
 
     item_type = "text"
@@ -43,8 +42,10 @@ class TextProcessor(Processor):
         try:
             encoding, data = get_codec_and_string(data)
         except UnicodeDecodeError as ude:
-            self.logger.exception('UnicodeDecodeError in handle_error_method',
-                                  exc_info=ude, url=url_object.url)
+            self.logger.exception(
+                'UnicodeDecodeError in handle_error_method',
+                exc_info=ude,
+                url=url_object.url)
             return False
 
         from ..scanner_types.scanner import Scanner

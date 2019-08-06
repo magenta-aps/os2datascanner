@@ -27,19 +27,19 @@ def load_whitelist(whitelist):
 
     Returns a set of the names in all upper-case characters
     """
-    return set(
-        [
-            line.upper().strip() for line in whitelist.splitlines()
-        ] if whitelist else []
-    )
+    return set([line.upper().strip()
+                for line in whitelist.splitlines()] if whitelist else [])
 
 
 class CPRRule(Rule):
-
     """Represents a rule which scans for CPR numbers."""
 
-    def __init__(self, name, sensitivity,
-            do_modulus11, ignore_irrelevant, whitelist=None):
+    def __init__(self,
+                 name,
+                 sensitivity,
+                 do_modulus11,
+                 ignore_irrelevant,
+                 whitelist=None):
         """Initialize the CPR Rule."""
         super().__init__(name, sensitivity)
 
@@ -49,18 +49,18 @@ class CPRRule(Rule):
 
     def execute(self, text, mask_digits=True):
         """Execute the CPR rule."""
-        matches = match_cprs(text,
-                             sensitivity=self.sensitivity,
-                             do_modulus11=self.do_modulus11,
-                             ignore_irrelevant=self.ignore_irrelevant,
-                             mask_digits=mask_digits,
-                             whitelist=self.whitelist)
+        matches = match_cprs(
+            text,
+            sensitivity=self.sensitivity,
+            do_modulus11=self.do_modulus11,
+            ignore_irrelevant=self.ignore_irrelevant,
+            mask_digits=mask_digits,
+            whitelist=self.whitelist)
         return matches
 
 
 cpr_regex = regex.compile(
-    r"\b(\d{2}[\s]?\d{2}[\s]?\d{2})(?:[\s\-/\.]|\s\-\s)?(\d{4})\b"
-)
+    r"\b(\d{2}[\s]?\d{2}[\s]?\d{2})(?:[\s\-/\.]|\s\-\s)?(\d{4})\b")
 
 #
 # Updated list of dates with CPR numbers violating the Modulo-11 check,
@@ -87,7 +87,6 @@ cpr_exception_dates = {
     date(1991, 1, 1),
     date(1992, 1, 1),
 }
-
 
 THIS_YEAR = date.today().year
 
@@ -188,8 +187,12 @@ def modulus11_check(cpr):
         return _is_modulus11(cpr)
 
 
-def match_cprs(text, sensitivity, do_modulus11=True, ignore_irrelevant=True,
-               mask_digits=True, whitelist=[]):
+def match_cprs(text,
+               sensitivity,
+               do_modulus11=True,
+               ignore_irrelevant=True,
+               mask_digits=True,
+               whitelist=[]):
     """Return MatchItem objects for each CPR matched in the given text.
 
     If mask_digits is False, then the matches will contain full CPR numbers.
@@ -221,10 +224,11 @@ def match_cprs(text, sensitivity, do_modulus11=True, ignore_irrelevant=True,
         match_context = regex.sub(cpr_regex, "XXXXXX-XXXX", match_context)
 
         if valid_date and valid_modulus11:
-            matches.add(MatchItem(
-                matched_data=cpr,
-                sensitivity=sensitivity,
-                match_context=match_context,
-                original_matched_data=original_cpr,
-            ))
+            matches.add(
+                MatchItem(
+                    matched_data=cpr,
+                    sensitivity=sensitivity,
+                    match_context=match_context,
+                    original_matched_data=original_cpr,
+                ))
     return matches

@@ -16,11 +16,19 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='location',
             name='scanner',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='locations', to='os2datascanner.Scanner', verbose_name='Scan'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='locations',
+                to='os2datascanner.Scanner',
+                verbose_name='Scan'),
         ),
         migrations.AlterField(
             model_name='match',
             name='url',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='matches', to='os2datascanner.WebVersion', verbose_name='URL'),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='matches',
+                to='os2datascanner.WebVersion',
+                verbose_name='URL'),
         ),
     ]

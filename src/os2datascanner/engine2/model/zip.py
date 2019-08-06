@@ -5,6 +5,7 @@ from zipfile import ZipFile
 from datetime import datetime
 from contextlib import contextmanager
 
+
 @Source.mime_handler("application/zip")
 class ZipSource(Source):
     def __init__(self, handle):
@@ -32,9 +33,11 @@ class ZipSource(Source):
     def to_handle(self):
         return self._handle
 
+
 class ZipHandle(Handle):
     def follow(self, sm):
         return ZipResource(self, sm)
+
 
 class ZipResource(FileResource):
     def __init__(self, handle, sm):
@@ -44,7 +47,7 @@ class ZipResource(FileResource):
     def get_info(self):
         if not self._info:
             self._info = self._open_source()[1].getinfo(
-                    str(self.get_handle().get_relative_path()))
+                str(self.get_handle().get_relative_path()))
         return self._info
 
     def get_hash(self):

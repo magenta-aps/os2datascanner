@@ -15,7 +15,6 @@
 #
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( http://www.os2web.dk/ )
-
 """Contains Django model for the scanner types."""
 
 import os
@@ -42,26 +41,33 @@ base_dir = os.path.dirname(
 
 
 class Scanner(models.Model):
-
     """A scanner, i.e. a template for actual scanning jobs."""
     objects = InheritanceManager()
 
     linkable = False
 
-    name = models.CharField(max_length=256, unique=True, null=False,
-                            db_index=True,
-                            verbose_name='Navn')
+    name = models.CharField(
+        max_length=256,
+        unique=True,
+        null=False,
+        db_index=True,
+        verbose_name='Navn')
 
-    organization = models.ForeignKey(Organization, null=False,
-                                     verbose_name='Organisation',
-                                     on_delete=models.PROTECT)
+    organization = models.ForeignKey(
+        Organization,
+        null=False,
+        verbose_name='Organisation',
+        on_delete=models.PROTECT)
 
-    group = models.ForeignKey(Group, null=True, blank=True,
-                              verbose_name='Gruppe',
-                              on_delete=models.SET_NULL)
+    group = models.ForeignKey(
+        Group,
+        null=True,
+        blank=True,
+        verbose_name='Gruppe',
+        on_delete=models.SET_NULL)
 
-    schedule = RecurrenceField(max_length=1024,
-                               verbose_name='Planlagt afvikling')
+    schedule = RecurrenceField(
+        max_length=1024, verbose_name='Planlagt afvikling')
 
     do_ocr = models.BooleanField(default=False, verbose_name='Scan billeder')
 
@@ -70,19 +76,17 @@ class Scanner(models.Model):
         verbose_name='Tjek dato for sidste ændring',
     )
 
-    columns = models.CharField(validators=[validate_comma_separated_integer_list],
-                               max_length=128,
-                               null=True,
-                               blank=True
-                               )
+    columns = models.CharField(
+        validators=[validate_comma_separated_integer_list],
+        max_length=128,
+        null=True,
+        blank=True)
 
-    rules = models.ManyToManyField(Rule,
-                                   blank=True,
-                                   verbose_name='Regler',
-                                   related_name='scanners')
+    rules = models.ManyToManyField(
+        Rule, blank=True, verbose_name='Regler', related_name='scanners')
 
-    recipients = models.ManyToManyField(UserProfile, blank=True,
-                                        verbose_name='Modtagere')
+    recipients = models.ManyToManyField(
+        UserProfile, blank=True, verbose_name='Modtagere')
 
     # Spreadsheet annotation and replacement parameters
 
@@ -96,21 +100,20 @@ class Scanner(models.Model):
     do_cpr_replace = models.BooleanField(default=False)
 
     # Text to replace CPRs with
-    cpr_replace_text = models.CharField(max_length=2048, null=True,
-                                        blank=True)
+    cpr_replace_text = models.CharField(max_length=2048, null=True, blank=True)
 
     # Replace names?
     do_name_replace = models.BooleanField(default=False)
 
     # Text to replace names with
-    name_replace_text = models.CharField(max_length=2048, null=True,
-                                         blank=True)
+    name_replace_text = models.CharField(
+        max_length=2048, null=True, blank=True)
     # Replace addresses?
     do_address_replace = models.BooleanField(default=False)
 
     # Text to replace addresses with
-    address_replace_text = models.CharField(max_length=2048, null=True,
-                                            blank=True)
+    address_replace_text = models.CharField(
+        max_length=2048, null=True, blank=True)
 
     VALID = 1
     INVALID = 0
@@ -122,19 +125,20 @@ class Scanner(models.Model):
 
     url = models.CharField(max_length=2048, blank=False, verbose_name='URL')
 
-    authentication = models.OneToOneField(Authentication,
-                                          null=True,
-                                          related_name='%(app_label)s_%(class)s_authentication',
-                                          verbose_name='Brugernavn',
-                                          on_delete=models.SET_NULL)
+    authentication = models.OneToOneField(
+        Authentication,
+        null=True,
+        related_name='%(app_label)s_%(class)s_authentication',
+        verbose_name='Brugernavn',
+        on_delete=models.SET_NULL)
 
-    validation_status = models.IntegerField(choices=validation_choices,
-                                            default=INVALID,
-                                            verbose_name='Valideringsstatus')
+    validation_status = models.IntegerField(
+        choices=validation_choices,
+        default=INVALID,
+        verbose_name='Valideringsstatus')
 
-    exclusion_rules = models.TextField(blank=True,
-                                       default="",
-                                       verbose_name='Ekskluderingsregler')
+    exclusion_rules = models.TextField(
+        blank=True, default="", verbose_name='Ekskluderingsregler')
 
     def exclusion_rule_list(self):
         """Return the exclusion rules as a list of strings or regexes."""
@@ -143,8 +147,8 @@ class Scanner(models.Model):
         for line in self.exclusion_rules.splitlines():
             line = line.strip()
             if line.startswith(REGEX_PREFIX):
-                rules.append(re.compile(line[len(REGEX_PREFIX):],
-                                        re.IGNORECASE))
+                rules.append(
+                    re.compile(line[len(REGEX_PREFIX):], re.IGNORECASE))
             else:
                 rules.append(line)
         return rules
@@ -165,14 +169,10 @@ class Scanner(models.Model):
             return u"Nej"
 
     # Run error messages
-    ALREADY_RUNNING = (
-        "Scanneren kunne ikke startes," +
-        " fordi der allerede er en scanning i gang for den."
-    )
-    EXCHANGE_EXPORT_IS_RUNNING = (
-        "Scanneren kunne ikke startes," +
-        " fordi der er en exchange export igang."
-    )
+    ALREADY_RUNNING = ("Scanneren kunne ikke startes," +
+                       " fordi der allerede er en scanning i gang for den.")
+    EXCHANGE_EXPORT_IS_RUNNING = ("Scanneren kunne ikke startes," +
+                                  " fordi der er en exchange export igang.")
 
     process_urls = JSONField(null=True, blank=True)
 
@@ -192,8 +192,7 @@ class Scanner(models.Model):
         added_minutes -= added_hours * 60
         return Scanner.FIRST_START_TIME.replace(
             hour=Scanner.FIRST_START_TIME.hour + added_hours,
-            minute=Scanner.FIRST_START_TIME.minute + added_minutes
-        )
+            minute=Scanner.FIRST_START_TIME.minute + added_minutes)
 
     @classmethod
     def modulo_for_starttime(cls, time):
@@ -203,7 +202,7 @@ class Scanner(models.Model):
         should be started at the given time by filtering a query with:
             (WebScanner.pk % WebScanner.STARTTIME_QUARTERS) == <modulo_value>
         """
-        if(time < cls.FIRST_START_TIME):
+        if (time < cls.FIRST_START_TIME):
             return None
         hours = time.hour - cls.FIRST_START_TIME.hour
         minutes = 60 * hours + time.minute - cls.FIRST_START_TIME.minute

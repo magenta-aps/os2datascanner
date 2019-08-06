@@ -17,9 +17,11 @@ from tempfile import NamedTemporaryFile
 from contextlib import contextmanager
 from prometheus_client import start_http_server
 
+
 def run_django_setup():
     """Load django setup and include django app"""
-    os.environ["DJANGO_SETTINGS_MODULE"] = "os2datascanner.projects.admin.settings"
+    os.environ[
+        "DJANGO_SETTINGS_MODULE"] = "os2datascanner.projects.admin.settings"
     django.setup()
 
 
@@ -57,10 +59,7 @@ def get_data(file_name: str, uppercase=True) -> typing.FrozenSet[str]:
         text = text.upper()
 
     return frozenset(
-        line.split('\t', 1)[0]
-        for line in text.splitlines()
-        if line
-    )
+        line.split('\t', 1)[0] for line in text.splitlines() if line)
 
 
 @contextmanager
@@ -82,18 +81,16 @@ def prometheus_session(name, advertisement_directory, **kwargs):
                 raise
 
     # ... advertise this port, and this service, to Prometheus...
-    with NamedTemporaryFile(mode="wt", dir=advertisement_directory,
-            delete=False) as fp:
+    with NamedTemporaryFile(
+            mode="wt", dir=advertisement_directory, delete=False) as fp:
         tmpfile = fp.name
         # (... making sure that other users can read the advertisement...)
         os.chmod(tmpfile, 0o644)
 
-        json.dump([
-            {
-                "targets": ["localhost:{0}".format(port)],
-                "labels": kwargs
-            }
-        ], fp)
+        json.dump([{
+            "targets": ["localhost:{0}".format(port)],
+            "labels": kwargs
+        }], fp)
     advertisement_path = advertisement_directory + ("/{0}.json".format(name))
     os.rename(tmpfile, advertisement_path)
 

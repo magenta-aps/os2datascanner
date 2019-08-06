@@ -23,7 +23,6 @@ from .scan_model import Scan
 
 
 class WebScan(Scan):
-
     """An actual instance of the web scanning process done by a web scanner."""
 
     class Meta:
@@ -37,13 +36,11 @@ class WebScan(Scan):
         super().__init__(*args, **kwargs)
         self._old_status = self.status
 
-    do_link_check = models.BooleanField(default=False,
-                                        verbose_name='Tjek links')
+    do_link_check = models.BooleanField(
+        default=False, verbose_name='Tjek links')
 
     do_external_link_check = models.BooleanField(
-        default=False,
-        verbose_name='Tjek eksterne links'
-    )
+        default=False, verbose_name='Tjek eksterne links')
 
     do_last_modified_check_head_request = models.BooleanField(
         default=True,
@@ -51,8 +48,8 @@ class WebScan(Scan):
         help_text='Tjek datoer ved hjælp af en særskilt forespørgsel',
     )
 
-    do_collect_cookies = models.BooleanField(default=False,
-                                             verbose_name='Opsaml cookies')
+    do_collect_cookies = models.BooleanField(
+        default=False, verbose_name='Opsaml cookies')
 
     # Create method - copies fields from scanner
     def create(self, scanner):
@@ -104,9 +101,7 @@ class WebScan(Scan):
             output.write("{0}\n".format(domain))
             for cookie in cookie_counts[domain]:
                 output.write("    {0} Antal: {1}\n".format(
-                    cookie,
-                    cookie_counts[domain][cookie]
-                ))
+                    cookie, cookie_counts[domain][cookie]))
 
         result = output.getvalue()
 
@@ -127,6 +122,6 @@ class WebScan(Scan):
     @property
     def has_active_scans(self, scanner):
         """Whether the scanner has active scans."""
-        active_scanners = WebScan.objects.filter(scanner=scanner, status__in=(
-                Scan.NEW, Scan.STARTED)).count()
+        active_scanners = WebScan.objects.filter(
+            scanner=scanner, status__in=(Scan.NEW, Scan.STARTED)).count()
         return active_scanners > 0
