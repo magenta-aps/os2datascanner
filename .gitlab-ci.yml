@@ -1,6 +1,5 @@
 stages:
   - test
-  - check
   - build
 
 variables:
@@ -52,22 +51,20 @@ tests:
       junit: build/test-results.xml
 
 flake8:
-  stage: check
+  stage: test
   image: python:latest
   script:
-    - pip install flake8 flake8-gl-codeclimate
-    - flake8 --exit-zero --format gl-codeclimate --tee --output-file build/code-quality.json src/
+    - mkdir -p build
+    - pip install flake8 flake8_formatter_junit_xml
+    - flake8 --exit-zero --format junit-xml --tee --output-file build/flake8-results.xml src/
   artifacts:
     name: "$CI_JOB_STAGE-$CI_COMMIT_REF_NAME"
-    paths:
-      - build/code-quality.json
     reports:
-      codequality: build/code-quality.json
+      junit: build/flake8-results.xml
 
 yapf:
-  stage: check
+  stage: test
   image: python:latest
-  allow_failure: true
   script:
     - mkdir -p build
     - pip install yapf-junit
