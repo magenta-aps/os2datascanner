@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 import unittest
-from ...utils.amqp_connection_manager import start_amqp, send_message, \
-    set_callback, ack_message, purge_queue, start_consuming, close_connection
+from ...utils.pika_connection_manager import PikaConnectionManager
 
 
-class AMQPConnectionManagerTest(unittest.TestCase):
+class PikaConnectionManagerTest(unittest.TestCase):
 
+    pika_manager = None
     queue_name = 'test'
     message = 'hejsa'
 
@@ -13,28 +13,30 @@ class AMQPConnectionManagerTest(unittest.TestCase):
         ack_message(channel, method)
 
     def setUp(self):
-        start_amqp(self.queue_name)
-        purge_queue(self.queue_name)
+        self.pika_manager = PikaConnectionManager()
+        self.pika_manager.start_amqp(self.queue_name)
+        self.pika_manager.purge_queue(self.queue_name)
 
     def tearDown(self):
-        purge_queue(self.queue_name)
-        close_connection()
+        self.pika_manager.purge_queue(self.queue_name)
+        self.pika_manager.close_connection()
+        self.pika_manager = None
 
     def test_set_callback(self):
-        consumer_tag = set_callback(self.consume_message, self.queue_name)
+        consumer_tag = self.pika_manager.set_callback(self.consume_message, self.queue_name)
         self.assertNotEqual(consumer_tag, None)
 
     def test_send_message(self):
-        channel = send_message(self.queue_name, self.message)
+        channel = self.pika_manager.send_message(self.queue_name, self.message)
         method_frame, header_frame, body = channel.basic_get(self.queue_name)
 
         self.assertEqual(body.decode("utf-8"), self.message)
         self.assertEqual(method_frame.message_count, 0)
 
     def test_ack_message(self):
-        channel = send_message(self.queue_name, self.message)
+        channel = self.pika_manager.send_message(self.queue_name, self.message)
         method_frame, header_frame, body = channel.basic_get(self.queue_name)
-        ack_message(method_frame)
+        self.pika_manager.ack_message(method_frame)
         self.assertEqual(channel.is_open, True)
         self.assertEqual(method_frame.delivery_tag, 1)
 
@@ -44,9 +46,9 @@ class AMQPConnectionManagerTest(unittest.TestCase):
         name2 = 'test2'
         name3 = 'test3'
         # name0 is already started in setUp()
-        start_amqp(name1)
-        start_amqp(name2)
-        start_amqp(name3)
+        self.pika_manager.start_amqp(name1)
+        self.pika_manager.start_amqp(name2)
+        self.pika_manager.start_amqp(name3)
 
         message0 = self.message
         message1 = 'hejsa1'
@@ -62,15 +64,15 @@ class AMQPConnectionManagerTest(unittest.TestCase):
         self._send_message(message3, name3, 4)
 
     def _send_message(self, message, queue_name, expected_delivery_tag):
-        channel = send_message(queue_name, message)
+        channel = self.pika_manager.send_message(queue_name, message)
         method_frame, header_frame, body = channel.basic_get(queue_name)
 
         self.assertEqual(body.decode("utf-8"), message)
         self.assertEqual(method_frame.message_count, 0)
 
-        ack_message(method_frame)
+        self.pika_manager.ack_message(method_frame)
 
         self.assertEqual(channel.is_open, True)
         self.assertEqual(method_frame.delivery_tag, expected_delivery_tag)
 
-        purge_queue(self.queue_name)
+        self.pika_manager.purge_queue(self.queue_name)
