@@ -1,0 +1,45 @@
+.sensitivity-chart {
+
+  --dt-width: 8rem;
+
+  background-color: #fff;
+  box-shadow: var(--box-shadow-large);
+  margin: 1rem 0;
+  max-width: 80rem;
+  padding: 2rem;
+  width: calc(100% - 2rem);
+
+  summary {
+    cursor: pointer;
+  }
+
+  summary + div {
+    margin-top: 2rem;
+  }
+
+  dl {
+    margin: 0;
+    max-width: none;
+    overflow: hidden;
+  }
+
+  dt,
+  dd {
+    float: left;
+  }
+
+  dt:not(:first-of-type),
+  dd:not(:first-of-type) {
+    margin-top: 0.5rem;
+  }
+
+  dt {
+    clear: both;
+    font-weight: bold;
+    width: var(--dt-width);
+  }
+
+  dd {
+    width: calc(100% - var(--dt-width));
+  }
+}
