@@ -21,3 +21,6 @@ db.sqlite3
 src/os2datascanner/projects/static/
 src/os2datascanner/projects/uploads/
 .vscode
+
+# IntelliJ/PyCharm:
+.idea/
