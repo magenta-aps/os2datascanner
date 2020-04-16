@@ -16,19 +16,15 @@ $(tooltip).css({
 });
 
 $(button).click(function() {
-  console.log("click!");
-
   $(this).toggleClass("is-active");
   $(this).siblings(tooltip).toggleClass("show");
 })
 
 function openMatchHandler() {
-  console.log("openMatchHandler");
   $(tooltip).addClass("show");
 }
 
 function closeMatchHandler() {
-  console.log("closeMatchHandler");
   $(tooltip).removeClass("show");
 }
 // Handle matches, stop
