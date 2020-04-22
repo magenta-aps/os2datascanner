@@ -180,7 +180,7 @@ class ScannerUpdate(ScannerBase, RestrictedUpdateView):
 
 class ScannerDelete(RestrictedDeleteView):
     """Delete a scanner view."""
-    template_name = 'os2datascanner/scanner_confirm_delete.html'
+    template_name = 'os2datascanner/scanners.html'
 
     def get_form(self, form_class=None):
         """Adds special field password and decrypts password."""
