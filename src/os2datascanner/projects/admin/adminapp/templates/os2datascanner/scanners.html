@@ -122,7 +122,7 @@
             <button 
               type="submit"
               class="button button--small button--rounded"
-              onclick="return confirm('Ønsker du virkelig at slette denne scanner?\nHandlingen kan ikke fortrydes.{% if object.webscans.all %}\n\n(Bemærk venligst at {{ object.webscans.all.count }} rapporter er knyttet til dette scannerjob. Disse rapporter vil ligeledes slettes. Handlingen kan ikke fortrydes){% else %}\n\n(Denne scanner har ingen tilknyttede rapporter){% endif %}')">
+              onclick="return confirm('Ønsker du virkelig at slette denne scanner?\nHandlingen kan ikke fortrydes.')">
               <svg class="icon">
                 <use xlink:href="/static/src/svg/symbol-defs.svg#icon-cross"></use>
               </svg>
