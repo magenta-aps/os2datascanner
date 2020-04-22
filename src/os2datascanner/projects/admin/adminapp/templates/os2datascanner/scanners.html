@@ -116,15 +116,6 @@
           </a>
 
           {% if not scanner.scans %}
-          <!-- <a 
-            href="/{{ view.type }}scanners/{{scanner.pk}}/delete/" 
-            class="button button--small button--rounded"
-            title="Slet"
-            onclick="return confirm('abc')">
-            <svg class="icon">
-              <use xlink:href="/static/src/svg/symbol-defs.svg#icon-cross"></use>
-            </svg>
-          </a> -->
           <form action="" method="post" style="display: inline-block;">
             {% csrf_token %}
             {{ form.as_p }}
