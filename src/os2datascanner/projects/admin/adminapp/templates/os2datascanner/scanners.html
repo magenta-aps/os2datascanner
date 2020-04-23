@@ -116,13 +116,13 @@
           </a>
 
           {% if not scanner.scans %}
-          <form action="" method="post" style="display: inline-block;">
+          <form action="/{{ view.type }}scanners/{{scanner.pk}}/delete/" method="post" style="display: inline-block;">
             {% csrf_token %}
             {{ form.as_p }}
             <button 
               type="submit"
               class="button button--small button--rounded"
-              onclick="return confirm('Ønsker du virkelig at slette denne scanner?\nHandlingen kan ikke fortrydes.')">
+              onclick="return confirm('Ønsker du virkelig at slette denne scanner?\n{{scanner.name}}\n\nHandlingen kan ikke fortrydes.')">
               <svg class="icon">
                 <use xlink:href="/static/src/svg/symbol-defs.svg#icon-cross"></use>
               </svg>
