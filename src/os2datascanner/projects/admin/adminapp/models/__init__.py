@@ -1,7 +1,6 @@
 # Import needed here for django models:
 from . import authentication_model  # noqa
 from . import authenticationmethods_model  # noqa
-from . import conversionqueueitem_model  # noqa
 from . import group_model  # noqa
 from . import location_model  # noqa
 from . import match_model  # noqa

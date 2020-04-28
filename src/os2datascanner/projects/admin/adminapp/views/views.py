@@ -33,7 +33,6 @@ from django.views.generic.edit import ModelFormMixin, DeleteView
 from shutil import copyfile
 
 from ..forms import FileUploadForm
-from ..models.conversionqueueitem_model import ConversionQueueItem
 from ..models.scannerjobs.exchangescanner_model import ExchangeScanner
 from ..models.scannerjobs.filescanner_model import FileScanner
 from ..models.group_model import Group
@@ -428,53 +427,6 @@ class DialogSuccess(TemplateView):
         if model_type in self.reload_map:
             model_type = self.reload_map[model_type]
         context['reload_url'] = '/' + model_type + '/'
-        return context
-
-
-class SystemStatusView(TemplateView, SuperUserRequiredMixin):
-    """Display the system status for superusers."""
-
-    template_name = 'os2datascanner/system_status.html'
-
-    def get_context_data(self, **kwargs):
-        """Setup context for the template."""
-        context = super().get_context_data(**kwargs)
-        all = ConversionQueueItem.objects.filter(
-            status=ConversionQueueItem.NEW
-        )
-        total = all.count()
-        totals_by_type = all.values('type').annotate(
-            total=Count('type')
-        ).order_by('-total')
-        totals_by_scan = all.values('url__scan__pk').annotate(
-            total=Count('url__scan__pk')
-        ).order_by('-total')
-        totals_by_scan_and_type = all.values('url__scan__pk', 'type').annotate(
-            total=Count('type')
-        ).order_by('-total')
-
-        for item in totals_by_scan:
-            item['scan'] = Scan.objects.get(pk=item['url__scan__pk'])
-            by_type = []
-            for x in totals_by_scan_and_type:
-                if x['url__scan__pk'] == item['url__scan__pk']:
-                    by_type.append({
-                        'total': x['total'],
-                        'type': x['type']
-                    })
-            item['by_type'] = by_type
-
-        def assign_percentages(grouped_totals, total):
-            for item in grouped_totals:
-                item['percentage'] = "%.1f" % (float(item['total']) /
-                                               total * 100.)
-
-        assign_percentages(totals_by_type, total)
-        assign_percentages(totals_by_scan, total)
-
-        context['total_queue_items'] = total
-        context['total_queue_items_by_type'] = totals_by_type
-        context['total_queue_items_by_scan'] = totals_by_scan
         return context
 
 

@@ -28,7 +28,6 @@ from django.utils import timezone
 from django.utils.functional import cached_property
 from model_utils.fields import MonitorField, StatusField
 
-from ..conversionqueueitem_model import ConversionQueueItem
 from ..match_model import Match
 from ..rules.rule_model import Rule
 from ..scannerjobs.scanner_model import Scanner
@@ -158,13 +157,6 @@ class Scan(models.Model):
                                                     verbose_name='Pause ' +
                                                                  'non-OCR conversions')
 
-    def get_number_of_failed_conversions(self):
-        """The number conversions that has failed during this scan."""
-        return ConversionQueueItem.objects.filter(
-            url__scan=self,
-            status=ConversionQueueItem.FAILED
-        ).count()
-
     @cached_property
     def webscanner(self):
         return Scanner.objects.get_subclass(pk=self.scanner_id)
@@ -283,8 +275,6 @@ class Scan(models.Model):
 
     def cleanup_finished_scan(self):
         """Delete pending conversion queue items and remove the scan dir."""
-        self.delete_all_pending_conversionqueue_items()
-
         # remove all files associated with the scan
         if self.is_scan_dir_writable():
             self.delete_scan_dir()
@@ -348,20 +338,6 @@ class Scan(models.Model):
                         "FAILED: process {} disappeared".format(scan.pid)
                     )
 
-    def delete_all_pending_conversionqueue_items(self):
-        # Delete all pending conversionqueue items
-        pending_items = ConversionQueueItem.objects.filter(
-            url__scan=self,
-            status=ConversionQueueItem.NEW
-        )
-
-        if pending_items.exists():
-            self.logger.debug(
-                "remaining_scan_items",
-                count=pending_items.count(),
-            )
-            pending_items.delete()
-
     def delete_scan_dir(self):
         shutil.rmtree(self.scan_dir, True)
         self.logger.debug(
@@ -369,51 +345,6 @@ class Scan(models.Model):
             scan_id=self.pk,
             dir=self.scan_dir,
         )
-
-    @classmethod
-    def pause_non_ocr_conversions_on_scans_with_too_many_ocr_items(cls):
-        """Pause non-OCR conversions on scans with too many OCR items.
-
-        When the number of OCR items per scan reaches a
-        certain threshold (PAUSE_NON_OCR_ITEMS_THRESHOLD), non-OCR conversions
-        are paused to allow the number of
-        OCR items to fall to a reasonable level. For large scans with OCR
-        enabled, this is necessary because so many OCR items are extracted
-        from PDFs or Office documents that it exhausts the number of
-        available inodes on the filesystem.
-
-        When the number of OCR items falls below the lower threshold
-        (RESUME_NON_OCR_ITEMS_THRESHOLD), non-OCR conversions are resumed.
-        """
-        ocr_items_by_scan = ConversionQueueItem.objects.filter(
-            status=ConversionQueueItem.NEW,
-            type="ocr"
-        ).values("url__scan").annotate(total=Count("url__scan"))
-        for items in ocr_items_by_scan:
-            scan = cls.objects.get(pk=items["url__scan"])
-            num_ocr_items = items["total"]
-            if (not scan.pause_non_ocr_conversions and
-                        num_ocr_items > settings.PAUSE_NON_OCR_ITEMS_THRESHOLD):
-                logger.info(
-                    "Pausing non-OCR conversions for scan "
-                    "because it has too many OCR items",
-                    scan_id=scan.pk, scan_status=scan.status,
-                    num_ocr_items=num_ocr_items,
-                    threshold=settings.PAUSE_NON_OCR_ITEMS_THRESHOLD,
-                )
-                scan.pause_non_ocr_conversions = True
-                scan.save()
-            elif (scan.pause_non_ocr_conversions and
-                          num_ocr_items < settings.RESUME_NON_OCR_ITEMS_THRESHOLD):
-                logger.info(
-                    "Resuming non-OCR conversions for scan "
-                    "as its OCR are under the threshold",
-                    scan_id=scan.pk, scan_status=scan.status,
-                    num_ocr_items=num_ocr_items,
-                    threshold=settings.RESUME_NON_OCR_ITEMS_THRESHOLD,
-                )
-                scan.pause_non_ocr_conversions = False
-                scan.save()
 
     def is_scan_dir_writable(self):
         """Return whether the scan's directory exists and is writable."""

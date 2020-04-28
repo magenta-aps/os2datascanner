@@ -22,7 +22,6 @@ from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 
 from .models.authentication_model import Authentication
-from .models.conversionqueueitem_model import ConversionQueueItem
 from .models.group_model import Group
 from .models.match_model import Match
 from .models.organization_model import Organization
@@ -105,13 +104,6 @@ class UrlModifiedAdmin(admin.ModelAdmin):
     date_hierarchy = 'last_modified'
     list_filter = ('scanner',)
     list_display = ('url', 'scanner', 'last_modified')
-
-@admin.register(ConversionQueueItem)
-class ConversionQueueItemAdmin(admin.ModelAdmin):
-    date_hierarchy = 'process_start_time'
-    list_filter = ('status',)
-    list_display = ('file', 'type', 'page_no', 'status',
-                    'process_start_time')
 
 @admin.register(ReferrerUrl)
 class ReferrerUrlAdmin(admin.ModelAdmin):
