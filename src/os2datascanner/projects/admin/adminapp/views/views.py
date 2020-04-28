@@ -41,10 +41,9 @@ from ..models.referrerurl_model import ReferrerUrl
 from ..models.rules.cprrule_model import CPRRule
 from ..models.rules.regexrule_model import RegexRule
 from ..models.scans.scan_model import Scan
-from ..models.summary_model import Summary
 from ..models.userprofile_model import UserProfile
 from ..models.scannerjobs.webscanner_model import WebScanner
-from ..utils import scans_for_summary_report, do_scan, as_file_uri
+from ..utils import do_scan, as_file_uri
 
 
 class LoginRequiredMixin(View):
@@ -403,8 +402,7 @@ class DialogSuccess(TemplateView):
         'exchangescanners': ExchangeScanner,
         'rules/cpr': CPRRule,
         'rules/regex': RegexRule,
-        'groups': Group,
-        'reports/summaries': Summary,
+        'groups': Group
     }
 
     reload_map = {
@@ -427,112 +425,6 @@ class DialogSuccess(TemplateView):
         if model_type in self.reload_map:
             model_type = self.reload_map[model_type]
         context['reload_url'] = '/' + model_type + '/'
-        return context
-
-
-class SummaryList(RestrictedListView):
-    """Displays list of summaries."""
-
-    model = Summary
-    template_name = 'os2datascanner/summaries.html'
-
-
-class SummaryCreate(RestrictedCreateView):
-    """Create new summary."""
-
-    model = Summary
-    fields = ['name', 'description', 'schedule', 'last_run', 'recipients',
-              'scanners']
-
-    def get_form(self, form_class=None):
-        """Set up fields and return form."""
-        if form_class is None:
-            form_class = self.get_form_class()
-
-        form = super().get_form(form_class)
-
-        field_names = ['recipients', 'scanners']
-        for field_name in field_names:
-            queryset = form.fields[field_name].queryset
-            queryset = queryset.filter(organization=0)
-            form.fields[field_name].queryset = queryset
-
-        return form
-
-    def get_success_url(self):
-        """The URL to redirect to after successful creation."""
-        return '/reports/summaries/{0}/created/'.format(self.object.id)
-
-
-class SummaryUpdate(RestrictedUpdateView):
-    """Edit summary."""
-
-    model = Summary
-    fields = ['name', 'description', 'schedule', 'last_run', 'recipients',
-              'scanners', 'do_email_recipients']
-
-    def get_form(self, form_class=None):
-        """Get the form for the view.
-
-        Querysets for selecting the field 'recipients' must be limited by the
-        summary's organization - i.e., there must be an organization set on
-        the object.
-        """
-        if form_class is None:
-            form_class = self.get_form_class()
-
-        form = super().get_form(form_class)
-        summary = self.get_object()
-        # Limit recipients to organization
-        queryset = form.fields['recipients'].queryset
-        if summary.organization:
-            queryset = queryset.filter(organization=summary.organization)
-        else:
-            queryset = queryset.filter(organization=0)
-        form.fields['recipients'].queryset = queryset
-
-        # Limit scanners to organization
-        queryset = form.fields['scanners'].queryset
-        if summary.organization:
-            queryset = queryset.filter(organization=summary.organization)
-        else:
-            queryset = queryset.filter(organization=0)
-
-        # Only display visible scanners
-        queryset = queryset.filter(is_visible=True)
-        form.fields['scanners'].queryset = queryset
-
-        return form
-
-    def get_success_url(self):
-        """The URL to redirect to after successful update."""
-        return '/reports/summaries/%s/saved/' % self.object.pk
-
-
-class SummaryDelete(RestrictedDeleteView):
-    """Delete summary."""
-
-    model = Summary
-    success_url = '/reports/summaries/'
-
-
-class SummaryReport(RestrictedDetailView):
-    """Display report for summary."""
-
-    model = Summary
-    template_name = 'os2datascanner/summary_report.html'
-
-    def get_context_data(self, **kwargs):
-        """Setup context for the template."""
-        context = super().get_context_data(**kwargs)
-
-        summary = self.object
-        scan_list, from_date, to_date = scans_for_summary_report(summary)
-
-        context['scans'] = scan_list
-        context['from_date'] = from_date
-        context['to_date'] = to_date
-
         return context
 
 

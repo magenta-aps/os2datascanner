@@ -34,8 +34,7 @@ from .views.rule_views import RuleList, \
 from .views.views import GroupList, GroupCreate, GroupUpdate, GroupDelete
 from .views.views import MainPageView
 from .views.views import OrganizationList
-from .views.views import SummaryList, SummaryCreate, SummaryUpdate, SummaryDelete
-from .views.views import SummaryReport, DialogSuccess
+from .views.views import DialogSuccess
 from .views.views import file_upload, referrer_content
 from .views.webscanner_views import (WebScannerCreate, WebScannerUpdate,
                                      WebScannerDelete, WebScannerRun,
