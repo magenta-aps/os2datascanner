@@ -34,7 +34,6 @@ from django.template import loader
 from .models.match_model import Match
 from .models.webversion_model import WebVersion
 from .models.scannerjobs.webscanner_model import WebScanner
-from .models.scans.webscan_model import WebScan
 
 
 def notify_user(scan):
@@ -56,9 +55,6 @@ def notify_user(scan):
     scan_status = ''
     if scan.no_of_critical_matches > 0:
         scan_status = "Kritiske matches!"
-    elif hasattr(scan, 'webscan'):
-        if scan.webscan.no_of_broken_links > 0:
-            scan_status = "Døde links"
     else:
         if scan.status_text:
             scan_status = scan.status_text
