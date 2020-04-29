@@ -31,46 +31,7 @@ from django.conf import settings
 from django.core.mail import EmailMessage
 from django.template import loader
 
-from .models.match_model import Match
 from .models.scannerjobs.webscanner_model import WebScanner
-
-
-def notify_user(scan):
-    """Notify user about completed scan - including success and failure."""
-    template = 'os2datascanner/email/scan_report.html'
-
-    t = loader.get_template(template)
-
-    to_addresses = [p.user.email for p in scan.scanner.recipients.all() if
-                    p.user.email]
-    if not to_addresses:
-        to_addresses = [settings.ADMIN_EMAIL, ]
-    matches = Match.objects.filter(url__scan=scan).count()
-    critical = scan.no_of_critical_matches
-
-    scan_status = ''
-    if scan.no_of_critical_matches > 0:
-        scan_status = "Kritiske matches!"
-    else:
-        if scan.status_text:
-            scan_status = scan.status_text
-        else:
-            scan_status = 'Ingen status tekst.'
-
-    subject = "Scanning afsluttet: {0}".format(scan_status)
-
-    c = {'scan': scan, 'domain': settings.SITE_URL,
-         'matches': matches, 'critical': critical}
-
-    if scan.scanner.organization.do_notify_all_scans or critical > 0:
-        try:
-            body = t.render(c)
-            message = EmailMessage(subject, body, settings.ADMIN_EMAIL,
-                                   to_addresses)
-            message.send()
-        except Exception:
-            # TODO: Handle this properly
-            raise
 
 
 def capitalize_first(s):
