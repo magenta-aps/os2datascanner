@@ -39,7 +39,6 @@ from ..models.group_model import Group
 from ..models.organization_model import Organization
 from ..models.rules.cprrule_model import CPRRule
 from ..models.rules.regexrule_model import RegexRule
-from ..models.scans.scan_model import Scan
 from ..models.userprofile_model import UserProfile
 from ..models.scannerjobs.webscanner_model import WebScanner
 from ..utils import do_scan, as_file_uri
@@ -425,95 +424,3 @@ class DialogSuccess(TemplateView):
             model_type = self.reload_map[model_type]
         context['reload_url'] = '/' + model_type + '/'
         return context
-
-
-@login_required
-def file_upload(request):
-    """Handle upload of file for scanning."""
-    if request.method == 'POST':
-        form = FileUploadForm(request.POST, request.FILES)
-        if form.is_valid():
-            # Perform the scan
-            upload_file = request.FILES['scan_file']
-            extension = upload_file.name.split('.')[-1]
-            # Get parametes
-            params = {}
-            params['do_cpr_scan'] = form.cleaned_data['do_cpr_scan']
-            params['do_cpr_replace'] = form.cleaned_data['do_replace_cpr']
-            params['cpr_replace_text'] = form.cleaned_data[
-                'cpr_replacement_text'
-            ]
-            params['do_name_scan'] = form.cleaned_data['do_name_scan']
-            params['do_name_replace'] = form.cleaned_data['do_replace_name']
-            params['name_replace_text'] = form.cleaned_data[
-                'name_replacement_text'
-            ]
-            params['do_address_scan'] = form.cleaned_data['do_address_scan']
-            params['do_address_replace'] = form.cleaned_data[
-                'do_replace_address'
-            ]
-            params['do_ocr'] = form.cleaned_data['do_ocr']
-            params['address_replace_text'] = form.cleaned_data[
-                'address_replacement_text'
-            ]
-            params['output_spreadsheet_file'] = (extension != 'pdf')
-
-            def to_int(L):
-                return str(ord(L) - ord('A') + 1) if L else ''
-
-            params['columns'] = ','.join(
-                map(to_int, form.cleaned_data['column_list'].split(','))
-            )
-
-            path = upload_file.temporary_file_path()
-            rpcdir = settings.RPC_TMP_PREFIX
-            try:
-                os.makedirs(rpcdir)
-            except OSError:
-                if os.path.isdir(rpcdir):
-                    pass
-                else:
-                    # There was an error, so make sure we know about it
-                    raise
-            # Now create temporary dir, fill with files
-            dirname = tempfile.mkdtemp(dir=rpcdir)
-            file_path = os.path.join(dirname,
-                                     upload_file.name).encode('utf-8')
-            copyfile(path, file_path)
-            file_url = as_file_uri(file_path)
-            scan = do_scan(request.user, [file_url], params, blocking=True,
-                           visible=True)
-            scan.scanner.is_visible = False
-            scan.scanner.save()
-
-            #
-            if not isinstance(scan, Scan):
-                raise RuntimeError("Unable to perform scan - check user has"
-                                   "organization and valid scanner")
-            # We now have the scan object
-            if not params['output_spreadsheet_file']:
-                return HttpResponseRedirect('/report/{0}/'.format(scan.pk))
-            response = HttpResponse(content_type='text/csv')
-            report_file = '{0}{1}.csv'.format(
-                scan.scanner.organization.name.replace(' ', '_'),
-                scan.id)
-            response[
-                'Content-Disposition'
-            ] = 'attachment; filename={0}'.format(report_file)
-            csv_file = open(scan.scan_output_file, "rb")
-
-            # Load CSV file, write it back to the client
-            response.write(codecs.BOM_UTF8)
-            csv_data = csv_file.read()
-            response.write(csv_data)
-
-            return response
-
-    else:
-        # Request.method == 'GET'
-        form = FileUploadForm()
-
-    return render_to_response(
-        'os2datascanner/file_upload.html',
-        {'form': form}
-    )
