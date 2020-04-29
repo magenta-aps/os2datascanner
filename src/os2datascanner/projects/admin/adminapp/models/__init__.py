@@ -5,7 +5,6 @@ from . import group_model  # noqa
 from . import location_model  # noqa
 from . import match_model  # noqa
 from . import organization_model  # noqa
-from . import referrerurl_model  # noqa
 from . import rules  # noqa
 from . import scannerjobs  # noqa
 from . import scans  # noqa

@@ -25,7 +25,6 @@ from .models.authentication_model import Authentication
 from .models.group_model import Group
 from .models.match_model import Match
 from .models.organization_model import Organization
-from .models.referrerurl_model import ReferrerUrl
 from .models.rules.cprrule_model import CPRRule
 from .models.rules.namerule_model import NameRule
 from .models.rules.regexrule_model import RegexRule, RegexPattern
@@ -74,10 +73,6 @@ class ScanAdmin(admin.ModelAdmin):
 @admin.register(WebVersion)
 class WebVersionAdmin(admin.ModelAdmin):
     list_filter = ('scan',)
-    list_display = ('location', 'scan')
-
-@admin.register(ReferrerUrl)
-class ReferrerUrlAdmin(admin.ModelAdmin):
     list_display = ('location', 'scan')
 
 @admin.register(FileScanner)

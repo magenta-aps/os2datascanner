@@ -37,7 +37,6 @@ from ..models.scannerjobs.exchangescanner_model import ExchangeScanner
 from ..models.scannerjobs.filescanner_model import FileScanner
 from ..models.group_model import Group
 from ..models.organization_model import Organization
-from ..models.referrerurl_model import ReferrerUrl
 from ..models.rules.cprrule_model import CPRRule
 from ..models.rules.regexrule_model import RegexRule
 from ..models.scans.scan_model import Scan
@@ -426,12 +425,6 @@ class DialogSuccess(TemplateView):
             model_type = self.reload_map[model_type]
         context['reload_url'] = '/' + model_type + '/'
         return context
-
-
-@login_required
-def referrer_content(request, pk):
-    u = ReferrerUrl.objects.get(id=int(pk))
-    return HttpResponse(u.content)
 
 
 @login_required

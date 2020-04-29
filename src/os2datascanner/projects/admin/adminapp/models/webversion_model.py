@@ -29,9 +29,6 @@ class WebVersion(Version):
                                       verbose_name='Status code')
     status_message = models.CharField(blank=True, null=True, max_length=256,
                                       verbose_name='Status ' + 'Message')
-    referrers = models.ManyToManyField("ReferrerUrl",
-                                       related_name='%(app_label)s_%(class)s_linked_urls',
-                                       verbose_name='Referrers')
 
     @property
     def tmp_dir(self):
