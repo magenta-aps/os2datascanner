@@ -32,7 +32,6 @@ from django.core.mail import EmailMessage
 from django.template import loader
 
 from .models.match_model import Match
-from .models.webversion_model import WebVersion
 from .models.scannerjobs.webscanner_model import WebScanner
 
 
@@ -47,9 +46,6 @@ def notify_user(scan):
     if not to_addresses:
         to_addresses = [settings.ADMIN_EMAIL, ]
     matches = Match.objects.filter(url__scan=scan).count()
-    matches += WebVersion.objects.filter(
-        scan=scan
-    ).exclude(status_code__isnull=True).count()
     critical = scan.no_of_critical_matches
 
     scan_status = ''

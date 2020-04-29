@@ -11,4 +11,3 @@ from . import scans  # noqa
 from . import sensitivity_level  # noqa
 from . import userprofile_model  # noqa
 from . import version_model  # noqa
-from . import webversion_model  # noqa

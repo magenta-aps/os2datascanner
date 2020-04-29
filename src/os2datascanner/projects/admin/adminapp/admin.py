@@ -33,7 +33,6 @@ from .models.scans.scan_model import Scan
 from .models.scannerjobs.webscanner_model import WebScanner
 from .models.scannerjobs.filescanner_model import FileScanner
 from .models.scannerjobs.exchangescanner_model import ExchangeScanner
-from .models.webversion_model import WebVersion
 from .models.userprofile_model import UserProfile
 
 
@@ -69,11 +68,6 @@ class ScanAdmin(admin.ModelAdmin):
                     'start_time', 'end_time', 'is_visible')
     list_filter = ('status', 'is_visible', 'scanner')
 
-
-@admin.register(WebVersion)
-class WebVersionAdmin(admin.ModelAdmin):
-    list_filter = ('scan',)
-    list_display = ('location', 'scan')
 
 @admin.register(FileScanner)
 @admin.register(ExchangeScanner)
