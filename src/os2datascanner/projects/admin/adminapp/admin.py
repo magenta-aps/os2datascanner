@@ -37,7 +37,6 @@ from .models.scannerjobs.filescanner_model import FileScanner
 from .models.scannerjobs.exchangescanner_model import ExchangeScanner
 from .models.statistic_model import Statistic, TypeStatistics
 from .models.webversion_model import WebVersion
-from .models.urllastmodified_model import UrlLastModified
 from .models.userprofile_model import UserProfile
 
 
@@ -98,12 +97,6 @@ class StatisticAdmin(admin.ModelAdmin):
 class WebVersionAdmin(admin.ModelAdmin):
     list_filter = ('scan',)
     list_display = ('location', 'scan')
-
-@admin.register(UrlLastModified)
-class UrlModifiedAdmin(admin.ModelAdmin):
-    date_hierarchy = 'last_modified'
-    list_filter = ('scanner',)
-    list_display = ('url', 'scanner', 'last_modified')
 
 @admin.register(ReferrerUrl)
 class ReferrerUrlAdmin(admin.ModelAdmin):
