@@ -35,7 +35,6 @@ from .models.scans.webscan_model import WebScan
 from .models.scannerjobs.webscanner_model import WebScanner
 from .models.scannerjobs.filescanner_model import FileScanner
 from .models.scannerjobs.exchangescanner_model import ExchangeScanner
-from .models.statistic_model import Statistic, TypeStatistics
 from .models.webversion_model import WebVersion
 from .models.userprofile_model import UserProfile
 
@@ -81,16 +80,6 @@ class ScanAdmin(WebScanAdmin):
     def get_queryset(self, request):
         qs = super().get_queryset(request)
         return qs.filter(webscan__isnull=True)
-
-
-class TypeStatisticsInline(admin.TabularInline):
-    model = TypeStatistics
-
-
-@admin.register(Statistic)
-class StatisticAdmin(admin.ModelAdmin):
-    inlines = (TypeStatisticsInline,)
-    list_display = ('scan', 'files_scraped_count')
 
 
 @admin.register(WebVersion)
