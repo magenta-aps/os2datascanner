@@ -165,10 +165,8 @@ class Scanner(models.Model):
 
     @property
     def is_running(self) -> bool:
-        '''Are any scans currently running against this scanner?'''
-        # using a string for the status is kind of ugly, but necessary
-        # to avoid circular imports
-        return self.webscans.filter(status="STARTED").exists()
+        """Dummy transitional method; returns False."""
+        return False
 
     @property
     def schedule_description(self):
@@ -302,15 +300,6 @@ class Scanner(models.Model):
         amqp_connection_manager.close_connection()
 
         return scan
-
-    def create_scan(self):
-        """
-        Creates a file scan.
-        :return: A file scan object
-        """
-        from ..scans.scan_model import Scan
-        scan = Scan()
-        return scan.create(self)
 
     def path_for(self, uri):
         return uri

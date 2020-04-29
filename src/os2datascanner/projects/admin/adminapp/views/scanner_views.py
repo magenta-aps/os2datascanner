@@ -5,7 +5,6 @@ from .views import RestrictedListView, RestrictedCreateView, \
     RestrictedUpdateView, RestrictedDetailView, RestrictedDeleteView
 from ..models.authentication_model import Authentication
 from ..models.rules.rule_model import Rule
-from ..models.scans.scan_model import Scan
 from ..models.scannerjobs.scanner_model import Scanner
 from ..models.userprofile_model import UserProfile
 
@@ -229,7 +228,8 @@ class ScannerRun(RestrictedDetailView):
                                  user=request.user)
 
         context = self.get_context_data(object=self.object)
-        context['success'] = isinstance(result, Scan)
+        # XXX: engine2 error/success needs to be clearer
+        context['success'] = False # isinstance(result, Scan)
 
         if not context['success']:
             context['error_message'] = result

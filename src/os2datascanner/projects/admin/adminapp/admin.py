@@ -23,13 +23,11 @@ from django.utils.translation import ugettext_lazy as _
 
 from .models.authentication_model import Authentication
 from .models.group_model import Group
-from .models.match_model import Match
 from .models.organization_model import Organization
 from .models.rules.cprrule_model import CPRRule
 from .models.rules.namerule_model import NameRule
 from .models.rules.regexrule_model import RegexRule, RegexPattern
 from .models.rules.addressrule_model import AddressRule
-from .models.scans.scan_model import Scan
 from .models.scannerjobs.webscanner_model import WebScanner
 from .models.scannerjobs.filescanner_model import FileScanner
 from .models.scannerjobs.exchangescanner_model import ExchangeScanner
@@ -39,12 +37,6 @@ from .models.userprofile_model import UserProfile
 @admin.register(Authentication)
 class AuthenticationAdmin(admin.ModelAdmin):
     list_display = ('username', 'domain')
-
-
-@admin.register(Match)
-class MatchAdmin(admin.ModelAdmin):
-    list_display = ('scan', 'sensitivity', 'url',)
-    list_filter = ('sensitivity',)
 
 
 @admin.register(CPRRule)
@@ -59,14 +51,6 @@ class RuleAdmin(admin.ModelAdmin):
 @admin.register(RegexPattern)
 class RegexPatternAdmin(admin.ModelAdmin):
     list_display = ('pattern_string', 'regex')
-
-
-@admin.register(Scan)
-class ScanAdmin(admin.ModelAdmin):
-    date_hierarchy = 'creation_time'
-    list_display = ('scanner', 'status', 'creation_time',
-                    'start_time', 'end_time', 'is_visible')
-    list_filter = ('status', 'is_visible', 'scanner')
 
 
 @admin.register(FileScanner)
