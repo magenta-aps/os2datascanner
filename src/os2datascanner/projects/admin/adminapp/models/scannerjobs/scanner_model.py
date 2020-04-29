@@ -164,11 +164,6 @@ class Scanner(models.Model):
         return rules
 
     @property
-    def is_running(self) -> bool:
-        """Dummy transitional method; returns False."""
-        return False
-
-    @property
     def schedule_description(self):
         """A lambda for creating schedule description strings."""
         if any(self.schedule.occurrences()):
@@ -177,14 +172,6 @@ class Scanner(models.Model):
             return u"Nej"
 
     # Run error messages
-    ALREADY_RUNNING = (
-        "Scanneren kunne ikke startes," +
-        " fordi der allerede er en scanning i gang for den."
-    )
-    EXCHANGE_EXPORT_IS_RUNNING = (
-        "Scanneren kunne ikke startes," +
-        " fordi der er en exchange export igang."
-    )
     HAS_NO_RULES = (
         "Scanneren kunne ikke startes," +
         " fordi den ingen tilknyttede regler har."
