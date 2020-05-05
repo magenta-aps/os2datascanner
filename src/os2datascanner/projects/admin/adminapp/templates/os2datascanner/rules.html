@@ -55,9 +55,7 @@
         </td>
         <td class="datatable__column--actions">
           <a 
-            href="#edit-rule-modal" 
-            data-modal="modal:open" 
-            data-src="/rules/regex/{{rule.pk}}"
+            href="/rules/regex/{{rule.pk}}"
             class="button button--small button--rounded"
             title="Redigér">
             <svg class="icon">
@@ -109,7 +107,6 @@
         <th class="datatable__column--description">Beskrivelse</th>
         <th class="datatable__column--expression"></th>
         <th class="datatable__column--sensitivity">Følsomhed</th>
-        <th class="datatable__column--probability">p(A)</th>
       </tr>
     </thead>
 
@@ -124,7 +121,6 @@
         <td class="datatable__column--sensitivity">
           <span class="level-label level-label--{{ rule.sensitivity }}">{{ rule.get_sensitivity_display }}</span>
         </td>
-        <td class="datatable__column--probability">&nbsp;</td>
       </tr>
       {% endfor %}
     </tbody>
