@@ -69,7 +69,9 @@ class MainPageView(TemplateView, LoginRequiredMixin):
         # Filter out anything we don't know how to show in the UI
         self.data_results = []
         for result in results:
-            if "matches" in result.data and result.data["matches"]:
+            if (result.data
+                    and "matches" in result.data
+                    and result.data["matches"]):
                 mm = result.data["matches"]
                 renderable_matches = [cm for cm in mm["matches"]
                         if cm["rule"]["type"] in RENDERABLE_RULES]
