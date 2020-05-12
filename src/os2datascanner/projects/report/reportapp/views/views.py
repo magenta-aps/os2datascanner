@@ -79,6 +79,9 @@ class MainPageView(TemplateView, LoginRequiredMixin):
                     mm["matches"] = renderable_matches
                     self.data_results.append(result)
 
+        self.data_results.sort(key=
+                lambda result: (result.matches.sensitivity.value, result.pk))
+
         # Results are grouped by the rule they where found with,
         # together with the count.
         sensitivities = {}
