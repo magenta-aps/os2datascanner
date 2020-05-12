@@ -62,6 +62,14 @@ class JSONAPIView(LoginRequiredMixin):
     def post(self, request):
         return JsonResponse(self.get_data(request))
 
+    def http_method_not_allowed(self, request):
+        r = JsonResponse({
+            "status": "fail",
+            "message": "method not allowed"
+        })
+        r.status_code = 405
+        return r
+
     def get_data(self, request):
         try:
             body = json.loads(request.body.decode("utf-8"))
