@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from django.views.generic import View
 
 from ..models.documentreport_model import DocumentReport
+from .views import LoginRequiredMixin
 
 
 def set_status_1(body):
@@ -57,7 +58,7 @@ api_endpoints = {
 }
 
 
-class JSONAPIView(View):
+class JSONAPIView(LoginRequiredMixin):
     def post(self, request):
         return JsonResponse(self.get_data(request))
 
