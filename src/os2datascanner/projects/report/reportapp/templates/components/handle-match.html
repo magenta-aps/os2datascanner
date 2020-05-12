@@ -5,13 +5,10 @@
   <div class="handle-match" role="tooltip">
     <h5>Har håndteret dette match på følgende måde:</h5>
     <div>
-      <button type="button" class="handle-match__action">Har flyttet filen</button>
-      <button type="button" class="handle-match__action">Har slettet filen</button>
-      <button type="button" class="handle-match__action">Har redigeret filen</button>
-      <button type="button" class="handle-match__action">Har ikke foretaget mig noget</button>
-
-      <label for="handle-match-other" class="handle-match__label">Andet:</label>
-      <input type="text" name="handle-match-other" id="handle-match-other" class="handle-match__input" placeholder="Andet: (Angiv...)">
+      <button type="button" class="handle-match__action" data-report-pk="{{ match.pk }}" data-status="2">Har flyttet filen</button>
+      <button type="button" class="handle-match__action" data-report-pk="{{ match.pk }}" data-status="3">Har slettet filen</button>
+      <button type="button" class="handle-match__action" data-report-pk="{{ match.pk }}" data-status="1">Har redigeret filen</button>
+      <button type="button" class="handle-match__action" data-report-pk="{{ match.pk }}" data-status="4">Har intet foretaget mig</button>
     </div>
   </div>
 
