@@ -56,7 +56,6 @@ $(actions).click(function() {
       contentType: "application/json; charset=utf-8",
       dataType: "json",
       beforeSend: function(xhr, settings) {
-        xhr.data = JSON.stringify(xhr.data)
         xhr.setRequestHeader("X-CSRFToken", getCookie("csrftoken"))
       }
     }).done(function(body) {
