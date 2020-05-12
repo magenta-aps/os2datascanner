@@ -1,10 +1,14 @@
 import json
+import structlog
 from django.core.exceptions import ValidationError
 from django.http import JsonResponse
 from django.views.generic import View
 
 from ..models.documentreport_model import DocumentReport
 from .views import LoginRequiredMixin
+
+
+logger = structlog.get_logger()
 
 
 def set_status_1(body):
@@ -73,6 +77,7 @@ class JSONAPIView(LoginRequiredMixin):
     def get_data(self, request):
         try:
             body = json.loads(request.body.decode("utf-8"))
+            logger.info("API call for user {0}".format(request.user), **body)
             return api_endpoints.get(body.get("action"), error_1)(body)
         except json.JSONDecodeError:
             return {
