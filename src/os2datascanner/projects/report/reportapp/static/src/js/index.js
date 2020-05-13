@@ -40,10 +40,10 @@ function getCookie(name) {
 $(actions).click(function() {
   const button = $(this)
 
-  const report_id = Number.parseInt(button.attr("data-report-pk"))
-  const new_status = Number.parseInt(button.attr("data-status"))
+  const report_id = parseInt(button.attr("data-report-pk"))
+  const new_status = parseInt(button.attr("data-status"))
 
-  if (!Number.isNaN(report_id) && !Number.isNaN(new_status)) {
+  if (!isNaN(report_id) && !isNaN(new_status)) {
     $.ajax({
       url: "/api",
       method: "POST",
