@@ -59,10 +59,9 @@ $(actions).click(function() {
         xhr.setRequestHeader("X-CSRFToken", getCookie("csrftoken"))
       }
     }).done(function(body) {
-      status = body["status"]
-      if (status == "ok") {
-        button.closest("tr").fadeOut()
-      } else if (status == "fail") {
+      if (body["status"] == "ok") {
+        button.closest("tr").remove()
+      } else if (body["status"] == "fail") {
         console.log(
             "Attempt to call set-status-1 failed: "
             + body["message"])
