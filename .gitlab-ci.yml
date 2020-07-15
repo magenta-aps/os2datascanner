@@ -138,27 +138,27 @@ Build documentation:
   services:
     - postgres:12
     - rabbitmq:3-alpine
+  variables:
+    POSTGRES_HOST: postgres
+    AMQP_HOST: rabbitmq
+    AMQP_USER: guest
+    AMQP_PWD: guest
+    SECRET_KEY: TestDummy!TestDummy!TestDummy!TestDummy!TestDummy!
+    COVERAGE_FILE: $CI_PROJECT_DIR/.coverage
+  allow_failure: false
+
+Test Admin Application:
+  extends: .test-default
   image:
     name: ${ADMIN_IMAGE}
   variables:
     POSTGRES_DB: os2datascanner_admin
     POSTGRES_USER: os2datascanner_admin
     POSTGRES_PASSWORD: os2datascanner_admin
-    POSTGRES_HOST: postgres
-    AMQP_HOST: rabbitmq
-    AMQP_USER: guest
-    AMQP_PWD: guest
-    DJANGO_SETTINGS_MODULE: os2datascanner.projects.admin.settings
-    SECRET_KEY: TestDummy!TestDummy!TestDummy!TestDummy!TestDummy!
-    COVERAGE_FILE: $CI_PROJECT_DIR/.coverage
-  allow_failure: false
-
-Unit-test:
-  <<: *test-default
   needs:
     - Build Admin Application
   script:
-    - coverage run --source=os2datascanner.engine2,os2datascanner.projects,os2datascanner.utils,os2datascanner.tests -m django test os2datascanner.tests
+    - coverage run --source=os2datascanner.projects.admin,os2datascanner.utils, -m django test os2datascanner.projects.admin.tests
   after_script:
     - coverage html -d ${CI_PROJECT_DIR}/coverage-html
     - coverage xml -o ${CI_PROJECT_DIR}/junit.xml
@@ -192,7 +192,7 @@ Run notice scripts:
     - Build Report Application
     - Build Engine
     - Build documentation
-    - Unit-test
+    - Test Admin Application
   image: alpine
   variables:
     GIT_STRATEGY: none # We do not need the source code
