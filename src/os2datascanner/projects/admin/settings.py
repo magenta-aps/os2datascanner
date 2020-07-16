@@ -16,6 +16,7 @@ PROJECT_DIR = os.path.dirname(BASE_DIR)
 BUILD_DIR = os.path.join(PROJECT_DIR, 'build')
 VAR_DIR = os.path.join(PROJECT_DIR, 'var')
 LOGS_DIR = os.path.join(VAR_DIR, 'logs')
+DECRYPTION_FILE_PATH = os.getenv('DECRYPTION_FILE_PATH', PROJECT_DIR)
 
 os.makedirs(BUILD_DIR, exist_ok=True)
 
