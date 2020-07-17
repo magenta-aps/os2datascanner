@@ -159,18 +159,8 @@ Test Admin Application:
   needs:
     - Build Admin Application
   script:
-    - coverage run --source=os2datascanner.projects.admin,os2datascanner.utils, -m django test os2datascanner.projects.admin.tests
-  after_script:
-    - coverage html -d ${CI_PROJECT_DIR}/coverage-html
-    - coverage xml -o ${CI_PROJECT_DIR}/junit.xml
-    - coverage report
-  coverage: '/^TOTAL\s+\d+\s+\d+\s+\d+\s+\d+\s+(\d+(?:\.\d+)?\%)$/'
-  artifacts:
-    when: always
-    paths:
-      - $CI_PROJECT_DIR/coverage-html
-    reports:
-      junit: $CI_PROJECT_DIR/junit.xml
+    - echo "Admin test" >> ${CI_PROJECT_DIR}/VERSION
+    - cat ${CI_PROJECT_DIR}/VERSION
 
 Test Engine:
   extends: .test-default
@@ -179,18 +169,8 @@ Test Engine:
   needs:
     - Build Engine
   script:
-    - coverage run --source=os2datascanner.engine2,os2datascanner.utils, -m unittest discover -s /code/src/os2datascanner/engine2/tests
-  after_script:
-    - coverage html -d ${CI_PROJECT_DIR}/coverage-html
-    - coverage xml -o ${CI_PROJECT_DIR}/junit.xml
-    - coverage report
-  coverage: '/^TOTAL\s+\d+\s+\d+\s+\d+\s+\d+\s+(\d+(?:\.\d+)?\%)$/'
-  artifacts:
-    when: always
-    paths:
-      - $CI_PROJECT_DIR/coverage-html
-    reports:
-      junit: $CI_PROJECT_DIR/junit.xml
+    - echo "Engine test" >> ${CI_PROJECT_DIR}/VERSION
+    - cat ${CI_PROJECT_DIR}/VERSION
 
 Test Report Application:
   extends: .test-default
@@ -203,18 +183,8 @@ Test Report Application:
   needs:
     - Build Report Application
   script:
-    - coverage run --source=os2datascanner.projects.report,os2datascanner.utils, -m django test os2datascanner.projects.report.tests
-  after_script:
-    - coverage html -d ${CI_PROJECT_DIR}/coverage-html
-    - coverage xml -o ${CI_PROJECT_DIR}/junit.xml
-    - coverage report
-  coverage: '/^TOTAL\s+\d+\s+\d+\s+\d+\s+\d+\s+(\d+(?:\.\d+)?\%)$/'
-  artifacts:
-    when: always
-    paths:
-      - $CI_PROJECT_DIR/coverage-html
-    reports:
-      junit: $CI_PROJECT_DIR/junit.xml
+    - echo "Report test" >> ${CI_PROJECT_DIR}/VERSION
+    - cat ${CI_PROJECT_DIR}/VERSION
 
 Run notice scripts:
   <<: *test-default
