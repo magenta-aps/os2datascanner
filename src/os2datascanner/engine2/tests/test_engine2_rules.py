@@ -6,7 +6,7 @@ from os2datascanner.engine2.rules.regex import RegexRule
 from os2datascanner.engine2.rules.dimensions import DimensionsRule
 from os2datascanner.engine2.rules.last_modified import LastModifiedRule
 from os2datascanner.engine2.rules.logical import (
-        OrRule, AndRule, NotRule, oxford_comma)
+    OrRule, AndRule, NotRule, oxford_comma)
 
 
 class RuleTests(unittest.TestCase):
@@ -64,6 +64,49 @@ Vejstrand Kommune, Børn- og Ungeforvaltningen. P-nummer: 2305000003
                 ]
             ),
             (
+                CPRRule(modulus_11=True, ignore_irrelevant=True,
+                        examine_context=False, validate_ending_exclude_pnums=True),
+                """
+Vejstrand Kommune, Børn- og Ungeforvaltningen. P-nr. 2205995008
+Vejstrand Kommune, 2405010006
+Børn- og Ungeforvaltningen. P-nummer: 2705010006""",
+                []
+            ),
+            (
+                CPRRule(validate_ending_exclude_pnums=True),
+                #1
+                """
+2205995008 forbryder,
+230500 0003, forbryder,
+240501-0006! forbryder,
+250501-1987: forbryder""",
+                [
+                    "2205XXXXXX",
+                    "2305XXXXXX",
+                ]
+            ),
+            (
+                CPRRule(modulus_11=True, ignore_irrelevant=True,
+                        validate_ending_exclude_pnums=True, examine_context=False),
+                """
+2205995008, forbryder,
+230500 0003 forbryder,
+240501-0006 forbryder,
+250501-1987 forbryder
+pnr.""",
+                []
+            ),
+            (
+                CPRRule(modulus_11=False, ignore_irrelevant=False, validate_ending_exclude_pnums=True),
+                #2
+                """
+2205995008! forbryder,
+230500-0003- forbryder,
+""",
+                []
+            ),
+
+            (
                 RegexRule("((four|six)( [aopt]+)?|(one|seven) [aopt]+)"),
                 """
 one
@@ -84,9 +127,9 @@ more!""",
             ),
             (
                 LastModifiedRule(
-                        datetime(
-                                2019, 12, 24, 23, 59, 59,
-                                tzinfo=timezone.utc)),
+                    datetime(
+                        2019, 12, 24, 23, 59, 59,
+                        tzinfo=timezone.utc)),
                 datetime(2019, 12, 31, 23, 59, 59, tzinfo=timezone.utc),
                 [
                     "2019-12-31T23:59:59+0000"
@@ -94,17 +137,17 @@ more!""",
             ),
             (
                 LastModifiedRule(
-                        datetime(
-                                2019, 12, 24, 23, 59, 59,
-                                tzinfo=timezone.utc)),
+                    datetime(
+                        2019, 12, 24, 23, 59, 59,
+                        tzinfo=timezone.utc)),
                 datetime(2019, 5, 22, 0, 0, 1, tzinfo=timezone.utc),
                 None
             ),
             (
                 DimensionsRule(
-                        width_range=range(0, 16385),
-                        height_range=range(0, 16385),
-                        min_dim=256),
+                    width_range=range(0, 16385),
+                    height_range=range(0, 16385),
+                    min_dim=256),
                 (128, 256),
                 [
                     [128, 256]
@@ -112,17 +155,17 @@ more!""",
             ),
             (
                 DimensionsRule(
-                        width_range=range(0, 16385),
-                        height_range=range(0, 16385),
-                        min_dim=256),
+                    width_range=range(0, 16385),
+                    height_range=range(0, 16385),
+                    min_dim=256),
                 (128, 255),
                 []
             ),
             (
                 DimensionsRule(
-                        width_range=range(256, 1024),
-                        height_range=range(256, 1024),
-                        min_dim=0),
+                    width_range=range(256, 1024),
+                    height_range=range(256, 1024),
+                    min_dim=0),
                 (256, 256),
                 [
                     [256, 256]
@@ -130,9 +173,9 @@ more!""",
             ),
             (
                 DimensionsRule(
-                        width_range=range(256, 1024),
-                        height_range=range(256, 1024),
-                        min_dim=0),
+                    width_range=range(256, 1024),
+                    height_range=range(256, 1024),
+                    min_dim=0),
                 (32, 32),
                 []
             ),
@@ -148,7 +191,7 @@ more!""",
                 matches = rule.match(in_value)
                 if expected:
                     self.assertEqual(
-                            [match["match"] for match in matches], expected)
+                        [match["match"] for match in matches], expected)
                 else:
                     self.assertFalse(list(matches))
 
@@ -225,13 +268,13 @@ more!""",
                         break
                 print(input_string, now, outcome)
                 self.assertEqual(
-                        outcome,
-                        now,
-                        "{0}: wrong result".format(input_string))
+                    outcome,
+                    now,
+                    "{0}: wrong result".format(input_string))
                 self.assertEqual(
-                        evaluation_count,
-                        evaluations,
-                        "{0}: wrong evaluation count".format(input_string))
+                    evaluation_count,
+                    evaluations,
+                    "{0}: wrong evaluation count".format(input_string))
 
     def test_json_round_trip(self):
         for rule, _ in RuleTests.compound_candidates:
@@ -242,14 +285,14 @@ more!""",
 
     def test_oxford_comma(self):
         self.assertEqual(
-                oxford_comma(["Monday"], "and"),
-                "Monday")
+            oxford_comma(["Monday"], "and"),
+            "Monday")
         self.assertEqual(
-                oxford_comma(["Monday", "Tuesday"], "and"),
-                "Monday and Tuesday")
+            oxford_comma(["Monday", "Tuesday"], "and"),
+            "Monday and Tuesday")
         self.assertEqual(
-                oxford_comma(["Monday", "Tuesday", "Wednesday"], "and"),
-                "Monday, Tuesday, and Wednesday")
+            oxford_comma(["Monday", "Tuesday", "Wednesday"], "and"),
+            "Monday, Tuesday, and Wednesday")
 
     def test_rule_names(self):
         A = RegexRule("A", name="Fragment A")
@@ -258,8 +301,8 @@ more!""",
         C2 = RegexRule("C2", name="Fragment C2")
         C = OrRule(C1, C2, name="Fragment C")
         self.assertEqual(
-                AndRule(A, B).presentation,
-                "(Fragment A and Fragment B)")
+            AndRule(A, B).presentation,
+            "(Fragment A and Fragment B)")
         self.assertEqual(
-                OrRule(A, B, C).presentation,
-                "(Fragment A, Fragment B, or Fragment C)")
+            OrRule(A, B, C).presentation,
+            "(Fragment A, Fragment B, or Fragment C)")
