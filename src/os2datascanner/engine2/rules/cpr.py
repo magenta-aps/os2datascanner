@@ -7,7 +7,6 @@ from .utilities.cpr_probability import (get_birth_date, cpr_exception_dates,
 cpr_regex = r"\b(\d{2}[\s]?\d{2}[\s]?\d{2})(?:[\s\-/\.]|\s\-\s)?(\d{4})\b"
 calculator = CprProbabilityCalculator()
 
-
 class CPRRule(RegexRule):
     type_label = "cpr"
 
@@ -55,6 +54,12 @@ class CPRRule(RegexRule):
                     # Error text -- this can't be a CPR number
                     continue
 
+            p_nums = ["p-nr.", "p.nr.",
+                      "p-nr.:", "p.nr.:",
+                      "p-nummer:", "pnr", "pnr:"]
+            if any(pnum.lower() in content.lower() for pnum in p_nums):
+                probability = 0.0
+
             cpr = cpr[0:4] + "XXXXXX"
             low, high = m.span()
 
@@ -71,6 +76,12 @@ class CPRRule(RegexRule):
             match_context = content[max(low - 50, 0):high + 50]
             match_context = self._compiled_expression.sub(
                     "XXXXXX-XXXX", match_context)
+
+            match_context_cpr_split = match_context.split("XXXXXX-XXXX", 1)[1]
+            valid_endings = [" ", ",", ".", "\n", "\t", "\r"]
+            if len(match_context_cpr_split) is not 0:
+                if not any(x in match_context_cpr_split[0] for x in valid_endings):
+                    probability = 0.0
 
             if probability:
                 yield {
