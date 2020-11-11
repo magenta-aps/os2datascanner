@@ -125,6 +125,8 @@ COPY --from=frontend /code/src/os2datascanner/projects/admin/adminapp/static/dis
 
 # Run the server as the os2ds_admin user on port 8000
 WORKDIR /code/src/os2datascanner/projects/admin
+# Change permissions of translation folders
+RUN find . -name 'LC_MESSAGES' | xargs chown -R os2ds_admin:os2ds_admin
 USER os2ds_admin:os2ds_admin
 EXPOSE 5000
 ENTRYPOINT ["/code/docker/docker-entrypoint.sh"]
