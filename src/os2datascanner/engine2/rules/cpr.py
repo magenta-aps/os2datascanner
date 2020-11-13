@@ -1,3 +1,5 @@
+import re
+
 from .rule import Rule, Sensitivity
 from .regex import RegexRule
 from .logical import oxford_comma
@@ -84,11 +86,10 @@ class CPRRule(RegexRule):
                 "XXXXXX-XXXX", match_context)
 
             if self._validate_ending_exclude_pnums:
-                match_context_cpr_split = match_context.split("XXXXXX-XXXX", 1)[1]
                 valid_endings = [" ", ",", ".", "\n", "\t", "\r"]
-                if len(match_context_cpr_split) is not 0:
-                    if not any(x in match_context_cpr_split[0] for x in valid_endings):
-                        probability = 0.0
+                match_ending_char = content[high:high + 1]
+                if not any(x in match_ending_char for x in valid_endings):
+                    probability = 0.0
 
             if probability:
                 yield {

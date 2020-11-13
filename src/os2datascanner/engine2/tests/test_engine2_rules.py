@@ -73,10 +73,10 @@ Børn- og Ungeforvaltningen. P-nummer: 2705010006""",
                 []
             ),
             (
-                CPRRule(validate_ending_exclude_pnums=True),
-                #1
+                CPRRule(modulus_11=False, ignore_irrelevant=False,
+                        validate_ending_exclude_pnums=True, examine_context=False),
                 """
-2205995008 forbryder,
+2205995008 forbryder, 
 230500 0003, forbryder,
 240501-0006! forbryder,
 250501-1987: forbryder""",
@@ -98,12 +98,33 @@ pnr.""",
             ),
             (
                 CPRRule(modulus_11=False, ignore_irrelevant=False, validate_ending_exclude_pnums=True),
-                #2
                 """
 2205995008! forbryder,
 230500-0003- forbryder,
 """,
                 []
+            ),
+            (
+                CPRRule(validate_ending_exclude_pnums=True, examine_context=False),
+                """
+2205995008 forbryder,
+230500-0003 forbryder,
+men de er faktisk p-nummer:
+""",
+                []
+            ),
+            (
+                CPRRule(validate_ending_exclude_pnums=True, examine_context=False),
+                """
+2205995008! forbryder,
+230500-0003, der er en forbryder,
+240501-0006
+
+""",
+                [
+                    "2305XXXXXX",
+                    "2405XXXXXX"
+                ]
             ),
 
             (
