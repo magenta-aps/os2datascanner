@@ -190,6 +190,32 @@ services:
     ports:
       - "8080:8080"
 
+  postgres-keycloak:
+    image: postgres
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloak
+    volumes:
+      - type: volume
+        source: knr-postgres-keycloak-volume
+        target: /var/lib/postgresql/data
+
+  keycloak:
+    depends_on:
+      - postgres-keycloak
+    image: quay.io/keycloak/keycloak:11.0.2
+    command: [ "-Dkeycloak.migration.strategy=IGNORE_EXISTING" ]
+    ports:
+      - 8090:8080
+    environment:
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+      PROXY_ADDRESS_FORWARDING: 'false'
+      DB_USER: keycloak
+      DB_PASSWORD: keycloak
+      DB_ADDR: postgres-keycloak
+
 x-disabled:
   engine_processor:
     build:
@@ -198,10 +224,10 @@ x-disabled:
       target: engine
     command: processor --enable-metrics
     volumes:
-      - ./dev-environment/engine/dev-settings.toml:/user-settings.toml
-      - ./src/os2datascanner:/code/src/os2datascanner
+        - ./dev-environment/engine/dev-settings.toml:/user-settings.toml
+        - ./src/os2datascanner:/code/src/os2datascanner
     depends_on:
-      - queue
+        - queue
 
   engine_matcher:
     build:
@@ -211,10 +237,10 @@ x-disabled:
     command: matcher --enable-metrics
     restart: unless-stopped
     volumes:
-      - ./dev-environment/engine/dev-settings.toml:/user-settings.toml
-      - ./src/os2datascanner:/code/src/os2datascanner
+        - ./dev-environment/engine/dev-settings.toml:/user-settings.toml
+        - ./src/os2datascanner:/code/src/os2datascanner
     depends_on:
-      - queue
+        - queue
 
   engine_tagger:
     build:
@@ -223,10 +249,11 @@ x-disabled:
       target: engine
     command: tagger --enable-metrics
     volumes:
-      - ./dev-environment/engine/dev-settings.toml:/user-settings.toml
-      - ./src/os2datascanner:/code/src/os2datascanner
+        - ./dev-environment/engine/dev-settings.toml:/user-settings.toml
+        - ./src/os2datascanner:/code/src/os2datascanner
     depends_on:
-      - queue
+        - queue
+
 
 
 volumes:
@@ -234,3 +261,4 @@ volumes:
   frontend-bundles-report:
   postgres-data:
   postgres-initdb.d:
+  knr-postgres-keycloak-volume:
