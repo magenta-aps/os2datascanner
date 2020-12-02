@@ -191,6 +191,23 @@ services:
       - "8080:8080"
 
 x-disabled:
+  admin_cron:
+    build:
+      context: .
+      dockerfile: docker/admin/Dockerfile
+      target: application
+    entrypoint: []
+    environment:
+      - OS2DS_SKIP_DJANGO_MIGRATIONS=1
+    command: supercronic /code/docker/crontab
+    volumes:
+      - ./dev-environment/admin/dev-settings.toml:/user-settings.toml
+      - ./src/os2datascanner:/code/src/os2datascanner
+    depends_on:
+      - db
+      - admin_application
+      - queue
+
   engine_processor:
     build:
       context: .
