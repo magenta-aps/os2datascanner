@@ -29,12 +29,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'os2datascanner.projects.report.reportapp.apps.ReportappConfig',
 ]
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
 OPTIONAL_APPS = []
 AUTH_PROFILE_MODULE = 'os2datascanner.projects.report.reportapp.UserProfile'
 WSGI_APPLICATION = 'os2datascanner.projects.report.wsgi.application'
 ROOT_URLCONF = 'os2datascanner.projects.report.urls'
 STATIC_URL = '/static/'
-LOGIN_REDIRECT_URL = '/'
 NOTIFICATION_INSTITUTION = ""
 
 # Which URL schemes can be used in links to matched objects? (The possible
@@ -52,6 +54,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_structlog.middlewares.RequestMiddleware',
+    'mozilla_django_oidc.middleware.SessionRefresh',
 ]
 
 SETTINGS_EXPORT = [
