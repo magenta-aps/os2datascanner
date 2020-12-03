@@ -1,6 +1,6 @@
 -r requirements-django.in
 -c requirements-engine.txt
-
+datapunt_keycloak_oidc
 git+https://github.com/magenta-aps/django-saml2-auth.git@2.2.2
 google-api-python-client
 oauth2client
