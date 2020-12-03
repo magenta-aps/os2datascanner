@@ -15,11 +15,6 @@ import sys
 import pathlib
 import structlog
 
-# Import from keycloak_oidc settings and use the defaults
-
-from keycloak_oidc.default_settings import *
-
-
 from django.utils.translation import gettext_lazy as _
 
 from os2datascanner.projects.django_toml_configuration import process_toml_conf_for_django
