@@ -15,7 +15,10 @@
 # The code is currently governed by OS2 the Danish community of open
 # source municipalities ( https://os2.eu/ )
 import collections
+from urllib.parse import urlencode
+
 import structlog
+from django.conf import settings
 
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
@@ -44,6 +47,10 @@ class LoginRequiredMixin(View):
 
 class LoginPageView(View):
     template_name = 'login.html'
+
+
+class LogoutPageView(TemplateView, View):
+    template_name = 'logout.html'
 
 
 class MainPageView(TemplateView, LoginRequiredMixin):
@@ -112,7 +119,7 @@ class MainPageView(TemplateView, LoginRequiredMixin):
             else:
                 temp = {'sensitivity': Sensitivity(se), 'count': 0, 'label': Sensitivity(se).name}
                 context['dashboard_results'][Sensitivity(se).name.lower()] = temp
-                
+
         return context
 
 
@@ -148,7 +155,6 @@ class SensitivityPageView(ListView, LoginRequiredMixin):
         context = super().get_context_data(**kwargs)
         context['sensitivity'] = sensitivity
         return context
-
 
 
 class StatisticsPageView(TemplateView):
@@ -198,3 +204,9 @@ def filter_matches(results):
     data_results.sort(key=
                       lambda result: (result.matches.sensitivity.value, result.pk))
     return data_results
+
+
+def oidc_op_logout_url_method(request):
+    logout_url = settings.LOGOUT_URL
+    return_to_url = settings.LOGOUT_REDIRECT_URL
+    return logout_url + '?' + urlencode({'redirect_uri': return_to_url, 'client_id': settings.OIDC_RP_CLIENT_ID})

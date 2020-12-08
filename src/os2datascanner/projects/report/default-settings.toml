@@ -31,10 +31,12 @@ OIDC_OP_USER_ENDPOINT = "http://keycloak:8090/auth/realms/magenta/protocol/openi
 OIDC_RP_SIGN_ALGO = "RS256"
 OIDC_OP_JWKS_ENDPOINT = "http://keycloak:8090/auth/realms/magenta/protocol/openid-connect/certs"
 # redirect urls
-LOGIN_URL = "oidc_authentication_init"
 LOGIN_REDIRECT_URL = "http://localhost:8040/"
-LOGOUT_REDIRECT_URL = "http://localhost:8040"
-# OIDC_OP_LOGOUT_URL_METHOD > probably to be used
+LOGOUT_REDIRECT_URL = "http://localhost:8040/accounts/logout/"
+# login and logout urls
+LOGIN_URL = "oidc_authentication_init"
+LOGOUT_URL = "http://keycloak:8090/auth/realms/magenta/protocol/openid-connect/logout"
+OIDC_OP_LOGOUT_URL_METHOD = "os2datascanner.projects.report.reportapp.views.views.oidc_op_logout_url_method"
 
 # [installation]
 INSTALLED_APPS = [
