@@ -180,9 +180,9 @@ services:
   idp:
     image: magentalabs/simplesamlphp:2.0.0
     environment:
-      - SIMPLESAMLPHP_BASEURLPATH=http://localhost:8080/simplesaml/
-      - SIMPLESAMLPHP_SP_ENTITY_ID=http://localhost:8040/saml2_auth/acs/
-      - SIMPLESAMLPHP_SP_ASSERTION_CONSUMER_SERVICE=http://localhost:8040/saml2_auth/acs/
+      - SIMPLESAMLPHP_SP_ENTITY_ID=http://keycloak:8090/auth/realms/magenta
+      - SIMPLESAMLPHP_SP_ASSERTION_CONSUMER_SERVICE=http://keycloak:8090/auth/realms/magenta/broker/saml/endpoint
+      - SIMPLESAMLPHP_SP_SINGLE_LOGOUT_SERVICE=http://keycloak:8090/auth/realms/magenta/broker/saml/endpoint
     volumes:
       - ./dev-environment/authsources.php:/var/www/simplesamlphp/config/authsources.php
     ports:

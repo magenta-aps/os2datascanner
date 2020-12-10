@@ -36,7 +36,7 @@ LOGOUT_REDIRECT_URL = ""
 LOGIN_URL = "oidc_authentication_init"
 LOGOUT_URL = ""
 OIDC_OP_LOGOUT_URL_METHOD = "os2datascanner.projects.report.reportapp.views.views.oidc_op_logout_url_method"
-
+# OIDC_USERNAME_ALGO <-> used to provide a method to set username, could decode email?
 # [installation]
 INSTALLED_APPS = [
     'django.contrib.admin',
