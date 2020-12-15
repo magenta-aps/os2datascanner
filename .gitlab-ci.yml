@@ -18,6 +18,8 @@ stages:
 
 
 variables:
+  PUBLIC_REGISTRY: mirror.gcr.io
+
   # Project variables
   RELEASE_REGISTRY: docker.io
   RELEASE_REPORT_IMAGE: index.docker.io/magentaaps/os2datascanner-report
@@ -42,7 +44,7 @@ variables:
 
 Lint Python:
   <<: *lint-default
-  image: python:3.6
+  image: ${PUBLIC_REGISTRY}/python:3.6
   before_script:
     - pip install flake8
   script:
@@ -52,7 +54,7 @@ Lint Python:
 
 Lint Dockerfiles:
   <<: *lint-default
-  image: hadolint/hadolint:latest-debian
+  image: ${PUBLIC_REGISTRY}/hadolint/hadolint:latest-debian
   before_script:
     - apt-get -y update
     - apt-get -y install --no-install-recommends git
@@ -61,7 +63,7 @@ Lint Dockerfiles:
 
 Lint shell scripts:
   <<: *lint-default
-  image: koalaman/shellcheck-alpine:latest
+  image: ${PUBLIC_REGISTRY}/koalaman/shellcheck-alpine:latest
   before_script:
     - apk update
     - apk add git
@@ -118,7 +120,7 @@ Build Engine:
 
 Build documentation:
   <<: *build-default
-  image: keimlink/sphinx-doc:latex
+  image: ${PUBLIC_REGISTRY}/keimlink/sphinx-doc:latex
   script:
     - make -C doc PAPER=a4 html latexpdf
     - mv doc/_build .
@@ -137,9 +139,9 @@ Build documentation:
     - docker
     - network-per-build
   services:
-    - postgres:12
-    - rabbitmq:3-alpine
-    - name: dperson/samba:amd64
+    - ${PUBLIC_REGISTRY}/postgres:12
+    - ${PUBLIC_REGISTRY}/rabbitmq:3-alpine
+    - name: ${PUBLIC_REGISTRY}/dperson/samba:amd64
       alias: samba
       # XXX: this should be replaced with a fork under our control (see #37182)
   variables:
@@ -360,7 +362,7 @@ Deploy dev:
   # Automatic deployment of development branch to
   # https://admin.dev.os2ds.magenta.dk and https://report.dev.os2ds.magenta.dk
   stage: deploy
-  image: magentalabs/pepper:latest
+  image: ${PUBLIC_REGISTRY}/magentalabs/pepper:latest
   services: []
   rules:
     - if: $CI_COMMIT_REF_NAME == "development"
