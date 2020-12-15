@@ -204,14 +204,15 @@ services:
   keycloak:
     depends_on:
       - postgres-keycloak
-    image: quay.io/keycloak/keycloak:11.0.2
-    command: [ "-Dkeycloak.migration.strategy=IGNORE_EXISTING" ]
+    image: quay.io/keycloak/keycloak:11.0.3
+    command: [ "-Dkeycloak.migration.strategy=IGNORE_EXISTING", "-Djboss.socket.binding.port-offset=10" ]
     ports:
-      - 8090:8080
+      - 8090:8090
+
     environment:
       KEYCLOAK_USER: admin
       KEYCLOAK_PASSWORD: admin
-      PROXY_ADDRESS_FORWARDING: 'false'
+      # PROXY_ADDRESS_FORWARDING: 'false'
       DB_USER: keycloak
       DB_PASSWORD: keycloak
       DB_ADDR: postgres-keycloak
