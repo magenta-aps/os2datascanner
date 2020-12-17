@@ -39,7 +39,6 @@ class OIDCAuthenticationBackend(auth.OIDCAuthenticationBackend):
     def update_user(self, user, claims):
         user.first_name = claims.get('given_name', '')
         user.last_name = claims.get('family_name', '')
-        user.password = claims.get('password', 'password')
         user.save()
         get_or_create_user_aliases(user, email=claims.get('email', ''), sid=claims.get('sid', ''))
         # self.update_groups(user, claims)
@@ -50,9 +49,10 @@ class OIDCAuthenticationBackend(auth.OIDCAuthenticationBackend):
 def get_or_create_user_aliases(user, email, sid):  # noqa: D401
     """ This method creates or updates the users aliases  """
     if email:
-        EmailAlias.objects.get_or_create(user= user, address=email)
+        EmailAlias.objects.get_or_create(user=user, address=email)
     if sid:
         ADSIDAlias.objects.get_or_create(user=user, sid=sid)
+
 
 def get_user_data(key, user_data):
     """Helper method for retrieving data for a given key."""
