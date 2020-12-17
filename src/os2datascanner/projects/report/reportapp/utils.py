@@ -47,7 +47,6 @@ class OIDCAuthenticationBackend(auth.OIDCAuthenticationBackend):
     def update_user(self, user, claims):
         user.first_name = claims.get('given_name', '')
         user.last_name = claims.get('family_name', '')
-        user.password = claims.get('password', 'password')
         user.save()
         get_or_create_user_aliases(user, email=claims.get('email', ''), sid=claims.get('sid', ''))
         # self.update_groups(user, claims)
