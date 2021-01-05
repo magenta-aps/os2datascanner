@@ -34,9 +34,7 @@ def get_or_create_user_aliases(user_data):  # noqa: D401
 class OIDCAuthenticationBackend(auth.OIDCAuthenticationBackend):
     def create_user(self, claims):
         user = super(OIDCAuthenticationBackend, self).create_user(claims)
-        user.username = claims.get('preferred_username', '')
-        user.first_name = claims.get('given_name', '')
-        user.last_name = claims.get('family_name', '')
+        get_claim_user_info(claims, user)
         user.save()
         get_or_create_user_aliases(user, email=claims.get('email', ''), sid=claims.get('sid', ''))
 
@@ -45,13 +43,18 @@ class OIDCAuthenticationBackend(auth.OIDCAuthenticationBackend):
         return user
 
     def update_user(self, user, claims):
-        user.first_name = claims.get('given_name', '')
-        user.last_name = claims.get('family_name', '')
+        get_claim_user_info(claims, user)
         user.save()
         get_or_create_user_aliases(user, email=claims.get('email', ''), sid=claims.get('sid', ''))
         # self.update_groups(user, claims)
 
         return user
+
+
+def get_claim_user_info(claims, user):
+    user.username = claims.get('preferred_username', '')
+    user.first_name = claims.get('given_name', '')
+    user.last_name = claims.get('family_name', '')
 
 
 def get_or_create_user_aliases(user, email, sid):  # noqa: D401
