@@ -31,8 +31,8 @@ OIDC_OP_USER_ENDPOINT = "http://keycloak:8090/auth/realms/magenta/protocol/openi
 OIDC_RP_SIGN_ALGO = "RS256"
 OIDC_OP_JWKS_ENDPOINT = "http://keycloak:8090/auth/realms/magenta/protocol/openid-connect/certs"
 # redirect urls
-LOGIN_REDIRECT_URL = "http://localhost:8040/"
-LOGOUT_REDIRECT_URL = "http://localhost:8040/accounts/logout/"
+LOGIN_REDIRECT_URL = ""
+LOGOUT_REDIRECT_URL = ""
 # login and logout urls
 LOGIN_URL = "oidc_authentication_init"
 LOGOUT_URL = "http://keycloak:8090/auth/realms/magenta/protocol/openid-connect/logout"
