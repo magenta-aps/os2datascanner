@@ -20,9 +20,9 @@ SITE_URL = "*"
 ALLOWED_HOSTS = ['*']
 
 
-# Client info from keycloak
+# KEYCLOAK
 OIDC_RP_CLIENT_ID = "os2datascanner"
-OIDC_RP_CLIENT_SECRET = "fbed925a-4001-4a2e-b18e-f30f9e71903b"
+OIDC_RP_CLIENT_SECRET = "dcd58d7f-59e3-474c-9e62-b550d94a19f8"
 # endpoints
 OIDC_OP_AUTHORIZATION_ENDPOINT = "http://keycloak:8090/auth/realms/magenta/protocol/openid-connect/auth"
 OIDC_OP_TOKEN_ENDPOINT = "http://keycloak:8090/auth/realms/magenta/protocol/openid-connect/token"
@@ -31,13 +31,13 @@ OIDC_OP_USER_ENDPOINT = "http://keycloak:8090/auth/realms/magenta/protocol/openi
 OIDC_RP_SIGN_ALGO = "RS256"
 OIDC_OP_JWKS_ENDPOINT = "http://keycloak:8090/auth/realms/magenta/protocol/openid-connect/certs"
 # redirect urls
-LOGIN_REDIRECT_URL = "http://localhost:8040/"
-LOGOUT_REDIRECT_URL = "http://localhost:8040/accounts/logout/"
+LOGIN_REDIRECT_URL = ""
+LOGOUT_REDIRECT_URL = ""
 # login and logout urls
 LOGIN_URL = "oidc_authentication_init"
 LOGOUT_URL = "http://keycloak:8090/auth/realms/magenta/protocol/openid-connect/logout"
 OIDC_OP_LOGOUT_URL_METHOD = "os2datascanner.projects.report.reportapp.views.views.oidc_op_logout_url_method"
-# OIDC_USERNAME_ALGO <-> used to provide a method to set username, could decode email?
+
 # [installation]
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -51,7 +51,7 @@ INSTALLED_APPS = [
 ]
 
 AUTHENTICATION_BACKENDS = [
-    'mozilla_django_oidc.auth.OIDCAuthenticationBackend',
+    'os2datascanner.projects.report.reportapp.utils.OIDCAuthenticationBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
 
@@ -79,7 +79,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_structlog.middlewares.RequestMiddleware',
-    'mozilla_django_oidc.middleware.SessionRefresh',
 ]
 
 SETTINGS_EXPORT = [

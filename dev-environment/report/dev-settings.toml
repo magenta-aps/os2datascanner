@@ -15,6 +15,10 @@ ALLOWED_HOSTS = []
 # The name of the institution, to be included in the notification signoff
 NOTIFICATION_INSTITUTION = 'MAGENTA APS'
 
+# Redirect urls
+LOGIN_REDIRECT_URL = "http://localhost:8040/"
+LOGOUT_REDIRECT_URL = "http://localhost:8040/accounts/logout/"
+
 # [email]
 DEFAULT_FROM_EMAIL = "os2datascanner@magenta.dk"
 ADMIN_EMAIL = "os2datascanner@magenta.dk"
