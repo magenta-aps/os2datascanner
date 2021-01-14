@@ -180,9 +180,9 @@ services:
   idp:
     image: magentalabs/simplesamlphp:2.0.0
     environment:
-      - SIMPLESAMLPHP_SP_ENTITY_ID=http://keycloak:8090/auth/realms/magenta
-      - SIMPLESAMLPHP_SP_ASSERTION_CONSUMER_SERVICE=http://keycloak:8090/auth/realms/magenta/broker/saml/endpoint
-      - SIMPLESAMLPHP_SP_SINGLE_LOGOUT_SERVICE=http://keycloak:8090/auth/realms/magenta/broker/saml/endpoint
+      - SIMPLESAMLPHP_SP_ENTITY_ID=https://lemur-1.cloud-iam.com/auth/realms/magenta
+      - SIMPLESAMLPHP_SP_ASSERTION_CONSUMER_SERVICE=https://lemur-1.cloud-iam.com/auth/realms/magenta/broker/saml/endpoint
+      - SIMPLESAMLPHP_SP_SINGLE_LOGOUT_SERVICE=https://lemur-1.cloud-iam.com/auth/realms/magenta/broker/saml/endpoint
     volumes:
       - ./dev-environment/authsources.php:/var/www/simplesamlphp/config/authsources.php
     ports:
@@ -212,7 +212,7 @@ services:
       KEYCLOAK_USER: admin
       KEYCLOAK_PASSWORD: admin
       KEYCLOAK_IMPORT: /realm.json
-      # PROXY_ADDRESS_FORWARDING: 'false'
+      # PROXY_ADDRESS_FORWARDING: "true"
       DB_USER: keycloak
       DB_PASSWORD: keycloak
       DB_ADDR: postgres-keycloak
