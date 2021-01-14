@@ -15,6 +15,18 @@ ALLOWED_HOSTS = []
 # The name of the institution, to be included in the notification signoff
 NOTIFICATION_INSTITUTION = 'MAGENTA APS'
 
+# KEYCLOAK
+OIDC_RP_CLIENT_ID = ""
+OIDC_RP_CLIENT_SECRET = ""
+# endpoints
+OIDC_OP_AUTHORIZATION_ENDPOINT = "https://lemur-1.cloud-iam.com/auth/realms/magenta/protocol/openid-connect/auth"
+OIDC_OP_TOKEN_ENDPOINT = "https://lemur-1.cloud-iam.com/auth/realms/magenta/protocol/openid-connect/token"
+OIDC_OP_USER_ENDPOINT = "https://lemur-1.cloud-iam.com/auth/realms/magenta/protocol/openid-connect/userinfo"
+# signing algorithm and key
+OIDC_RP_SIGN_ALGO = "RS256"
+OIDC_OP_JWKS_ENDPOINT = "https://lemur-1.cloud-iam.com/auth/realms/magenta/protocol/openid-connect/certs"
+# login and logout urls
+LOGOUT_URL = "https://lemur-1.cloud-iam.com/auth/realms/magenta/protocol/openid-connect/logout"
 # Redirect urls
 LOGIN_REDIRECT_URL = "http://localhost:8040/"
 LOGOUT_REDIRECT_URL = "http://localhost:8040/accounts/logout/"

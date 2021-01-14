@@ -19,23 +19,22 @@ SAML2_ENABLED = false
 SITE_URL = "*"
 ALLOWED_HOSTS = ['*']
 
-
 # KEYCLOAK
-OIDC_RP_CLIENT_ID = "os2datascanner"
-OIDC_RP_CLIENT_SECRET = "dcd58d7f-59e3-474c-9e62-b550d94a19f8"
+OIDC_RP_CLIENT_ID = ""
+OIDC_RP_CLIENT_SECRET = ""
 # endpoints
-OIDC_OP_AUTHORIZATION_ENDPOINT = "http://keycloak:8090/auth/realms/magenta/protocol/openid-connect/auth"
-OIDC_OP_TOKEN_ENDPOINT = "http://keycloak:8090/auth/realms/magenta/protocol/openid-connect/token"
-OIDC_OP_USER_ENDPOINT = "http://keycloak:8090/auth/realms/magenta/protocol/openid-connect/userinfo"
+OIDC_OP_AUTHORIZATION_ENDPOINT = ""
+OIDC_OP_TOKEN_ENDPOINT = ""
+OIDC_OP_USER_ENDPOINT = ""
 # signing algorithm and key
-OIDC_RP_SIGN_ALGO = "RS256"
-OIDC_OP_JWKS_ENDPOINT = "http://keycloak:8090/auth/realms/magenta/protocol/openid-connect/certs"
+OIDC_RP_SIGN_ALGO = ""
+OIDC_OP_JWKS_ENDPOINT = ""
 # redirect urls
 LOGIN_REDIRECT_URL = ""
 LOGOUT_REDIRECT_URL = ""
 # login and logout urls
 LOGIN_URL = "oidc_authentication_init"
-LOGOUT_URL = "http://keycloak:8090/auth/realms/magenta/protocol/openid-connect/logout"
+LOGOUT_URL = ""
 OIDC_OP_LOGOUT_URL_METHOD = "os2datascanner.projects.report.reportapp.views.views.oidc_op_logout_url_method"
 
 # [installation]
