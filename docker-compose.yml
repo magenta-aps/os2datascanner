@@ -219,8 +219,11 @@ services:
       DB_DATABASE: keycloak
       DB_SCHEMA: public
       DB_VENDOR: POSTGRES
+      KEYCLOAK_LOGLEVEL: WARN
+      ROOT_LOGLEVEL: WARN
     volumes:
       - ./dev-environment/realm.json:/realm.json
+      - ./dev-environment/standalone.xml:/opt/jboss/keycloak/standalone/configuration/standalone.xml
     depends_on:
       - postgres-keycloak
 
