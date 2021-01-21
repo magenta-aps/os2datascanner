@@ -247,6 +247,8 @@ services:
     environment:
       PHPLDAPADMIN_LDAP_HOSTS: ldap_server
       PHPLDAPADMIN_HTTPS: 'false'
+    depends_on:
+      - ldap_server
 
 x-disabled:
   admin_cron:
