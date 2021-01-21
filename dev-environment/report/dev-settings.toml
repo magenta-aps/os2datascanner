@@ -16,17 +16,17 @@ ALLOWED_HOSTS = []
 NOTIFICATION_INSTITUTION = 'MAGENTA APS'
 
 # KEYCLOAK
-OIDC_RP_CLIENT_ID = ""
+OIDC_RP_CLIENT_ID = "os2datascanner"
 OIDC_RP_CLIENT_SECRET = ""
 # endpoints
-OIDC_OP_AUTHORIZATION_ENDPOINT = "https://lemur-1.cloud-iam.com/auth/realms/magenta/protocol/openid-connect/auth"
-OIDC_OP_TOKEN_ENDPOINT = "https://lemur-1.cloud-iam.com/auth/realms/magenta/protocol/openid-connect/token"
-OIDC_OP_USER_ENDPOINT = "https://lemur-1.cloud-iam.com/auth/realms/magenta/protocol/openid-connect/userinfo"
+OIDC_OP_AUTHORIZATION_ENDPOINT = "http://localkeycloak.com:8090/auth/realms/magenta/protocol/openid-connect/auth"
+OIDC_OP_TOKEN_ENDPOINT = "http://localkeycloak.com:8090/auth/realms/magenta/protocol/openid-connect/token"
+OIDC_OP_USER_ENDPOINT = "http://localkeycloak.com:8090/auth/realms/magenta/protocol/openid-connect/userinfo"
 # signing algorithm and key
 OIDC_RP_SIGN_ALGO = "RS256"
-OIDC_OP_JWKS_ENDPOINT = "https://lemur-1.cloud-iam.com/auth/realms/magenta/protocol/openid-connect/certs"
+OIDC_OP_JWKS_ENDPOINT = "http://localkeycloak.com:8090/auth/realms/magenta/protocol/openid-connect/certs"
 # login and logout urls
-LOGOUT_URL = "https://lemur-1.cloud-iam.com/auth/realms/magenta/protocol/openid-connect/logout"
+LOGOUT_URL = "http://localkeycloak.com:8090/auth/realms/magenta/protocol/openid-connect/logout"
 # Redirect urls
 LOGIN_REDIRECT_URL = "http://localhost:8040/"
 LOGOUT_REDIRECT_URL = "http://localhost:8040/accounts/logout/"
