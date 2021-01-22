@@ -22,9 +22,11 @@ Checkboxes can be pre-filled before submitting the MR by replacing
 - [ ] The code contains documentation where relevant
 - [ ] The feature/bugfix has no dependencies (eg. database/config changes), or: I have noted the dependencies on the corresponding Redmine ticket
 - [ ] The MR does not depend on changes outside of the relevant development branch other than those referenced in the description
+- [ ] The label bug (if it is a bugfix) or enhancement (if it is a feature) has been added to the merge request
+- [ ] The merge request has been marked for deletion when merged 
 
 ## Review checklist
 
 - [ ] The code is understandable, well-structured and sufficiently documented
 - [ ] I would be able to deploy this feature and verify that it's working without further input from the author
-- [ ] I have checked out the code and tested locally, tested the changes on cmstest01.ku.dk or thorougly vetted the code
+- [ ] I have checked out the code and tested locally, tested the changes or thorougly vetted the code

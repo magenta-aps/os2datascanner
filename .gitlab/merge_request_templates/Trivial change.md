@@ -17,3 +17,4 @@ Checkboxes can be pre-filled before submitting the MR by replacing
 - [ ] The title of this MR contains the relevant ticket no., formatted like `[#12345]` or `#12345`
 - [ ] The corresponding Redmine ticket has been linked to the next deployment
 - [ ] The change purely affects HTML semantics or documentation
+- [ ] Screenshots of any UI changes are added to the merge request.
