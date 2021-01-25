@@ -1,6 +1,6 @@
 {% load l10n %}
 
-<div class="handle-match-wrapper">
+<!-- <div class="handle-match-wrapper">
 
   <button class="handle-match-button button button--handle-match" type="button">Håndtér match</button>
 
@@ -14,4 +14,28 @@
     </div>
   </div>
 
-</div>
+</div> -->
+  <div class="handle-match-wrapper">
+    <span>Håndtér matches som:</span>
+      <div class="handle-match">
+          <select name="match-handle" id="match-handle">
+            <option value="" selected="selected">
+                ----------
+            </option>
+            <option data-status="2">
+                Har flyttet filen
+            </option>
+            <option data-status="3">
+                Har slettet filen
+            </option>
+            <option data-status="1">
+                Har redigeret filen
+            </option>
+            <option data-status="4">
+                Falsk positiv
+            </option>
+          </select>
+      </div>
+      <button type="submit">Udfør</button>
+      <span class="selected-cb">0 af 10 valgt</span>
+  </div>

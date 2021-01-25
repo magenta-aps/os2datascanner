@@ -3,14 +3,22 @@
 
   <thead>
     <tr>
-      <th class="datatable__column--filetype-icon">
-        <span class="screen-reader-only">Type</span>
+      <th>
+        {% include "components/handle-match.html" %}
+      </th>
+    </tr>
+    <tr class="grey-bg">
+      <th class="datatable__column--handle">
+        <div class="datatable__column--filetype-icon">
+          <input id="select-all" type="checkbox" name="match-checkbox" class="datatable-checkbox">
+  
+          <span class="screen-reader-only">Type</span>
+        </div>
       </th>
       <th class="datatable__column--item">Objekt</th>
       <th class="datatable__column--match">Match</th>
       <th class="datatable__column--context">Kontekst</th>
       <th class="datatable__column--probability">Sandsynlighed</th>
-      <th class="datatable__column--handle">Håndtér</th>
     </tr>
   </thead>
 
