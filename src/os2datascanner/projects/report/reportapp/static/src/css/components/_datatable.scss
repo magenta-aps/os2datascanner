@@ -2,85 +2,7 @@
   --datatable-cell-padding: 2rem;
 }
 
-.dashboard_wrapper {
-  display: flex;
-  max-width: 85%;
-  min-height: 9.5rem;
-  margin-bottom: 3.5rem;
-
-  .link {
-    height: 0;
-    color: var(--color-text-main);
-    text-decoration: none;
-  }
-}
-
-.dashboard {
-  display: grid;
-  grid-template-columns: 0.5fr 12fr 2fr;
-  grid-template-areas: "sensitivity text-content material-icons";
-  background-color: var(--color-widget-bg);
-  box-shadow: var(--box-shadow-widget);
-  border-radius: var(--border-radius-widget);
-
-  .sensitivity {
-    width: 1rem;
-    min-height: 9.5rem;
-    border-radius: var(--border-radius-sensitivity);
-
-      &--critical {
-        display: block;
-        background-color: var(--color-error);
-      }
-      
-      &--problem {
-        display: block;
-        background-color: var(--color-problem);
-      }
-
-      &--warning {
-        display: block;
-        background-color: var(--color-warning);
-      }
-
-      &--notification {
-        display: block;
-        background-color: var(--color-notification);
-      }
-  }
-
-  .text-content {
-    display: flex;
-    align-items: flex-start;
-    flex-flow: column;
-    grid-area: text-content;
-    padding: 2rem;
-
-    h1 {
-      height: 0.6rem;
-    }
-
-    .matches {
-      color: var(--color-text-main);
-      font-weight: normal;
-    }
-  }
-
-  .material-icons {
-    grid-area: material-icons;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    color: #9e9e9e59;
-    font-size: 5rem;
-
-    &--hidden {
-      visibility: hidden;
-    }
-  }
-
-}
-
+// datatable, start
 .datatable {
   background-color: var(--color-widget-bg);
   border-collapse: collapse;
@@ -145,7 +67,9 @@
 .datatable-checkbox {
   margin-right: 5rem;
 }
+// datatable, end
 
+// matches & count, start
 .matches {
   display: flex;
   flex-flow: row nowrap;
@@ -159,7 +83,9 @@
     margin-left: .5rem;
   }
 }
+// matches & count, end
 
+// probability,  start
 .probability {
   margin-left: 4rem;
   font-size: 0.75rem;
@@ -180,7 +106,9 @@
     background-color: var(--color-ok-dark);
   }
 }
+// probability, end
 
+// paginaion, start
 .pagination {
   margin-bottom: 1.5rem;
 
@@ -194,7 +122,9 @@
     text-decoration: underline;
   }
 }
+// pagination, end
 
+// datatable tr hover, start
 .datatable tr:hover {
 
   td{
@@ -205,6 +135,7 @@
     opacity: 1;
   }
 }
+// datatable tr hover, end
 
 @supports(display: grid) {
   // We use CSS Grid to detect IE11, as "tr:focus" breaks the whole selector in IE11
@@ -221,6 +152,7 @@
   }
 }
 
+// datatable th & td, start
 .datatable th,
 .datatable td {
   line-height: 1;
@@ -235,7 +167,9 @@
     padding-right: var(--datatable-cell-padding);
   }
 }
+// datatable th & td, end
 
+// datatable checkbox, start
 .datatable input[type="checkbox"] {
   width: 1.2rem;
   height: 1.2rem;
@@ -257,13 +191,17 @@
   margin-left: 1px;
   font-size: 1rem;
 }
+// datatable checkbox, end
 
+// handle match th, start
 .datatable .handle-match th {
   font-size: 1rem;
   padding-top: 2rem;
   padding-bottom: 1.5rem;
 }
+// handle match th, end
 
+// grey th, start
 .datatable .grey-bg th {
   font-size: 1rem;
   font-weight: bold;
@@ -277,17 +215,18 @@
   background-color: #f4f4f4;
 }
 
+.datatable .grey-bg th.scrollActive {
+  border-radius: 0;
+  background-color: #f4f4f4;
+}
+// grey th, end
+
 .datatable td {
   border-top: 1px solid rgba(0, 0, 0, 0.2);
   transition: background-color 0.2s ease-in-out;
 }
 
-.datatable .grey-bg th.scrollActive {
-  border-radius: 0;
-  background-color: #f4f4f4;
-}
-
-/* .datatable--click-rows, start */
+// .datatable--click-rows, start
 .datatable--click-rows td {
   padding: 0;
 
@@ -306,9 +245,9 @@
   padding: 2rem;
   text-decoration: none;
 }
-/* .datatable--click-rows, stop */
+// .datatable--click-rows, end
 
-/* Nested tables, start */
+// nested tables, start
 .datatable--nested {
   border-collapse: collapse;
   box-shadow: initial;
@@ -322,8 +261,9 @@
     padding: var(--size-ds-unit) 0;
   }
 }
-/* Nested tables, stop */
+// nested tables, end
 
+// object items, start
 .scan {
   &__item-title {
     display: block;
@@ -346,3 +286,4 @@
     }
   }
 }
+// object items, end
